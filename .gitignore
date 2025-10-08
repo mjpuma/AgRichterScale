@@ -56,11 +56,19 @@ matlab_outputs/
 python_outputs/
 comparison_reports/
 
-# Large data files (SPAM data)
-spam2020V2r0_global_*/
+# Large data files (SPAM data - must be downloaded separately)
+spam2020V2r0_global_production/
+spam2020V2r0_global_harvested_area/
+spam2020V2r0_global_yield/
 spam2010V2r0_global_*/
+spam2020V2r0_global_*/
 *.asc
 *.txt.gz
+
+# Large ancillary files
+ancillary/CELL5M.asc
+ancillary/gdam_v2_state.asc
+ancillary/gdam_v2_country.txt
 
 # Temporary files
 *.tmp

@@ -1,5 +1,11 @@
 # AgriRichter Data Requirements
 
+## ⚠️ CRITICAL: SPAM Data Not Included in Repository
+
+**The SPAM 2020 data files (~1.5GB total) are NOT included in this repository.** You MUST download them separately from the MapSPAM project before running any analysis.
+
+**Quick Download Link:** https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/PRFF8V
+
 ## Overview
 
 AgriRichter requires several data files to perform historical event analysis. This guide describes all required and optional data files, their sources, and how to organize them.

@@ -30,6 +30,41 @@ cd AgRichterScale
 pip install -r requirements.txt
 ```
 
+### Required Data Downloads
+
+**IMPORTANT**: The SPAM 2020 data files are NOT included in this repository due to their size. You must download them separately:
+
+1. **SPAM 2020 Global Production Data**
+   - Download from: https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/PRFF8V
+   - File: `spam2020V2r0_global_P_TA.csv`
+   - Place in: `spam2020V2r0_global_production/spam2020V2r0_global_production/`
+
+2. **SPAM 2020 Global Harvested Area Data**
+   - Download from: https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/PRFF8V
+   - File: `spam2020V2r0_global_H_TA.csv`
+   - Place in: `spam2020V2r0_global_harvested_area/spam2020V2r0_global_harvested_area/`
+
+3. **SPAM 2020 Global Yield Data** (optional)
+   - Download from: https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/PRFF8V
+   - File: `spam2020V2r0_global_Y_TA.csv`
+   - Place in: `spam2020V2r0_global_yield/spam2020V2r0_global_yield/`
+
+**Directory Structure After Download:**
+```
+AgRichterScale/
+├── spam2020V2r0_global_production/
+│   └── spam2020V2r0_global_production/
+│       └── spam2020V2r0_global_P_TA.csv
+├── spam2020V2r0_global_harvested_area/
+│   └── spam2020V2r0_global_harvested_area/
+│       └── spam2020V2r0_global_H_TA.csv
+└── spam2020V2r0_global_yield/
+    └── spam2020V2r0_global_yield/
+        └── spam2020V2r0_global_Y_TA.csv
+```
+
+**Note**: The ancillary files (country codes, event definitions) are included in the repository.
+
 ### Generate Figures
 
 ```bash
