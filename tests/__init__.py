@@ -1,0 +1,1 @@
+"""Test suite for AgriRichter framework."""

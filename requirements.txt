@@ -1,0 +1,20 @@
+# Core dependencies
+pandas>=1.5.0
+numpy>=1.21.0
+matplotlib>=3.5.0
+cartopy>=0.21.0
+geopandas>=0.12.0
+seaborn>=0.11.0
+cmocean>=2.0
+adjustText>=0.7.3
+scipy>=1.8.0
+shapely>=1.8.0
+
+# Development dependencies (optional)
+pytest>=7.0.0
+pytest-cov>=4.0.0
+black>=22.0.0
+mypy>=0.991
+flake8>=5.0.0
+sphinx>=5.0.0
+sphinx-rtd-theme>=1.0.0

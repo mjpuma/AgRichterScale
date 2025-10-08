@@ -1,0 +1,87 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.hypothesis/
+
+# Jupyter
+.ipynb_checkpoints
+
+# Output directories (keep structure but not large data files)
+outputs/*/
+!outputs/.gitkeep
+verification_output/
+test_matlab_outputs/
+test_python_outputs/
+test_comparison_reports/
+matlab_outputs/
+python_outputs/
+comparison_reports/
+
+# Large data files (SPAM data)
+spam2020V2r0_global_*/
+spam2010V2r0_global_*/
+*.asc
+*.txt.gz
+
+# Temporary files
+*.tmp
+*.bak
+*.log
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Generated figures (optional - comment out if you want to track them)
+*.eps
+*.svg
+test_*.png
+test_*.jpg
+demo_*.png
+demo_*.jpg
+
+# MATLAB files (if any)
+*.m~
+*.asv
+
+# Excel temp files
+~$*.xls*
