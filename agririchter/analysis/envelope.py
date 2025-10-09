@@ -43,7 +43,7 @@ class HPEnvelopeCalculator:
         
         Args:
             production_kcal: Production data in kcal
-            harvest_km2: Harvest area data in km²
+            harvest_km2: Harvest area data (NOTE: SPAM data is in hectares, converted internally to km²)
         
         Returns:
             Dictionary with envelope data arrays
@@ -80,12 +80,14 @@ class HPEnvelopeCalculator:
         MATLAB: HPmatrix = [TotalHarvest(:),TotalProduction(:),TotalProduction(:)./TotalHarvest(:)];
         
         Args:
-            production_kcal: Production data in kcal
-            harvest_km2: Harvest area data in km²
+            production_kcal: Production data (NOTE: SPAM data is in metric tons, converted internally to kcal)
+            harvest_km2: Harvest area data (NOTE: SPAM data is in hectares, converted internally to km²)
         
         Returns:
-            Matrix with [harvest_area, production, yield] for each grid cell
+            Matrix with [harvest_area_km2, production_kcal, yield_kcal_per_km2] for each grid cell
         """
+        from ..core.constants import CALORIC_CONTENT, GRAMS_PER_METRIC_TON, HECTARES_TO_KM2
+        
         # Get crop columns based on config
         crop_columns = [col for col in production_kcal.columns if col.endswith('_A')]
         
@@ -107,9 +109,31 @@ class HPEnvelopeCalculator:
         
         self.logger.info(f"Using crop columns: {crop_columns}")
         
-        # Sum across selected crops for each grid cell (MATLAB: sum across columns)
-        total_production = production_kcal[crop_columns].sum(axis=1).values
-        total_harvest = harvest_km2[crop_columns].sum(axis=1).values
+        # Map crop columns to caloric content
+        crop_caloric_map = {
+            'BARL_A': CALORIC_CONTENT['Barley'],
+            'MAIZ_A': CALORIC_CONTENT['Corn'],
+            'OCER_A': CALORIC_CONTENT['MixedGrain'],
+            'PMIL_A': CALORIC_CONTENT['Millet'],
+            'RICE_A': CALORIC_CONTENT['Rice'],
+            'SMIL_A': CALORIC_CONTENT['Millet'],
+            'SORG_A': CALORIC_CONTENT['Sorghum'],
+            'WHEA_A': CALORIC_CONTENT['Wheat'],
+        }
+        
+        # Convert production from metric tons to kcal for each crop separately
+        # SPAM production data is in metric tons, we need kcal
+        total_production = np.zeros(len(production_kcal))
+        for crop_col in crop_columns:
+            crop_mt = production_kcal[crop_col].values
+            caloric_content = crop_caloric_map.get(crop_col, CALORIC_CONTENT['MixedGrain'])
+            crop_kcal = crop_mt * GRAMS_PER_METRIC_TON * caloric_content
+            total_production += crop_kcal
+        
+        # Sum harvest area across selected crops and convert from hectares to km²
+        # SPAM harvest data is in hectares, we need km²
+        total_harvest_ha = harvest_km2[crop_columns].sum(axis=1).values
+        total_harvest = total_harvest_ha * HECTARES_TO_KM2
         
         # Calculate yields (production/harvest area) - MATLAB: TotalProduction(:)./TotalHarvest(:)
         yields = np.divide(
