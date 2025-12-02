@@ -1,4 +1,4 @@
-"""MATLAB-exact H-P Envelope visualization."""
+"""MATLAB-exact H-P Envelope visualization with convergence analysis."""
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 class HPEnvelopeVisualizer:
-    """Visualizer for MATLAB-exact H-P Envelope plots."""
+    """Visualizer for MATLAB-exact H-P Envelope plots with convergence analysis."""
     
     def __init__(self, config):
         """
@@ -32,38 +32,100 @@ class HPEnvelopeVisualizer:
             'dpi': 300,
             'facecolor': 'white'
         }
+        
+        # Initialize convergence analysis components
+        self._convergence_validator = None
+        self._envelope_diagnostics = None
+        
+        # Define unified event type colors and markers (Publication Consistent)
+        self.event_type_styles = {
+            'Climate & Weather': {'color': '#1f77b4', 'marker': 'o', 'label': 'Climate & Weather'},  # Blue
+            'Conflict & Policy': {'color': '#d62728', 'marker': 's', 'label': 'Conflict & Policy'},  # Red
+            'Pest & Disease':    {'color': '#2ca02c', 'marker': 'D', 'label': 'Pest & Disease'},     # Green
+            'Geophysical':       {'color': '#ff7f0e', 'marker': '^', 'label': 'Geophysical'},        # Orange
+            'Compound/Other':    {'color': '#7f7f7f', 'marker': '*', 'label': 'Compound/Other'}      # Gray
+        }
     
+    def _consolidate_event_type(self, event_type_raw: str) -> str:
+        """Consolidate detailed event types into publication categories."""
+        if pd.isna(event_type_raw):
+            return 'Compound/Other'
+            
+        et = str(event_type_raw).lower()
+        
+        if any(x in et for x in ['climate', 'drought', 'flood', 'weather', 'rain', 'dry', 'wet']):
+            return 'Climate & Weather'
+        elif any(x in et for x in ['conflict', 'war', 'policy', 'political', 'civil', 'unrest']):
+            return 'Conflict & Policy'
+        elif any(x in et for x in ['disease', 'pest', 'locust', 'blight', 'fungus']):
+            return 'Pest & Disease'
+        elif any(x in et for x in ['volcanic', 'earthquake', 'seismic', 'natural disaster', 'geophysical']):
+            return 'Geophysical'
+        else:
+            return 'Compound/Other'
+
     def create_hp_envelope_plot(self, envelope_data: Dict, events_data: pd.DataFrame,
-                               save_path: Optional[Union[str, Path]] = None) -> plt.Figure:
+                               save_path: Optional[Union[str, Path]] = None,
+                               show_convergence: bool = True,
+                               total_production: Optional[float] = None,
+                               total_harvest: Optional[float] = None,
+                               ax: Optional[plt.Axes] = None,
+                               title: Optional[str] = None) -> plt.Figure:
         """
-        Create MATLAB-exact H-P Envelope visualization.
+        Create MATLAB-exact H-P Envelope visualization with convergence analysis.
         
         Args:
             envelope_data: Dictionary with 'disrupted_areas', 'upper_bound', 'lower_bound'
             events_data: DataFrame with columns: event_name, harvest_area_loss_ha, production_loss_kcal
                         (harvest_area_km2 will be calculated from harvest_area_loss_ha)
             save_path: Optional path to save the figure
+            show_convergence: Whether to highlight convergence point and add diagnostics
+            total_production: Total production for convergence validation (optional)
+            total_harvest: Total harvest area for convergence validation (optional)
+            ax: Optional matplotlib axes to plot on. If None, creates a new figure.
+            title: Optional custom title for the plot.
         
         Returns:
             matplotlib Figure object
         """
         # Convert harvest area from hectares to km² if needed
         events_data = self._prepare_events_data(events_data)
-        fig, ax = plt.subplots(figsize=self.figure_params['figsize'], 
-                              dpi=self.figure_params['dpi'],
-                              facecolor=self.figure_params['facecolor'])
+        
+        if ax is None:
+            fig, ax = plt.subplots(figsize=self.figure_params['figsize'], 
+                                  dpi=self.figure_params['dpi'],
+                                  facecolor=self.figure_params['facecolor'])
+        else:
+            fig = ax.get_figure()
         
         # Convert harvest area to magnitude: M_D = log10(A_H)
-        disrupted_areas = np.array(envelope_data['disrupted_areas'])
-        upper_bound = np.array(envelope_data['upper_bound'])
-        lower_bound = np.array(envelope_data['lower_bound'])
+        # Check if envelope has separate X-axes (MATLAB-exact approach)
+        if 'lower_bound_harvest' in envelope_data and 'upper_bound_harvest' in envelope_data:
+            # Use separate X-axes for each bound
+            lower_harvest = np.array(envelope_data['lower_bound_harvest'])
+            upper_harvest = np.array(envelope_data['upper_bound_harvest'])
+            lower_bound = np.array(envelope_data['lower_bound_production'])
+            upper_bound = np.array(envelope_data['upper_bound_production'])
+            
+            # For plotting, use lower bound X-axis as primary
+            disrupted_areas = lower_harvest
+            magnitude = np.log10(disrupted_areas)
+            
+            # Store separate X-axes for validation
+            self._lower_harvest = lower_harvest
+            self._upper_harvest = upper_harvest
+        else:
+            # Legacy: single X-axis for both bounds
+            disrupted_areas = np.array(envelope_data['disrupted_areas'])
+            upper_bound = np.array(envelope_data['upper_bound'])
+            lower_bound = np.array(envelope_data['lower_bound'])
+            magnitude = np.log10(disrupted_areas)
+            self._lower_harvest = disrupted_areas
+            self._upper_harvest = disrupted_areas
         
-        # Calculate magnitude for x-axis
-        magnitude = np.log10(disrupted_areas)
-        
-        # Set axis limits (MATLAB exact)
-        ax.set_xlim([2, 7])
-        ax.set_ylim([1e10, 1.62e16])
+        # Set axis limits - extended to capture smaller events
+        ax.set_xlim([1, 7])  # Extended lower bound from 2 to 1
+        ax.set_ylim([1e8, 1.62e16])  # Extended lower bound from 1e10 to 1e8
         
         # Plot gray envelope fill between upper and lower bounds
         self._plot_envelope_fill(ax, magnitude, upper_bound, lower_bound)
@@ -71,50 +133,67 @@ class HPEnvelopeVisualizer:
         # Plot upper bound (black) and lower bound (blue) boundary lines
         self._plot_boundary_lines(ax, magnitude, upper_bound, lower_bound)
         
-        # Plot AgriPhase threshold lines as horizontal dashed lines
+        # Plot threshold lines
         self._plot_agriPhase_thresholds(ax)
+        
+        # CRITICAL: Validate events are within envelope before plotting
+        events_data = self._validate_events_within_envelope(
+            events_data, magnitude, upper_bound, lower_bound
+        )
         
         # Plot historical events as red circles with labels
         self._plot_historical_events(ax, events_data)
         
+        # Add convergence analysis if requested and data is available
+        # REMOVED for publication clarity per user request
+        # if show_convergence and total_production is not None and total_harvest is not None:
+        #     self._highlight_convergence_point(ax, envelope_data, total_production, total_harvest)
+        #     self._add_convergence_diagnostics(ax, envelope_data, total_production, total_harvest)
+        
+        # Always highlight convergence point as it is part of the envelope definition
+        if show_convergence and total_production is not None and total_harvest is not None:
+             self._highlight_convergence_point(ax, envelope_data, total_production, total_harvest)
+        
         # Set logarithmic y-scale
         ax.set_yscale('log')
         
-        # Set axis labels
-        ax.set_xlabel('Magnitude M_D = log₁₀(A_H) [km²]', fontsize=12)
+        # Set axis labels with proper subscript formatting
+        ax.set_xlabel(r'Magnitude $M_D = \log_{10}(A_H)$ [km²]', fontsize=12)
         ax.set_ylabel('Production Loss [kcal]', fontsize=12)
         
         # Set title
-        title = f'H-P Envelope - {self.crop_type.title()}'
-        ax.set_title(title, fontsize=14, fontweight='bold')
+        if title:
+            plot_title = title
+        else:
+            plot_title = f'H-P Envelope - {self.crop_type.title()}'
+        ax.set_title(plot_title, fontsize=14, fontweight='bold')
         
         # Add grid
         ax.grid(True, alpha=0.3, linestyle='-', linewidth=0.5)
         
-        # Add legend with better organization
+        # Add legend in bottom right quadrant
         # Get handles and labels, organize by type
         handles, labels = ax.get_legend_handles_labels()
         
-        # Separate envelope/bounds from thresholds from events
+        # Separate envelope/bounds from event types
         envelope_items = [(h, l) for h, l in zip(handles, labels) 
                          if 'Envelope' in l or 'Bound' in l]
-        threshold_items = [(h, l) for h, l in zip(handles, labels) 
-                          if 'Phase' in l and '(' in l and 'Stressed' in l or 'Crisis' in l or 'Emergency' in l or 'Famine' in l]
         event_items = [(h, l) for h, l in zip(handles, labels) 
-                      if 'Phase' in l and '(' in l and 'Minimal' in l]
+                      if l not in [item[1] for item in envelope_items]]
         
-        # Combine in order: envelope, thresholds, events
-        ordered_handles = [h for h, l in envelope_items] + [h for h, l in threshold_items] + [h for h, l in event_items]
-        ordered_labels = [l for h, l in envelope_items] + [l for h, l in threshold_items] + [l for h, l in event_items]
+        # Combine in logical order (envelope first, then event types)
+        ordered_handles = [h for h, l in envelope_items] + [h for h, l in event_items]
+        ordered_labels = [l for h, l in envelope_items] + [l for h, l in event_items]
         
-        # Create legend with two columns if many items
+        # Create legend in bottom right with appropriate columns
         if len(ordered_labels) > 6:
-            ax.legend(ordered_handles, ordered_labels, loc='upper left', fontsize=9, ncol=2)
+            ax.legend(ordered_handles, ordered_labels, loc='lower right', fontsize=9, ncol=2)
         else:
-            ax.legend(ordered_handles, ordered_labels, loc='upper left', fontsize=10)
+            ax.legend(ordered_handles, ordered_labels, loc='lower right', fontsize=10)
         
-        # Adjust layout
-        plt.tight_layout()
+        # Adjust layout only if we created the figure
+        if save_path or ax is None:
+            plt.tight_layout()
         
         # Save figure if path provided
         if save_path:
@@ -125,78 +204,63 @@ class HPEnvelopeVisualizer:
     
     def _plot_envelope_fill(self, ax: plt.Axes, magnitude: np.ndarray, 
                            upper_bound: np.ndarray, lower_bound: np.ndarray) -> None:
-        """Plot gray envelope fill between upper and lower bounds."""
-        # Remove NaN and Inf values
-        valid_mask = (np.isfinite(magnitude) & np.isfinite(upper_bound) & 
-                     np.isfinite(lower_bound) & (upper_bound > 0) & (lower_bound > 0))
+        """Plot gray envelope fill between upper and lower bounds using separate X-axes."""
+        # Use separate X-axes for upper and lower bounds (MATLAB-exact approach)
+        lower_magnitude = np.log10(self._lower_harvest)
+        upper_magnitude = np.log10(self._upper_harvest)
         
-        if not np.any(valid_mask):
-            logger.warning("No valid data points for envelope fill")
-            return
+        # Create polygon for fill (MATLAB approach)
+        # Concatenate: lower bound forward + upper bound backward
+        X_env = np.concatenate([lower_magnitude, np.flip(upper_magnitude)])
+        Y_env = np.concatenate([lower_bound, np.flip(upper_bound)])
         
-        magnitude_clean = magnitude[valid_mask]
-        upper_clean = upper_bound[valid_mask]
-        lower_clean = lower_bound[valid_mask]
-        
-        # Sort by magnitude for proper filling
-        sort_idx = np.argsort(magnitude_clean)
-        magnitude_sorted = magnitude_clean[sort_idx]
-        upper_sorted = upper_clean[sort_idx]
-        lower_sorted = lower_clean[sort_idx]
-        
-        # Fill between upper and lower bounds with gray color
-        ax.fill_between(magnitude_sorted, lower_sorted, upper_sorted,
-                       color='gray', alpha=0.3, label='H-P Envelope')
+        # Fill the polygon
+        # REMOVED label to reduce legend clutter
+        ax.fill(X_env, Y_env, color='gray', alpha=0.3) #, label='H-P Envelope')
     
     def _plot_boundary_lines(self, ax: plt.Axes, magnitude: np.ndarray,
                             upper_bound: np.ndarray, lower_bound: np.ndarray) -> None:
-        """Plot upper bound (black) and lower bound (blue) boundary lines."""
-        # Remove NaN and Inf values
-        valid_mask = (np.isfinite(magnitude) & np.isfinite(upper_bound) & 
-                     np.isfinite(lower_bound) & (upper_bound > 0) & (lower_bound > 0))
+        """Plot upper bound (black) and lower bound (blue) boundary lines using separate X-axes."""
+        # Use separate X-axes for each bound (MATLAB-exact approach)
+        lower_magnitude = np.log10(self._lower_harvest)
+        upper_magnitude = np.log10(self._upper_harvest)
         
-        if not np.any(valid_mask):
-            logger.warning("No valid data points for boundary lines")
-            return
-        
-        magnitude_clean = magnitude[valid_mask]
-        upper_clean = upper_bound[valid_mask]
-        lower_clean = lower_bound[valid_mask]
-        
-        # Sort by magnitude
-        sort_idx = np.argsort(magnitude_clean)
-        magnitude_sorted = magnitude_clean[sort_idx]
-        upper_sorted = upper_clean[sort_idx]
-        lower_sorted = lower_clean[sort_idx]
-        
-        # Plot upper bound (black line)
-        ax.plot(magnitude_sorted, upper_sorted, 'k-', linewidth=2, 
+        # Plot upper bound (black line) with its own X-axis
+        ax.plot(upper_magnitude, upper_bound, 'k-', linewidth=2, 
                label='Upper Bound', alpha=0.8)
         
-        # Plot lower bound (blue line)
-        ax.plot(magnitude_sorted, lower_sorted, 'b-', linewidth=2, 
+        # Plot lower bound (blue line) with its own X-axis
+        ax.plot(lower_magnitude, lower_bound, 'b-', linewidth=2, 
                label='Lower Bound', alpha=0.8)
     
     def _plot_agriPhase_thresholds(self, ax: plt.Axes) -> None:
-        """Plot AgriPhase threshold lines as horizontal dashed lines."""
-        # Get thresholds from config
+        """Plot AgriPhase/Supply threshold lines as horizontal dashed lines."""
+        # Get thresholds from config (values in kcal)
         thresholds = self.config.get_thresholds()
+        colors = self.config.get_ipc_colors()
         
-        # IPC Phase mapping
-        phase_mapping = {'T1': 2, 'T2': 3, 'T3': 4, 'T4': 5}
-        phase_names = {'T1': 'Phase 2 (Stressed)', 'T2': 'Phase 3 (Crisis)', 
-                      'T3': 'Phase 4 (Emergency)', 'T4': 'Phase 5 (Famine)'}
+        # Get current y-limits to ensure we only plot visible thresholds
+        ylim = ax.get_ylim()
         
         # Plot horizontal threshold lines
-        for threshold_name, threshold_value in thresholds.items():
-            if threshold_name in phase_mapping:
-                phase_num = phase_mapping[threshold_name]
-                color = self.ipc_colors.get(phase_num, '#000000')
-                phase_name = phase_names.get(threshold_name, threshold_name)
-                
-                # Plot horizontal dashed line across magnitude range
-                ax.axhline(y=threshold_value, color=color, linestyle='--', 
-                          linewidth=2, alpha=0.8, label=phase_name)
+        for name, value_kcal in thresholds.items():
+            # Determine color
+            color = colors.get(name, '#000000')
+            
+            # Format label
+            label = f"{name} (~{value_kcal/1e15:.1f}P kcal)"
+            
+            # Only plot if within reasonable range (or just let matplotlib handle clipping)
+            # Adding a label at the right edge is helpful
+            ax.axhline(y=value_kcal, color=color, linestyle='--', 
+                      linewidth=2, alpha=0.8, label=label)
+            
+            # Add text annotation on the right side if within view
+            if ylim[0] <= value_kcal <= ylim[1]:
+                # Place text at the right edge
+                xlim = ax.get_xlim()
+                ax.text(xlim[1], value_kcal, f" {name}", 
+                       color=color, fontsize=8, va='center', ha='left', fontweight='bold')
     
     def _prepare_events_data(self, events_data: pd.DataFrame) -> pd.DataFrame:
         """
@@ -280,6 +344,92 @@ class HPEnvelopeVisualizer:
         
         return phase, phase_name, color, marker
     
+    def _validate_events_within_envelope(self, events_data: pd.DataFrame,
+                                         magnitude: np.ndarray,
+                                         upper_bound: np.ndarray,
+                                         lower_bound: np.ndarray) -> pd.DataFrame:
+        """
+        Validate that all events lie within the H-P envelope.
+        
+        By construction, all real events MUST be within the envelope bounds.
+        If events are outside, it indicates a bug in either:
+        - Envelope calculation
+        - Event calculation
+        - Units mismatch
+        
+        Args:
+            events_data: DataFrame with event data
+            magnitude: Envelope magnitude values (log10 of harvest area)
+            upper_bound: Envelope upper bound production values
+            lower_bound: Envelope lower bound production values
+        
+        Returns:
+            Validated events DataFrame
+        """
+        if events_data.empty:
+            return events_data
+        
+        events_data = events_data.copy()
+        events_data['magnitude'] = np.log10(events_data['harvest_area_km2'])
+        
+        # CRITICAL FIX: Use separate X-axes for upper and lower bounds
+        # The MATLAB-exact envelope has different harvest area sequences for each bound
+        
+        # Check each event
+        events_outside = []
+        for idx, event in events_data.iterrows():
+            event_harvest = event['harvest_area_km2']
+            event_prod = event['production_loss_kcal']
+            event_mag = event['magnitude']
+            
+            # Interpolate each bound using its own X-axis
+            # Lower bound: interpolate using lower_harvest X-axis
+            lower = np.interp(event_harvest, self._lower_harvest, lower_bound,
+                            left=lower_bound[0], right=lower_bound[-1])
+            # Upper bound: interpolate using upper_harvest X-axis
+            upper = np.interp(event_harvest, self._upper_harvest, upper_bound,
+                            left=upper_bound[0], right=upper_bound[-1])
+            
+            # Diagnostic logging for first few events
+            if len(events_outside) < 3:
+                logger.info(f"Event {event['event_name']}: A_H={event_harvest:.2f} km², P={event_prod:.2e} kcal")
+                logger.info(f"  Envelope bounds (interpolated): lower={lower:.2e}, upper={upper:.2e} kcal")
+            
+            # Check if event is within bounds (with tolerance for downsampling artifacts)
+            tolerance = 0.05  # 5% tolerance due to downsampling
+            if not (lower * (1 - tolerance) <= event_prod <= upper * (1 + tolerance)):
+                events_outside.append({
+                    'name': event['event_name'],
+                    'magnitude': event_mag,
+                    'production': event_prod,
+                    'lower_bound': lower,
+                    'upper_bound': upper,
+                    'below_lower': event_prod < lower,
+                    'above_upper': event_prod > upper
+                })
+        
+        # Report validation results
+        if events_outside:
+            logger.error(f"CRITICAL: {len(events_outside)} events are OUTSIDE the H-P envelope!")
+            for event in events_outside:
+                if event['above_upper']:
+                    logger.error(f"  {event['name']}: ABOVE envelope")
+                    logger.error(f"    Magnitude: {event['magnitude']:.2f}")
+                    logger.error(f"    Production: {event['production']:.2e} kcal")
+                    logger.error(f"    Upper bound: {event['upper_bound']:.2e} kcal")
+                    logger.error(f"    Excess: {(event['production']/event['upper_bound'] - 1)*100:.1f}%")
+                else:
+                    logger.error(f"  {event['name']}: BELOW envelope")
+                    logger.error(f"    Magnitude: {event['magnitude']:.2f}")
+                    logger.error(f"    Production: {event['production']:.2e} kcal")
+                    logger.error(f"    Lower bound: {event['lower_bound']:.2e} kcal")
+            
+            logger.error("This indicates a bug in envelope or event calculation!")
+        else:
+            logger.info(f"✓ All {len(events_data)} events are within the H-P envelope")
+        
+        return events_data
+    
     def _plot_historical_events(self, ax: plt.Axes, events_data: pd.DataFrame) -> None:
         """Plot historical events with severity-based colors and markers using adjustText for non-overlapping placement."""
         if events_data.empty:
@@ -290,34 +440,30 @@ class HPEnvelopeVisualizer:
         events_data = events_data.copy()
         events_data['magnitude'] = np.log10(events_data['harvest_area_km2'])
         
-        # Classify events by severity
-        events_data['phase'] = events_data['production_loss_kcal'].apply(
-            lambda x: self._classify_event_severity(x)[0]
-        )
-        events_data['phase_name'] = events_data['production_loss_kcal'].apply(
-            lambda x: self._classify_event_severity(x)[1]
-        )
-        events_data['color'] = events_data['production_loss_kcal'].apply(
-            lambda x: self._classify_event_severity(x)[2]
-        )
-        events_data['marker'] = events_data['production_loss_kcal'].apply(
-            lambda x: self._classify_event_severity(x)[3]
-        )
+        # Consolidate event types
+        if 'event_type' in events_data.columns:
+            events_data['consolidated_type'] = events_data['event_type'].apply(self._consolidate_event_type)
+        else:
+            events_data['consolidated_type'] = 'Unknown'
         
-        # Plot events grouped by severity phase for proper legend
-        plotted_phases = set()
-        for phase in sorted(events_data['phase'].unique()):
-            phase_data = events_data[events_data['phase'] == phase]
-            if not phase_data.empty:
-                phase_name = phase_data.iloc[0]['phase_name']
-                color = phase_data.iloc[0]['color']
-                marker = phase_data.iloc[0]['marker']
-                
-                # Plot this severity group
-                scatter = ax.scatter(phase_data['magnitude'], phase_data['production_loss_kcal'],
-                               c=color, s=100, alpha=0.8, edgecolors='black', linewidth=1,
-                               marker=marker, label=phase_name, zorder=5)
-                plotted_phases.add(phase)
+        # Plot events grouped by consolidated event type for proper legend
+        plotted_types = set()
+        for event_type, style in self.event_type_styles.items():
+            type_data = events_data[events_data['consolidated_type'] == event_type]
+            if not type_data.empty:
+                # Plot this event type group
+                ax.scatter(type_data['magnitude'], type_data['production_loss_kcal'],
+                               c=style['color'], s=100, alpha=0.8, edgecolors='black', linewidth=1,
+                               marker=style['marker'], label=style['label'], zorder=5)
+                plotted_types.add(event_type)
+        
+        # Plot unknown types if any
+        unknown_mask = ~events_data['consolidated_type'].isin(self.event_type_styles.keys())
+        unknown_data = events_data[unknown_mask]
+        if not unknown_data.empty:
+             ax.scatter(unknown_data['magnitude'], unknown_data['production_loss_kcal'],
+                       c='gray', s=100, alpha=0.8, edgecolors='black', linewidth=1,
+                       marker='o', label='Other', zorder=5)
         
         # Try to use adjustText for better label placement
         try:
@@ -326,18 +472,28 @@ class HPEnvelopeVisualizer:
             # Create text annotations
             texts = []
             for idx, row in events_data.iterrows():
+                # Use event type color for text label
+                etype = row.get('consolidated_type', 'Unknown')
+                if etype in self.event_type_styles:
+                    text_color = self.event_type_styles[etype]['color']
+                else:
+                    text_color = 'black'
+
                 text = ax.text(row['magnitude'], row['production_loss_kcal'], 
                              row['event_name'],
-                             fontsize=8, ha='center', va='bottom',
+                             fontsize=8, ha='center', va='bottom', color=text_color, fontweight='bold',
                              bbox=dict(boxstyle='round,pad=0.3', facecolor='white', 
-                                     alpha=0.7, edgecolor='red', linewidth=0.5))
+                                     alpha=0.7, edgecolor=text_color, linewidth=0.5))
                 texts.append(text)
             
-            # Adjust text positions to avoid overlaps
+            # Adjust text positions to avoid overlaps with aggressive settings
             adjust_text(texts, ax=ax,
-                       arrowprops=dict(arrowstyle='->', color='red', alpha=0.6, lw=0.5),
-                       expand_points=(1.5, 1.5),
-                       force_points=(0.5, 0.5))
+                       arrowprops=dict(arrowstyle='->', color='gray', alpha=0.6, lw=0.5),
+                       expand_points=(1.8, 1.8),
+                       expand_text=(1.5, 1.5),
+                       force_points=(0.8, 0.8),
+                       force_text=(0.8, 0.8),
+                       lim=1000)
             
             logger.info(f"Plotted {len(texts)} events with adjustText label placement")
             
@@ -356,6 +512,270 @@ class HPEnvelopeVisualizer:
                            bbox=dict(boxstyle='round,pad=0.3', facecolor='white', alpha=0.7),
                            arrowprops=dict(arrowstyle='->', connectionstyle='arc3,rad=0.1',
                                          color='red', alpha=0.6))
+    
+    def _highlight_convergence_point(self, ax: plt.Axes, envelope_data: Dict,
+                                   total_production: float, total_harvest: float) -> None:
+        """
+        Highlight the convergence point on the envelope plot.
+        
+        Args:
+            ax: Matplotlib axes to plot on
+            envelope_data: Envelope data dictionary
+            total_production: Expected total production at convergence
+            total_harvest: Expected total harvest area at convergence
+        """
+        # Get envelope bounds
+        if 'lower_bound_harvest' in envelope_data and 'upper_bound_harvest' in envelope_data:
+            lower_harvest = np.array(envelope_data['lower_bound_harvest'])
+            upper_harvest = np.array(envelope_data['upper_bound_harvest'])
+            lower_production = np.array(envelope_data['lower_bound_production'])
+            upper_production = np.array(envelope_data['upper_bound_production'])
+        else:
+            # Legacy format
+            disrupted_areas = np.array(envelope_data['disrupted_areas'])
+            lower_harvest = upper_harvest = disrupted_areas
+            lower_production = np.array(envelope_data['lower_bound'])
+            upper_production = np.array(envelope_data['upper_bound'])
+        
+        # Convert to log scale for plotting
+        total_harvest_log = np.log10(total_harvest)
+        
+        # Mark expected convergence point
+        ax.plot(total_harvest_log, total_production, 'go', markersize=12, 
+               markeredgecolor='darkgreen', markeredgewidth=2,
+               label='Expected Convergence', zorder=10)
+        
+        # Find actual endpoint
+        if len(lower_harvest) > 0:
+            actual_harvest = lower_harvest[-1]
+            actual_lower_prod = lower_production[-1]
+            actual_upper_prod = upper_production[-1]
+            actual_harvest_log = np.log10(actual_harvest)
+            
+            # Mark actual endpoints
+            ax.plot(actual_harvest_log, actual_lower_prod, 'ro', markersize=10,
+                   markeredgecolor='darkred', markeredgewidth=2,
+                   label='Actual Lower Endpoint', zorder=10)
+            ax.plot(actual_harvest_log, actual_upper_prod, 'bo', markersize=10,
+                   markeredgecolor='darkblue', markeredgewidth=2,
+                   label='Actual Upper Endpoint', zorder=10)
+            
+            # Calculate convergence error
+            lower_error = abs(actual_lower_prod - total_production) / total_production
+            upper_error = abs(actual_upper_prod - total_production) / total_production
+            harvest_error = abs(actual_harvest - total_harvest) / total_harvest
+            
+            # Add convergence error annotation
+            # REMOVED for publication clarity
+            # error_text = f'Convergence Errors:\nLower: {lower_error:.1%}\nUpper: {upper_error:.1%}\nHarvest: {harvest_error:.1%}'
+            # ax.text(0.02, 0.98, error_text, transform=ax.transAxes, 
+            #        verticalalignment='top', fontsize=9,
+            #        bbox=dict(boxstyle='round,pad=0.5', facecolor='lightyellow', alpha=0.8))
+    
+    def _add_convergence_diagnostics(self, ax: plt.Axes, envelope_data: Dict,
+                                   total_production: float, total_harvest: float) -> None:
+        """
+        Add convergence diagnostic information to the plot.
+        
+        Args:
+            ax: Matplotlib axes to plot on
+            envelope_data: Envelope data dictionary
+            total_production: Expected total production at convergence
+            total_harvest: Expected total harvest area at convergence
+        """
+        try:
+            # Import convergence validator if not already done
+            if self._convergence_validator is None:
+                from ..analysis.convergence_validator import ConvergenceValidator
+                self._convergence_validator = ConvergenceValidator()
+            
+            # Perform convergence validation
+            validation_result = self._convergence_validator.validate_mathematical_properties(
+                envelope_data, total_production, total_harvest
+            )
+            
+            # Create validation status text
+            status_text = "Mathematical Validation:\n"
+            properties = validation_result.properties
+            
+            # Use symbols for visual clarity
+            for prop_name, prop_value in properties.items():
+                symbol = "✓" if prop_value else "✗"
+                formatted_name = prop_name.replace('_', ' ').title()
+                status_text += f"{symbol} {formatted_name}\n"
+            
+            # Add overall status
+            overall_status = "PASSED" if validation_result.is_valid else "FAILED"
+            status_color = 'lightgreen' if validation_result.is_valid else 'lightcoral'
+            status_text += f"\nOverall: {overall_status}"
+            
+            # Add validation status box
+            ax.text(0.98, 0.98, status_text, transform=ax.transAxes,
+                   verticalalignment='top', horizontalalignment='right', fontsize=9,
+                   bbox=dict(boxstyle='round,pad=0.5', facecolor=status_color, alpha=0.8))
+            
+            # Add envelope width visualization near convergence
+            self._add_envelope_width_indicator(ax, envelope_data)
+            
+        except ImportError:
+            logger.warning("Convergence validator not available - skipping diagnostics")
+        except Exception as e:
+            logger.warning(f"Failed to add convergence diagnostics: {str(e)}")
+    
+    def _add_envelope_width_indicator(self, ax: plt.Axes, envelope_data: Dict) -> None:
+        """
+        Add visual indicator of envelope width near convergence.
+        
+        Args:
+            ax: Matplotlib axes to plot on
+            envelope_data: Envelope data dictionary
+        """
+        # Get envelope bounds
+        if 'lower_bound_harvest' in envelope_data and 'upper_bound_harvest' in envelope_data:
+            lower_harvest = np.array(envelope_data['lower_bound_harvest'])
+            lower_production = np.array(envelope_data['lower_bound_production'])
+            upper_production = np.array(envelope_data['upper_bound_production'])
+        else:
+            # Legacy format
+            lower_harvest = np.array(envelope_data['disrupted_areas'])
+            lower_production = np.array(envelope_data['lower_bound'])
+            upper_production = np.array(envelope_data['upper_bound'])
+        
+        if len(lower_harvest) < 2:
+            return
+        
+        # Calculate envelope width
+        envelope_width = upper_production - lower_production
+        
+        # Focus on the final 20% of the envelope to show convergence behavior
+        n_points = len(lower_harvest)
+        start_idx = max(0, int(0.8 * n_points))
+        
+        final_harvest = lower_harvest[start_idx:]
+        final_width = envelope_width[start_idx:]
+        
+        if len(final_harvest) > 1:
+            # Convert to log scale
+            final_harvest_log = np.log10(final_harvest)
+            
+            # Create a secondary y-axis for width visualization
+            ax2 = ax.twinx()
+            ax2.plot(final_harvest_log, final_width, 'purple', linewidth=2, alpha=0.7,
+                    linestyle='--', label='Envelope Width')
+            ax2.set_ylabel('Envelope Width (kcal)', color='purple', fontsize=10)
+            ax2.tick_params(axis='y', labelcolor='purple')
+            
+            # Calculate width reduction
+            if len(final_width) > 1:
+                initial_width = final_width[0]
+                final_width_val = final_width[-1]
+                width_reduction = (initial_width - final_width_val) / initial_width * 100
+                
+                # Add width reduction annotation
+                width_text = f'Width Reduction\n(final 20%): {width_reduction:.1f}%'
+                ax.text(0.02, 0.02, width_text, transform=ax.transAxes,
+                       verticalalignment='bottom', fontsize=9,
+                       bbox=dict(boxstyle='round,pad=0.5', facecolor='lavender', alpha=0.8))
+    
+    def create_convergence_analysis_plot(self, envelope_data: Dict,
+                                       total_production: float, total_harvest: float,
+                                       save_path: Optional[Union[str, Path]] = None) -> plt.Figure:
+        """
+        Create a detailed convergence analysis plot with multiple subplots.
+        
+        Args:
+            envelope_data: Envelope data dictionary
+            total_production: Total production for convergence validation
+            total_harvest: Total harvest area for convergence validation
+            save_path: Optional path to save the figure
+        
+        Returns:
+            matplotlib Figure object with convergence analysis
+        """
+        try:
+            # Import diagnostics if not already done
+            if self._envelope_diagnostics is None:
+                from ..analysis.envelope_diagnostics import EnvelopeDiagnostics
+                self._envelope_diagnostics = EnvelopeDiagnostics()
+            
+            # Create the convergence analysis plot
+            fig = self._envelope_diagnostics.plot_convergence_analysis(
+                envelope_data, total_production, total_harvest, save_path
+            )
+            
+            # Add crop type to the title
+            fig.suptitle(f'H-P Envelope Convergence Analysis - {self.crop_type.title()}', 
+                        fontsize=16, fontweight='bold')
+            
+            logger.info(f"Created convergence analysis plot for {self.crop_type}")
+            return fig
+            
+        except ImportError:
+            logger.error("Envelope diagnostics not available - cannot create convergence analysis plot")
+            # Create a simple fallback plot
+            fig, ax = plt.subplots(figsize=(10, 8))
+            ax.text(0.5, 0.5, 'Convergence analysis not available\n(envelope_diagnostics module not found)',
+                   ha='center', va='center', transform=ax.transAxes, fontsize=14)
+            ax.set_title(f'Convergence Analysis - {self.crop_type.title()}')
+            return fig
+        except Exception as e:
+            logger.error(f"Failed to create convergence analysis plot: {str(e)}")
+            # Create error plot
+            fig, ax = plt.subplots(figsize=(10, 8))
+            ax.text(0.5, 0.5, f'Error creating convergence analysis:\n{str(e)}',
+                   ha='center', va='center', transform=ax.transAxes, fontsize=12)
+            ax.set_title(f'Convergence Analysis Error - {self.crop_type.title()}')
+            return fig
+    
+    def create_bounds_convergence_plot(self, envelope_data: Dict,
+                                     total_production: float, total_harvest: float,
+                                     save_path: Optional[Union[str, Path]] = None) -> plt.Figure:
+        """
+        Create a specialized plot showing how bounds approach each other.
+        
+        Args:
+            envelope_data: Envelope data dictionary
+            total_production: Total production for convergence validation
+            total_harvest: Total harvest area for convergence validation
+            save_path: Optional path to save the figure
+        
+        Returns:
+            matplotlib Figure object with bounds convergence analysis
+        """
+        try:
+            # Import diagnostics if not already done
+            if self._envelope_diagnostics is None:
+                from ..analysis.envelope_diagnostics import EnvelopeDiagnostics
+                self._envelope_diagnostics = EnvelopeDiagnostics()
+            
+            # Create the bounds convergence plot
+            fig = self._envelope_diagnostics.create_bounds_convergence_plot(
+                envelope_data, total_production, total_harvest, save_path
+            )
+            
+            # Add crop type to the title
+            fig.suptitle(f'Envelope Bounds Convergence - {self.crop_type.title()}', 
+                        fontsize=16, fontweight='bold')
+            
+            logger.info(f"Created bounds convergence plot for {self.crop_type}")
+            return fig
+            
+        except ImportError:
+            logger.error("Envelope diagnostics not available - cannot create bounds convergence plot")
+            # Create a simple fallback plot
+            fig, ax = plt.subplots(figsize=(10, 6))
+            ax.text(0.5, 0.5, 'Bounds convergence analysis not available\n(envelope_diagnostics module not found)',
+                   ha='center', va='center', transform=ax.transAxes, fontsize=14)
+            ax.set_title(f'Bounds Convergence Analysis - {self.crop_type.title()}')
+            return fig
+        except Exception as e:
+            logger.error(f"Failed to create bounds convergence plot: {str(e)}")
+            # Create error plot
+            fig, ax = plt.subplots(figsize=(10, 6))
+            ax.text(0.5, 0.5, f'Error creating bounds convergence plot:\n{str(e)}',
+                   ha='center', va='center', transform=ax.transAxes, fontsize=12)
+            ax.set_title(f'Bounds Convergence Error - {self.crop_type.title()}')
+            return fig
     
     def _save_figure(self, fig: plt.Figure, save_path: Union[str, Path]) -> None:
         """Save figure in multiple formats."""
@@ -453,8 +873,24 @@ if __name__ == "__main__":
     envelope_data = create_sample_envelope_data('wheat')
     events_data = create_sample_events_data('wheat')
     
-    # Create plot
-    fig = visualizer.create_hp_envelope_plot(envelope_data, events_data, 'test_hp_envelope_wheat.png')
+    # Create plot with convergence analysis
+    total_production = 1e15  # Example total production
+    total_harvest = 1e6      # Example total harvest area
     
-    print("H-P Envelope visualization test completed!")
+    fig = visualizer.create_hp_envelope_plot(
+        envelope_data, events_data, 'test_hp_envelope_wheat.png',
+        show_convergence=True, total_production=total_production, total_harvest=total_harvest
+    )
+    
+    # Create detailed convergence analysis plot
+    fig_convergence = visualizer.create_convergence_analysis_plot(
+        envelope_data, total_production, total_harvest, 'test_convergence_analysis_wheat.png'
+    )
+    
+    # Create bounds convergence plot
+    fig_bounds = visualizer.create_bounds_convergence_plot(
+        envelope_data, total_production, total_harvest, 'test_bounds_convergence_wheat.png'
+    )
+    
+    print("H-P Envelope visualization with convergence analysis test completed!")
     plt.show()

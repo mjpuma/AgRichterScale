@@ -103,6 +103,42 @@ class USDADataLoader:
         logger.info(f"Loaded {len(result_df)} years of data for {crop}")
         return result_df
     
+    def get_mean_consumption(self, crop: str, year_range: Tuple[int, int] = (2019, 2021)) -> float:
+        """
+        Calculate mean annual consumption for a specified year range.
+        
+        Args:
+            crop: Crop type ('wheat', 'rice', 'maize')
+            year_range: Tuple of (start_year, end_year)
+            
+        Returns:
+            Mean consumption in metric tons
+        """
+        try:
+            df = self.load_crop_data(crop, year_range)
+            return df['Consumption'].mean()
+        except Exception as e:
+            logger.warning(f"Failed to calculate mean consumption for {crop}: {e}")
+            return 0.0
+
+    def get_mean_stocks(self, crop: str, year_range: Tuple[int, int] = (2019, 2021)) -> float:
+        """
+        Calculate mean ending stocks for a specified year range.
+        
+        Args:
+            crop: Crop type ('wheat', 'rice', 'maize')
+            year_range: Tuple of (start_year, end_year)
+            
+        Returns:
+            Mean ending stocks in metric tons
+        """
+        try:
+            df = self.load_crop_data(crop, year_range)
+            return df['EndingStocks'].mean()
+        except Exception as e:
+            logger.warning(f"Failed to calculate mean stocks for {crop}: {e}")
+            return 0.0
+
     def load_all_crops(self, year_range: Optional[Tuple[int, int]] = None) -> Dict[str, pd.DataFrame]:
         """
         Load USDA PSD data for all available crops.
@@ -340,6 +376,65 @@ class AgriPhaseThresholdCalculator:
         )
         
         return production_thresholds
+
+    def calculate_consumption_thresholds(self, crop: str, year_range: Tuple[int, int] = (2019, 2021)) -> Dict[str, float]:
+        """
+        Calculate consumption-based thresholds (Months of Supply) for determining disruption severity.
+        
+        REPLACES OLD T1-T4 IPC THRESHOLDS FOR PUBLICATION FIGURES.
+        
+        These thresholds represent physically meaningful "buffer capacities" of the global food system:
+        1. '1 Month': A short-term shock buffer. Losing this amount exceeds the typical logistical slack in supply chains.
+           Calculated as: (Mean Annual Consumption) / 12
+        2. '3 Months': A medium-term strategic reserve buffer. Roughly equivalent to the carryover stocks many nations aim to hold.
+           Calculated as: (Mean Annual Consumption) / 4
+        3. 'Total Stocks': The absolute theoretical limit of current reserves. Losing this amount implies a systemic stock-out.
+           Calculated as: Mean Ending Stocks
+           
+        Data Source: USDA Production, Supply and Distribution (PSD) dataset.
+        Method:
+        - Load historical Consumption and EndingStocks for the crop.
+        - Filter for the specified year_range (default 2019-2021 to align with SPAM 2020).
+        - Calculate mean values over this period to smooth inter-annual variability.
+        
+        Mathematical Formulation:
+        Let $C_{year}$ be the annual domestic consumption and $S_{year}$ be the ending stocks.
+        We compute the mean over the period $Y = [2019, 2021]$:
+        
+        $$ \bar{C} = \frac{1}{|Y|} \sum_{y \in Y} C_{y} $$
+        $$ \bar{S} = \frac{1}{|Y|} \sum_{y \in Y} S_{y} $$
+        
+        Thresholds:
+        - 1-Month Supply: $T_{1m} = \bar{C} / 12$
+        - 3-Month Supply: $T_{3m} = \bar{C} / 4$
+        - Total Stocks:   $T_{stocks} = \bar{S}$
+        
+        Args:
+            crop: Crop type ('wheat', 'rice', 'maize', 'allgrain')
+            year_range: Year range to average consumption/stocks (inclusive).
+            
+        Returns:
+            Dictionary mapping threshold names to mass values in Metric Tons (MT).
+            Note: The Config class handles conversion from MT to kcal.
+        """
+        # Get average consumption and stocks
+        if crop == 'allgrain':
+            crops = ['wheat', 'rice', 'maize']
+            avg_consumption = 0
+            avg_stocks = 0
+            for c in crops:
+                avg_consumption += self.usda_loader.get_mean_consumption(c, year_range)
+                avg_stocks += self.usda_loader.get_mean_stocks(c, year_range)
+        else:
+            avg_consumption = self.usda_loader.get_mean_consumption(crop, year_range)
+            avg_stocks = self.usda_loader.get_mean_stocks(crop, year_range)
+            
+        # Return thresholds in Metric Tons
+        return {
+            '1 Month': avg_consumption / 12.0,
+            '3 Months': avg_consumption / 4.0,
+            'Total Stocks': avg_stocks
+        }
 
 
 def create_usda_threshold_system(data_dir: Union[str, Path] = "USDAdata") -> Tuple[USDADataLoader, AgriPhaseThresholdCalculator]:

@@ -2,11 +2,13 @@
 
 import logging
 from typing import Dict, List, Tuple, Optional, Any
+from dataclasses import dataclass
 import pandas as pd
 import numpy as np
 
 from ..core.config import Config
 from ..core.utils import ProgressReporter
+from .convergence_validator import ConvergenceValidator, MathematicalProperties
 
 
 class HPEnvelopeError(Exception):
@@ -14,8 +16,135 @@ class HPEnvelopeError(Exception):
     pass
 
 
+@dataclass
+class EnvelopeData:
+    """Enhanced envelope data structure with convergence validation."""
+    
+    # Core envelope data
+    disruption_areas: np.ndarray
+    lower_bound_harvest: np.ndarray
+    lower_bound_production: np.ndarray
+    upper_bound_harvest: np.ndarray
+    upper_bound_production: np.ndarray
+    
+    # Convergence fields
+    convergence_point: Tuple[float, float]  # (total_harvest, total_production)
+    convergence_validated: bool
+    mathematical_properties: Dict[str, bool]
+    convergence_statistics: Dict[str, float]
+    
+    # Metadata
+    crop_type: str = "unknown"
+    calculation_date: str = ""
+    
+    def validate_convergence(self) -> bool:
+        """Validate that bounds converge properly."""
+        return self.convergence_validated and all(self.mathematical_properties.values())
+    
+    def get_convergence_statistics(self) -> Dict[str, Any]:
+        """Get convergence analysis statistics."""
+        return {
+            'convergence_point': self.convergence_point,
+            'convergence_validated': self.convergence_validated,
+            'mathematical_properties': self.mathematical_properties,
+            'statistics': self.convergence_statistics,
+            'envelope_points': len(self.disruption_areas)
+        }
+    
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary format for backward compatibility."""
+        return {
+            'disruption_areas': self.disruption_areas,
+            'lower_bound_harvest': self.lower_bound_harvest,
+            'lower_bound_production': self.lower_bound_production,
+            'upper_bound_harvest': self.upper_bound_harvest,
+            'upper_bound_production': self.upper_bound_production,
+            'convergence_point': self.convergence_point,
+            'convergence_validated': self.convergence_validated,
+            'mathematical_properties': self.mathematical_properties,
+            'convergence_statistics': self.convergence_statistics,
+            'crop_type': self.crop_type
+        }
+    
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> 'EnvelopeData':
+        """Create EnvelopeData from dictionary."""
+        return cls(
+            disruption_areas=data['disruption_areas'],
+            lower_bound_harvest=data['lower_bound_harvest'],
+            lower_bound_production=data['lower_bound_production'],
+            upper_bound_harvest=data['upper_bound_harvest'],
+            upper_bound_production=data['upper_bound_production'],
+            convergence_point=data.get('convergence_point', (0.0, 0.0)),
+            convergence_validated=data.get('convergence_validated', False),
+            mathematical_properties=data.get('mathematical_properties', {}),
+            convergence_statistics=data.get('convergence_statistics', {}),
+            crop_type=data.get('crop_type', 'unknown'),
+            calculation_date=data.get('calculation_date', '')
+        )
+    
+    def get_envelope_width_at_point(self, harvest_area: float) -> Tuple[float, float]:
+        """
+        Get envelope width (upper - lower) at a specific harvest area.
+        
+        Args:
+            harvest_area: Harvest area to query
+        
+        Returns:
+            Tuple of (harvest_width, production_width)
+        """
+        # Find closest point
+        idx = np.argmin(np.abs(self.lower_bound_harvest - harvest_area))
+        
+        harvest_width = self.upper_bound_harvest[idx] - self.lower_bound_harvest[idx]
+        production_width = self.upper_bound_production[idx] - self.lower_bound_production[idx]
+        
+        return harvest_width, production_width
+    
+    def get_convergence_approach_rate(self) -> float:
+        """
+        Calculate how quickly the envelope bounds approach each other.
+        
+        Returns:
+            Rate of convergence (width reduction per unit harvest area)
+        """
+        if len(self.disruption_areas) < 2:
+            return 0.0
+        
+        # Calculate production width at each point
+        production_widths = self.upper_bound_production - self.lower_bound_production
+        
+        # Calculate rate of width reduction
+        width_changes = np.diff(production_widths)
+        harvest_changes = np.diff(self.lower_bound_harvest)
+        
+        # Avoid division by zero
+        valid_changes = harvest_changes > 0
+        if not np.any(valid_changes):
+            return 0.0
+        
+        # Average rate of width reduction
+        rates = -width_changes[valid_changes] / harvest_changes[valid_changes]
+        return float(np.mean(rates))
+    
+    def is_mathematically_valid(self) -> bool:
+        """Check if envelope satisfies all mathematical requirements."""
+        if not self.mathematical_properties:
+            return False
+        
+        required_properties = [
+            'starts_at_origin',
+            'converges_at_endpoint', 
+            'upper_dominates_lower',
+            'conservation_satisfied',
+            'monotonic_harvest'
+        ]
+        
+        return all(self.mathematical_properties.get(prop, False) for prop in required_properties)
+
+
 class HPEnvelopeCalculator:
-    """Calculator for Harvest-Production (H-P) envelope analysis."""
+    """Calculator for Harvest-Production (H-P) envelope analysis with multi-tier support."""
     
     def __init__(self, config: Config):
         """
@@ -30,12 +159,19 @@ class HPEnvelopeCalculator:
         # Get disruption ranges for current crop type
         self.disruption_ranges = config.disruption_range
         
-    def calculate_hp_envelope(self, production_kcal: pd.DataFrame, 
-                             harvest_km2: pd.DataFrame) -> Dict[str, np.ndarray]:
-        """
-        Calculate the Harvest-Production envelope (upper and lower bounds).
+        # Initialize convergence validator
+        self.convergence_validator = ConvergenceValidator(tolerance=1e-6)
         
-        This implements the exact MATLAB algorithm:
+        # Initialize multi-tier engine (lazy loading)
+        self._multi_tier_engine = None
+        
+    def calculate_hp_envelope(self, production_kcal: pd.DataFrame, 
+                             harvest_km2: pd.DataFrame,
+                             tier: str = 'comprehensive') -> Dict[str, np.ndarray]:
+        """
+        Calculate the Harvest-Production envelope (upper and lower bounds) with optional multi-tier support.
+        
+        This implements the exact MATLAB algorithm with optional productivity-based filtering:
         HPmatrix = [TotalHarvest(:),TotalProduction(:),TotalProduction(:)./TotalHarvest(:)];
         HPmatrix_sorted = sortrows(HPmatrix,3); % sort by grid-cell *yield*
         HPmatrix_cumsum_SmallLarge = cumsum(HPmatrix_sorted);
@@ -44,11 +180,19 @@ class HPEnvelopeCalculator:
         Args:
             production_kcal: Production data in kcal
             harvest_km2: Harvest area data (NOTE: SPAM data is in hectares, converted internally to km²)
+            tier: Productivity tier to calculate ('comprehensive', 'commercial', or 'all')
         
         Returns:
-            Dictionary with envelope data arrays
+            Dictionary with envelope data arrays (or multi-tier results if tier='all')
         """
         try:
+            # Handle multi-tier calculation
+            if tier == 'all':
+                return self.calculate_multi_tier_envelope(production_kcal, harvest_km2)
+            elif tier != 'comprehensive':
+                return self.calculate_single_tier_envelope(production_kcal, harvest_km2, tier)
+            
+            # Original comprehensive calculation (backward compatibility)
             self.logger.info("Starting H-P envelope calculation")
             
             # Step 1: Prepare data matrix
@@ -97,6 +241,8 @@ class HPEnvelopeCalculator:
         # Filter to selected crop types based on config
         if self.config.crop_type == 'wheat':
             crop_columns = [col for col in crop_columns if 'WHEA' in col.upper()]
+        elif self.config.crop_type == 'maize':  # FIX: This was missing!
+            crop_columns = [col for col in crop_columns if 'MAIZ' in col.upper()]
         elif self.config.crop_type == 'rice':
             crop_columns = [col for col in crop_columns if 'RICE' in col.upper()]
         elif self.config.crop_type == 'allgrain':
@@ -302,22 +448,30 @@ class HPEnvelopeCalculator:
     def _calculate_envelope_bounds(self, hp_matrix: np.ndarray, 
                                   disruption_areas: np.ndarray) -> Dict[str, np.ndarray]:
         """
-        Calculate upper and lower envelope bounds using exact MATLAB algorithm.
+        Calculate upper and lower envelope bounds using exact MATLAB algorithm with convergence fixes.
         
-        MATLAB algorithm:
-        for i_disturb = 1:length(Disturb_HA)
-            index_temp = min(find(HPmatrix_cumsum_SmallLarge(:,1)>Disturb_HA(i_disturb)));
-            if ~isempty(index_temp)
-                LowerBound_HA(i_disturb) = HPmatrix_cumsum_SmallLarge(index_temp,1);
-                LowerBound_Prod(i_disturb) = HPmatrix_cumsum_SmallLarge(index_temp,2);
+        This enhanced version ensures:
+        1. Full range calculation (no premature truncation)
+        2. Explicit convergence point addition
+        3. Mathematical correctness enforcement
         
         Args:
             hp_matrix: Sorted H-P matrix [harvest_area, production, yield]
             disruption_areas: Array of disruption areas to calculate bounds for
         
         Returns:
-            Dictionary with envelope bounds
+            Dictionary with envelope bounds including convergence validation
         """
+        # Calculate total production and harvest for convergence validation
+        total_production = hp_matrix[:, 1].sum()
+        total_harvest = hp_matrix[:, 0].sum()
+        
+        self.logger.info(f"Calculating envelope with convergence validation")
+        self.logger.info(f"Total production: {total_production:.2e}, Total harvest: {total_harvest:.2f}")
+        
+        # Ensure full range calculation by extending disruption areas if needed
+        disruption_areas = self._ensure_full_range_calculation(disruption_areas, total_harvest)
+        
         # Calculate cumulative sums for both directions (MATLAB algorithm)
         cumsum_small_large = np.cumsum(hp_matrix, axis=0)  # Lower bound (least productive first)
         cumsum_large_small = np.cumsum(np.flipud(hp_matrix), axis=0)  # Upper bound (most productive first)
@@ -335,7 +489,6 @@ class HPEnvelopeCalculator:
                                f"Processed disruption area: {target_area:.0f} km²")
             
             # Lower bound (least productive first) - MATLAB algorithm
-            # index_temp = min(find(HPmatrix_cumsum_SmallLarge(:,1)>Disturb_HA(i_disturb)));
             indices_lower = np.where(cumsum_small_large[:, 0] > target_area)[0]
             if len(indices_lower) > 0:
                 idx = indices_lower[0]
@@ -343,7 +496,6 @@ class HPEnvelopeCalculator:
                 lower_bound_production[i] = cumsum_small_large[idx, 1]
             
             # Upper bound (most productive first) - MATLAB algorithm
-            # index_temp = min(find(HPmatrix_cumsum_LargeSmall(:,1)>Disturb_HA(i_disturb)));
             indices_upper = np.where(cumsum_large_small[:, 0] > target_area)[0]
             if len(indices_upper) > 0:
                 idx = indices_upper[0]
@@ -353,7 +505,6 @@ class HPEnvelopeCalculator:
         self.logger.info("Calculating envelope bounds: Envelope bounds calculation complete")
         
         # Remove NaN values (MATLAB algorithm)
-        # valid_indices = ~isnan(LowerBound_HA) & ~isnan(UpperBound_HA) & ...
         valid_indices = (~np.isnan(lower_bound_harvest) & ~np.isnan(upper_bound_harvest) & 
                         ~np.isnan(lower_bound_production) & ~np.isnan(upper_bound_production))
         
@@ -365,42 +516,166 @@ class HPEnvelopeCalculator:
         
         self.logger.info(f"Valid envelope points after NaN removal: {len(lower_bound_harvest)}")
         
-        # Ensure bounds meet at convergence point (MATLAB algorithm)
-        # convergence_idx = find(abs(LowerBound_Prod - UpperBound_Prod) < 0.01 * max(UpperBound_Prod), 1, 'first');
-        if len(upper_bound_production) > 0:
-            # Use a more relaxed convergence threshold to avoid premature truncation
-            convergence_threshold = 0.05 * np.max(upper_bound_production)  # 5% instead of 1%
-            convergence_indices = np.where(np.abs(lower_bound_production - upper_bound_production) < convergence_threshold)[0]
-            
-            # Only truncate if we have a substantial envelope (at least 10 points) and convergence occurs late
-            if len(convergence_indices) > 0 and len(lower_bound_harvest) > 10:
-                convergence_idx = convergence_indices[0]
-                
-                # Only truncate if convergence happens in the latter half of the envelope
-                if convergence_idx > len(lower_bound_harvest) // 2:
-                    self.logger.info(f"Found convergence at index {convergence_idx} (area: {lower_bound_harvest[convergence_idx]:.0f} km²)")
-                    
-                    # Truncate bounds at convergence (MATLAB algorithm)
-                    lower_bound_harvest = lower_bound_harvest[:convergence_idx+1]
-                    lower_bound_production = lower_bound_production[:convergence_idx+1]
-                    upper_bound_harvest = upper_bound_harvest[:convergence_idx+1]
-                    upper_bound_production = upper_bound_production[:convergence_idx+1]
-                    disruption_areas_valid = disruption_areas_valid[:convergence_idx+1]
-                else:
-                    self.logger.info(f"Convergence found early at index {convergence_idx}, keeping full envelope for better visualization")
-            else:
-                if len(convergence_indices) > 0:
-                    self.logger.info(f"Small envelope ({len(lower_bound_harvest)} points), keeping all points for visualization")
-                else:
-                    self.logger.info("No convergence found, keeping full envelope")
-        
-        return {
+        # Create initial envelope data
+        envelope_data = {
             'disruption_areas': disruption_areas_valid,
             'lower_bound_harvest': lower_bound_harvest,
             'lower_bound_production': lower_bound_production,
             'upper_bound_harvest': upper_bound_harvest,
             'upper_bound_production': upper_bound_production
         }
+        
+        # Add explicit convergence point if needed
+        envelope_data = self._add_convergence_point(envelope_data, total_production, total_harvest)
+        
+        # Validate and enforce mathematical correctness
+        validation_result = self.convergence_validator.validate_mathematical_properties(
+            envelope_data, total_production, total_harvest
+        )
+        
+        if not validation_result.is_valid:
+            self.logger.warning("Envelope failed mathematical validation, attempting correction")
+            envelope_data = self.convergence_validator.enforce_convergence(
+                envelope_data, total_production, total_harvest
+            )
+        
+        # Add convergence metadata
+        envelope_data['convergence_validated'] = validation_result.is_valid
+        envelope_data['mathematical_properties'] = validation_result.properties
+        envelope_data['convergence_statistics'] = validation_result.statistics
+        
+        return envelope_data
+    
+    def create_envelope_data_object(self, envelope_dict: Dict[str, Any]) -> EnvelopeData:
+        """
+        Create an EnvelopeData object from calculation results.
+        
+        Args:
+            envelope_dict: Dictionary with envelope calculation results
+        
+        Returns:
+            EnvelopeData object with validation methods
+        """
+        return EnvelopeData(
+            disruption_areas=envelope_dict['disruption_areas'],
+            lower_bound_harvest=envelope_dict['lower_bound_harvest'],
+            lower_bound_production=envelope_dict['lower_bound_production'],
+            upper_bound_harvest=envelope_dict['upper_bound_harvest'],
+            upper_bound_production=envelope_dict['upper_bound_production'],
+            convergence_point=envelope_dict.get('convergence_point', (0.0, 0.0)),
+            convergence_validated=envelope_dict.get('convergence_validated', False),
+            mathematical_properties=envelope_dict.get('mathematical_properties', {}),
+            convergence_statistics=envelope_dict.get('convergence_statistics', {}),
+            crop_type=envelope_dict.get('crop_type', self.config.crop_type),
+            calculation_date=pd.Timestamp.now().isoformat()
+        )
+    
+    def _ensure_full_range_calculation(self, disruption_areas: np.ndarray, 
+                                      total_harvest: float) -> np.ndarray:
+        """
+        Ensure calculation covers full harvest area range to prevent premature truncation.
+        
+        This method extends the disruption areas to include the total harvest area
+        if it's not already covered, ensuring the envelope reaches the convergence point.
+        
+        Args:
+            disruption_areas: Original disruption areas
+            total_harvest: Total harvest area from all cells
+        
+        Returns:
+            Extended disruption areas ensuring full range coverage
+        """
+        max_disruption = np.max(disruption_areas)
+        
+        if max_disruption < total_harvest * 0.99:  # If we don't reach at least 99% of total
+            self.logger.info(f"Extending disruption range from {max_disruption:.1f} to {total_harvest:.1f} km²")
+            
+            # Add points leading up to total harvest area
+            additional_points = []
+            
+            # Add intermediate points if there's a large gap
+            if total_harvest > max_disruption * 1.5:
+                # Add logarithmic progression to fill the gap
+                n_fill = min(10, int(np.log10(total_harvest / max_disruption) * 5))
+                fill_points = np.logspace(
+                    np.log10(max_disruption * 1.1), 
+                    np.log10(total_harvest * 0.95), 
+                    n_fill
+                )
+                additional_points.extend(fill_points)
+            
+            # Always add the total harvest area as the final point
+            additional_points.append(total_harvest)
+            
+            # Combine and sort
+            extended_areas = np.concatenate([disruption_areas, additional_points])
+            extended_areas = np.unique(extended_areas)  # Remove duplicates
+            extended_areas = np.sort(extended_areas)
+            
+            self.logger.info(f"Extended disruption areas: {len(extended_areas)} points "
+                           f"(added {len(extended_areas) - len(disruption_areas)} points)")
+            
+            return extended_areas
+        
+        return disruption_areas
+    
+    def _add_convergence_point(self, envelope_data: Dict[str, np.ndarray], 
+                              total_production: float, 
+                              total_harvest: float) -> Dict[str, np.ndarray]:
+        """
+        Explicitly add convergence point at (total_harvest, total_production).
+        
+        This method ensures that the envelope bounds converge at the mathematical
+        endpoint where both bounds must equal total production.
+        
+        Args:
+            envelope_data: Current envelope data
+            total_production: Total production from all cells
+            total_harvest: Total harvest area from all cells
+        
+        Returns:
+            Envelope data with explicit convergence point
+        """
+        lower_harvest = envelope_data['lower_bound_harvest']
+        max_harvest = np.max(lower_harvest) if len(lower_harvest) > 0 else 0
+        
+        # Check if we already have the convergence point (within 1% tolerance)
+        if max_harvest >= total_harvest * 0.99:
+            # Find the closest point to total harvest
+            closest_idx = np.argmin(np.abs(lower_harvest - total_harvest))
+            
+            # Update the closest point to be exactly the convergence point
+            envelope_data['lower_bound_harvest'][closest_idx] = total_harvest
+            envelope_data['lower_bound_production'][closest_idx] = total_production
+            envelope_data['upper_bound_harvest'][closest_idx] = total_harvest
+            envelope_data['upper_bound_production'][closest_idx] = total_production
+            envelope_data['disruption_areas'][closest_idx] = total_harvest
+            
+            self.logger.info(f"Updated existing point to convergence: ({total_harvest:.1f}, {total_production:.2e})")
+        else:
+            # Add explicit convergence point
+            envelope_data['lower_bound_harvest'] = np.append(
+                envelope_data['lower_bound_harvest'], total_harvest
+            )
+            envelope_data['lower_bound_production'] = np.append(
+                envelope_data['lower_bound_production'], total_production
+            )
+            envelope_data['upper_bound_harvest'] = np.append(
+                envelope_data['upper_bound_harvest'], total_harvest
+            )
+            envelope_data['upper_bound_production'] = np.append(
+                envelope_data['upper_bound_production'], total_production
+            )
+            envelope_data['disruption_areas'] = np.append(
+                envelope_data['disruption_areas'], total_harvest
+            )
+            
+            self.logger.info(f"Added explicit convergence point: ({total_harvest:.1f}, {total_production:.2e})")
+        
+        # Store convergence point for reference
+        envelope_data['convergence_point'] = (total_harvest, total_production)
+        
+        return envelope_data
     
     def _find_disruption_index(self, cumulative_harvest: np.ndarray, 
                               target_area: float) -> Optional[int]:
@@ -457,7 +732,7 @@ class HPEnvelopeCalculator:
     
     def validate_envelope_data(self, envelope_data: Dict[str, np.ndarray]) -> bool:
         """
-        Validate calculated envelope data.
+        Validate calculated envelope data including convergence properties.
         
         Args:
             envelope_data: Envelope data to validate
@@ -488,8 +763,9 @@ class HPEnvelopeCalculator:
         upper_prod = envelope_data['upper_bound_production']
         lower_prod = envelope_data['lower_bound_production']
         
-        if np.any(upper_prod < lower_prod):
-            self.logger.warning("Found cases where upper bound < lower bound")
+        violations = np.sum(upper_prod < lower_prod)
+        if violations > 0:
+            self.logger.warning(f"Found {violations} cases where upper bound < lower bound")
         
         # Check for reasonable values
         if np.any(envelope_data['lower_bound_harvest'] < 0):
@@ -497,6 +773,22 @@ class HPEnvelopeCalculator:
         
         if np.any(envelope_data['lower_bound_production'] < 0):
             raise HPEnvelopeError("Negative production values found")
+        
+        # Validate convergence properties if available
+        if 'convergence_validated' in envelope_data:
+            convergence_status = envelope_data['convergence_validated']
+            self.logger.info(f"Convergence validation status: {'PASSED' if convergence_status else 'FAILED'}")
+            
+            if 'mathematical_properties' in envelope_data:
+                props = envelope_data['mathematical_properties']
+                failed_props = [k for k, v in props.items() if not v]
+                if failed_props:
+                    self.logger.warning(f"Failed mathematical properties: {failed_props}")
+        
+        # Check for convergence point
+        if 'convergence_point' in envelope_data:
+            conv_point = envelope_data['convergence_point']
+            self.logger.info(f"Convergence point: ({conv_point[0]:.1f} km², {conv_point[1]:.2e} kcal)")
         
         self.logger.info("Envelope data validation passed")
         return True
@@ -506,33 +798,39 @@ class HPEnvelopeCalculator:
         Calculate statistics for envelope data.
         
         Args:
-            envelope_data: Envelope data
+            envelope_data: Envelope data (dict or EnvelopeData)
         
         Returns:
             Dictionary with envelope statistics
         """
+        # Handle both dict and EnvelopeData formats
+        if isinstance(envelope_data, EnvelopeData):
+            data_dict = envelope_data.to_dict()
+        else:
+            data_dict = envelope_data
+        
         stats = {
-            'crop_type': envelope_data.get('crop_type', self.config.crop_type),
-            'n_disruption_points': len(envelope_data['disruption_areas']),
-            'min_disruption_area': float(envelope_data['disruption_areas'].min()),
-            'max_disruption_area': float(envelope_data['disruption_areas'].max()),
+            'crop_type': data_dict.get('crop_type', self.config.crop_type),
+            'n_disruption_points': len(data_dict['disruption_areas']),
+            'min_disruption_area': float(data_dict['disruption_areas'].min()),
+            'max_disruption_area': float(data_dict['disruption_areas'].max()),
             'lower_bound_stats': {
-                'min_harvest': float(envelope_data['lower_bound_harvest'].min()),
-                'max_harvest': float(envelope_data['lower_bound_harvest'].max()),
-                'min_production': float(envelope_data['lower_bound_production'].min()),
-                'max_production': float(envelope_data['lower_bound_production'].max())
+                'min_harvest': float(data_dict['lower_bound_harvest'].min()),
+                'max_harvest': float(data_dict['lower_bound_harvest'].max()),
+                'min_production': float(data_dict['lower_bound_production'].min()),
+                'max_production': float(data_dict['lower_bound_production'].max())
             },
             'upper_bound_stats': {
-                'min_harvest': float(envelope_data['upper_bound_harvest'].min()),
-                'max_harvest': float(envelope_data['upper_bound_harvest'].max()),
-                'min_production': float(envelope_data['upper_bound_production'].min()),
-                'max_production': float(envelope_data['upper_bound_production'].max())
+                'min_harvest': float(data_dict['upper_bound_harvest'].min()),
+                'max_harvest': float(data_dict['upper_bound_harvest'].max()),
+                'min_production': float(data_dict['upper_bound_production'].min()),
+                'max_production': float(data_dict['upper_bound_production'].max())
             }
         }
         
         # Calculate envelope width (difference between upper and lower bounds)
-        harvest_width = envelope_data['upper_bound_harvest'] - envelope_data['lower_bound_harvest']
-        production_width = envelope_data['upper_bound_production'] - envelope_data['lower_bound_production']
+        harvest_width = data_dict['upper_bound_harvest'] - data_dict['lower_bound_harvest']
+        production_width = data_dict['upper_bound_production'] - data_dict['lower_bound_production']
         
         stats['envelope_width'] = {
             'avg_harvest_width': float(harvest_width.mean()),
@@ -540,6 +838,15 @@ class HPEnvelopeCalculator:
             'avg_production_width': float(production_width.mean()),
             'max_production_width': float(production_width.max())
         }
+        
+        # Add convergence information if available
+        if 'convergence_validated' in data_dict:
+            stats['convergence_info'] = {
+                'convergence_validated': data_dict['convergence_validated'],
+                'convergence_point': data_dict.get('convergence_point', (0.0, 0.0)),
+                'mathematical_properties': data_dict.get('mathematical_properties', {}),
+                'convergence_statistics': data_dict.get('convergence_statistics', {})
+            }
         
         return stats
     
@@ -613,3 +920,150 @@ class HPEnvelopeCalculator:
         ]
         
         return "\n".join(report_lines)
+    
+    # ========================================================================
+    # MULTI-TIER ENVELOPE SUPPORT (Task 1.3)
+    # ========================================================================
+    
+    def calculate_multi_tier_envelope(self, production_kcal: pd.DataFrame, 
+                                    harvest_km2: pd.DataFrame,
+                                    tiers: Optional[List[str]] = None) -> Dict[str, Dict[str, np.ndarray]]:
+        """
+        Calculate envelope bounds for multiple productivity tiers.
+        
+        Args:
+            production_kcal: Production data in kcal
+            harvest_km2: Harvest area data in km²
+            tiers: List of tier names to calculate (default: all available tiers)
+        
+        Returns:
+            Dictionary mapping tier names to envelope data dictionaries
+        """
+        # Initialize multi-tier engine if needed
+        if self._multi_tier_engine is None:
+            self._initialize_multi_tier_engine()
+        
+        # Calculate multi-tier results
+        multi_tier_results = self._multi_tier_engine.calculate_multi_tier_envelope(
+            production_kcal, harvest_km2, tiers
+        )
+        
+        # Convert to dictionary format for backward compatibility
+        tier_envelopes = {}
+        for tier_name, envelope_data in multi_tier_results.tier_results.items():
+            tier_envelopes[tier_name] = envelope_data.to_dict()
+        
+        # Add width analysis metadata
+        tier_envelopes['_width_analysis'] = multi_tier_results.width_analysis
+        tier_envelopes['_base_statistics'] = multi_tier_results.base_statistics
+        
+        return tier_envelopes
+    
+    def calculate_single_tier_envelope(self, production_kcal: pd.DataFrame, 
+                                     harvest_km2: pd.DataFrame,
+                                     tier: str) -> Dict[str, np.ndarray]:
+        """
+        Calculate envelope bounds for a single productivity tier.
+        
+        Args:
+            production_kcal: Production data in kcal
+            harvest_km2: Harvest area data in km²
+            tier: Tier name ('comprehensive', 'commercial')
+        
+        Returns:
+            Dictionary with envelope data arrays
+        """
+        # Initialize multi-tier engine if needed
+        if self._multi_tier_engine is None:
+            self._initialize_multi_tier_engine()
+        
+        # Calculate single tier
+        multi_tier_results = self._multi_tier_engine.calculate_multi_tier_envelope(
+            production_kcal, harvest_km2, [tier]
+        )
+        
+        # Return the single tier result
+        if tier in multi_tier_results.tier_results:
+            return multi_tier_results.tier_results[tier].to_dict()
+        else:
+            raise HPEnvelopeError(f"Tier '{tier}' not found in results")
+    
+    def get_available_tiers(self) -> Dict[str, str]:
+        """
+        Get available productivity tiers and their descriptions.
+        
+        Returns:
+            Dictionary mapping tier names to descriptions
+        """
+        # Initialize multi-tier engine if needed
+        if self._multi_tier_engine is None:
+            self._initialize_multi_tier_engine()
+        
+        tier_info = self._multi_tier_engine.get_tier_info()
+        return {name: info['description'] for name, info in tier_info.items()}
+    
+    def get_tier_selection_guide(self) -> Dict[str, Dict[str, Any]]:
+        """
+        Get guidance for selecting appropriate tiers for different use cases.
+        
+        Returns:
+            Dictionary with tier selection guidance
+        """
+        # Initialize multi-tier engine if needed
+        if self._multi_tier_engine is None:
+            self._initialize_multi_tier_engine()
+        
+        return self._multi_tier_engine.get_tier_info()
+    
+    def compare_tier_widths(self, production_kcal: pd.DataFrame, 
+                           harvest_km2: pd.DataFrame) -> Dict[str, Any]:
+        """
+        Compare envelope widths across different tiers.
+        
+        Args:
+            production_kcal: Production data in kcal
+            harvest_km2: Harvest area data in km²
+        
+        Returns:
+            Dictionary with width comparison analysis
+        """
+        # Calculate all tiers
+        multi_tier_results = self.calculate_multi_tier_envelope(production_kcal, harvest_km2)
+        
+        # Extract width analysis
+        width_analysis = multi_tier_results.get('_width_analysis', {})
+        
+        # Add tier descriptions
+        tier_info = self.get_tier_selection_guide()
+        
+        comparison = {
+            'width_analysis': width_analysis,
+            'tier_descriptions': {name: info['description'] for name, info in tier_info.items()},
+            'policy_applications': {name: info['policy_applications'] for name, info in tier_info.items()},
+            'target_users': {name: info['target_users'] for name, info in tier_info.items()}
+        }
+        
+        return comparison
+    
+    def _initialize_multi_tier_engine(self):
+        """Initialize the multi-tier engine with current configuration."""
+        try:
+            from .multi_tier_envelope import MultiTierEnvelopeEngine
+            from ..validation.spam_data_filter import SPAMDataFilter
+            
+            # Create SPAM filter with standard preset
+            spam_filter = SPAMDataFilter(preset='standard')
+            
+            # Initialize multi-tier engine
+            self._multi_tier_engine = MultiTierEnvelopeEngine(self.config, spam_filter)
+            
+            self.logger.info("Multi-tier envelope engine initialized")
+            
+        except ImportError as e:
+            raise HPEnvelopeError(
+                f"Multi-tier envelope functionality requires additional components: {e}"
+            )
+        except Exception as e:
+            raise HPEnvelopeError(
+                f"Failed to initialize multi-tier engine: {e}"
+            )

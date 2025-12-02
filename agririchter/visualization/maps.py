@@ -196,45 +196,42 @@ class GlobalProductionMapper:
         
         # Plot production data
         if production_masked.count() > 0:  # Only plot if we have data
-            # For sparse data, use both pcolormesh and scatter points
-            if production_masked.count() < 10000:  # If data is sparse, add scatter points
-                self.logger.info(f"Sparse data detected ({production_masked.count()} points), adding scatter overlay")
-                
-                # Get coordinates of data points
-                data_indices = np.where(~production_masked.mask)
-                data_lats = lat_grid[data_indices]
-                data_lons = lon_grid[data_indices]
-                data_values = production_masked[data_indices]
-                
-                # Plot as scatter points with size based on production
-                scatter = ax.scatter(data_lons, data_lats, 
-                                   c=data_values, 
-                                   cmap=self.production_colormap,
-                                   s=20,  # Point size
-                                   alpha=0.8,
-                                   transform=ccrs.PlateCarree(),
-                                   edgecolors='black',
-                                   linewidths=0.1)
-                
-                # Add colorbar for scatter
-                cbar = plt.colorbar(scatter, ax=ax, orientation='horizontal', 
-                                  pad=0.05, shrink=0.8, aspect=40)
-                cbar.set_label('Production Intensity (log₁₀ kcal)', fontsize=10)
-                cbar.ax.tick_params(labelsize=9)
-                
+            # Use scatter for all data to avoid streaky appearance from pcolormesh
+            # This ensures all cells are visible
+            self.logger.info(f"Plotting {production_masked.count()} cells with production data")
+            
+            # Get coordinates of data points
+            data_indices = np.where(~production_masked.mask)
+            data_lats = lat_grid[data_indices]
+            data_lons = lon_grid[data_indices]
+            data_values = production_masked[data_indices]
+            
+            # Adjust point size based on number of points
+            if production_masked.count() < 10000:
+                point_size = 20
+                edge_width = 0.1
+            elif production_masked.count() < 100000:
+                point_size = 5
+                edge_width = 0
             else:
-                # Use pcolormesh for dense data
-                im = ax.pcolormesh(lon_grid, lat_grid, production_masked,
-                                 transform=ccrs.PlateCarree(),
-                                 cmap=self.production_colormap,
-                                 shading='auto',
-                                 alpha=0.8)
-                
-                # Add colorbar
-                cbar = plt.colorbar(im, ax=ax, orientation='horizontal', 
-                                  pad=0.05, shrink=0.8, aspect=40)
-                cbar.set_label('Production Intensity (log₁₀ kcal)', fontsize=10)
-                cbar.ax.tick_params(labelsize=9)
+                point_size = 2
+                edge_width = 0
+            
+            # Plot as scatter points
+            scatter = ax.scatter(data_lons, data_lats, 
+                               c=data_values, 
+                               cmap=self.production_colormap,
+                               s=point_size,
+                               alpha=0.8,
+                               transform=ccrs.PlateCarree(),
+                               edgecolors='black' if edge_width > 0 else 'none',
+                               linewidths=edge_width)
+            
+            # Add colorbar
+            cbar = plt.colorbar(scatter, ax=ax, orientation='horizontal', 
+                              pad=0.05, shrink=0.8, aspect=40)
+            cbar.set_label('Production Intensity (log₁₀ kcal)', fontsize=10)
+            cbar.ax.tick_params(labelsize=9)
         else:
             self.logger.warning("No production data to plot")
         
@@ -251,8 +248,11 @@ class GlobalProductionMapper:
         # Set global extent
         ax.set_global()
         
-        # Adjust layout
-        plt.tight_layout()
+        # Adjust layout (ignore layout engine warnings with colorbar)
+        try:
+            plt.tight_layout()
+        except Exception:
+            pass  # Ignore colorbar layout warnings
         
         # Save figure if path provided
         if output_path:
@@ -308,12 +308,19 @@ class GlobalProductionMapper:
         yield_data = total_production / total_harvest
         yield_data = yield_data.replace([np.inf, -np.inf], np.nan)
         
-        # Create modified production dataframe with yield values
+        # Create modified production dataframe with yield values for grid mapping
+        # Keep the structure but use only one crop column with yield data
         yield_df = production_df.copy()
-        yield_df['yield'] = yield_data
         
-        # Prepare grid data for yield
-        lon_grid, lat_grid, yield_grid = self._prepare_yield_grid(yield_df)
+        # Zero out all crop columns except the first one
+        for col in crop_columns[1:]:
+            yield_df[col] = 0
+        
+        # Put yield data in the first crop column
+        yield_df[crop_columns[0]] = yield_data
+        
+        # Prepare grid data using the same method as production/harvest
+        lon_grid, lat_grid, yield_grid = self._prepare_grid_data(yield_df)
         
         # Create figure
         fig = plt.figure(figsize=figsize, dpi=dpi)
@@ -328,16 +335,39 @@ class GlobalProductionMapper:
         # Mask invalid values
         yield_masked = np.ma.masked_where(yield_grid <= 0, yield_grid)
         
-        # Plot yield data
+        # Plot yield data using scatter (same approach as production and harvest)
         if yield_masked.count() > 0:
-            im = ax.pcolormesh(lon_grid, lat_grid, yield_masked,
-                             transform=ccrs.PlateCarree(),
-                             cmap=self.production_colormap,
-                             shading='auto',
-                             alpha=0.8)
+            self.logger.info(f"Plotting {yield_masked.count()} cells with yield data")
+            
+            # Get coordinates of data points
+            data_indices = np.where(~yield_masked.mask)
+            data_lats = lat_grid[data_indices]
+            data_lons = lon_grid[data_indices]
+            data_values = yield_masked[data_indices]
+            
+            # Adjust point size based on number of points
+            if yield_masked.count() < 10000:
+                point_size = 20
+                edge_width = 0.1
+            elif yield_masked.count() < 100000:
+                point_size = 5
+                edge_width = 0
+            else:
+                point_size = 2
+                edge_width = 0
+            
+            # Plot as scatter points
+            scatter = ax.scatter(data_lons, data_lats, 
+                               c=data_values, 
+                               cmap=self.production_colormap,
+                               s=point_size,
+                               alpha=0.8,
+                               transform=ccrs.PlateCarree(),
+                               edgecolors='black' if edge_width > 0 else 'none',
+                               linewidths=edge_width)
             
             # Add colorbar
-            cbar = plt.colorbar(im, ax=ax, orientation='horizontal',
+            cbar = plt.colorbar(scatter, ax=ax, orientation='horizontal',
                               pad=0.05, shrink=0.8, aspect=40)
             cbar.set_label('Production Density (log₁₀ kcal/km²)', fontsize=10)
             cbar.ax.tick_params(labelsize=9)
@@ -355,8 +385,11 @@ class GlobalProductionMapper:
         # Set global extent
         ax.set_global()
         
-        # Adjust layout
-        plt.tight_layout()
+        # Adjust layout (ignore layout engine warnings with colorbar)
+        try:
+            plt.tight_layout()
+        except Exception:
+            pass  # Ignore colorbar layout warnings
         
         # Save figure if path provided
         if output_path:
@@ -409,3 +442,199 @@ class GlobalProductionMapper:
                     yield_grid[lat_idx, lon_idx] = np.log10(yield_value)
         
         return lon_grid, lat_grid, yield_grid
+    
+    def create_yield_map(self,
+                        yield_df: pd.DataFrame,
+                        title: Optional[str] = None,
+                        output_path: Optional[Path] = None,
+                        dpi: int = 150,
+                        figsize: Tuple[float, float] = (12, 8)) -> plt.Figure:
+        """Create global yield map using actual SPAM yield data.
+        
+        Args:
+            yield_df: DataFrame with yield data in tons/ha
+            title: Optional title for the map
+            output_path: Optional path to save the figure
+            dpi: Resolution for output image
+            figsize: Figure size in inches
+            
+        Returns:
+            Matplotlib figure object
+        """
+        self.logger.info("Creating global yield map...")
+        
+        # Prepare grid data (yield columns end with _Y)
+        lon_grid, lat_grid, yield_grid = self._prepare_grid_data(yield_df)
+        
+        # Create figure
+        fig = plt.figure(figsize=figsize, dpi=dpi)
+        ax = plt.axes(projection=ccrs.Robinson())
+        
+        # Add map features
+        ax.add_feature(cfeature.COASTLINE, linewidth=0.5, color='black')
+        ax.add_feature(cfeature.BORDERS, linewidth=0.3, color='gray')
+        ax.add_feature(cfeature.OCEAN, color='lightblue', alpha=0.7)
+        ax.add_feature(cfeature.LAND, color='lightgray', alpha=0.3)
+        
+        # Mask zero values
+        yield_masked = np.ma.masked_where(yield_grid <= 0, yield_grid)
+        
+        # Plot yield data using scatter
+        if yield_masked.count() > 0:
+            self.logger.info(f"Plotting {yield_masked.count()} cells with yield data")
+            
+            # Get coordinates of data points
+            data_indices = np.where(~yield_masked.mask)
+            data_lats = lat_grid[data_indices]
+            data_lons = lon_grid[data_indices]
+            data_values = yield_masked[data_indices]
+            
+            # Adjust point size based on number of points
+            if yield_masked.count() < 10000:
+                point_size = 20
+                edge_width = 0.1
+            elif yield_masked.count() < 100000:
+                point_size = 5
+                edge_width = 0
+            else:
+                point_size = 2
+                edge_width = 0
+            
+            # Use green-yellow colormap for yield (productivity)
+            scatter = ax.scatter(data_lons, data_lats, 
+                               c=data_values, 
+                               cmap='YlGn',  # Yellow to Green (productivity/growth)
+                               s=point_size,
+                               alpha=0.8,
+                               transform=ccrs.PlateCarree(),
+                               edgecolors='black' if edge_width > 0 else 'none',
+                               linewidths=edge_width)
+            
+            # Add colorbar
+            cbar = plt.colorbar(scatter, ax=ax, orientation='horizontal', 
+                              pad=0.05, shrink=0.8, aspect=40)
+            cbar.set_label('Yield (log₁₀ tons/ha)', fontsize=10)
+            cbar.ax.tick_params(labelsize=9)
+        
+        # Set title
+        if title is None:
+            crop_type = self.config.crop_type.title()
+            title = f'Global {crop_type} Yield'
+        
+        ax.set_title(title, fontsize=14, fontweight='bold', pad=20)
+        
+        # Set global extent
+        ax.set_global()
+        
+        # Adjust layout
+        try:
+            plt.tight_layout()
+        except Exception:
+            pass  # Ignore colorbar layout warnings
+        
+        # Save if path provided
+        if output_path:
+            self.logger.info(f"Saving yield map to {output_path}")
+            fig.savefig(output_path, dpi=dpi, bbox_inches='tight', 
+                       facecolor='white', edgecolor='none')
+        
+        self.logger.info("Global yield map created successfully")
+        return fig
+    
+    def create_harvest_area_map(self,
+                                harvest_df: pd.DataFrame,
+                                title: Optional[str] = None,
+                                output_path: Optional[Path] = None,
+                                dpi: int = 150,
+                                figsize: Tuple[float, float] = (12, 8)) -> plt.Figure:
+        """Create global harvest area map.
+        
+        Args:
+            harvest_df: DataFrame with harvest area data in ha
+            title: Optional title for the map
+            output_path: Optional path to save the figure
+            dpi: Resolution for output image
+            figsize: Figure size in inches
+            
+        Returns:
+            Matplotlib figure object
+        """
+        self.logger.info("Creating global harvest area map...")
+        
+        # Prepare grid data
+        lon_grid, lat_grid, harvest_grid = self._prepare_grid_data(harvest_df)
+        
+        # Create figure
+        fig = plt.figure(figsize=figsize, dpi=dpi)
+        ax = plt.axes(projection=ccrs.Robinson())
+        
+        # Add map features
+        ax.add_feature(cfeature.COASTLINE, linewidth=0.5, color='black')
+        ax.add_feature(cfeature.BORDERS, linewidth=0.3, color='gray')
+        ax.add_feature(cfeature.OCEAN, color='lightblue', alpha=0.7)
+        ax.add_feature(cfeature.LAND, color='lightgray', alpha=0.3)
+        
+        # Mask zero values
+        harvest_masked = np.ma.masked_where(harvest_grid <= 0, harvest_grid)
+        
+        # Plot harvest data
+        if harvest_masked.count() > 0:
+            self.logger.info(f"Plotting {harvest_masked.count()} cells with harvest data")
+            
+            # Get coordinates of data points
+            data_indices = np.where(~harvest_masked.mask)
+            data_lats = lat_grid[data_indices]
+            data_lons = lon_grid[data_indices]
+            data_values = harvest_masked[data_indices]
+            
+            # Adjust point size based on number of points
+            if harvest_masked.count() < 10000:
+                point_size = 20
+                edge_width = 0.1
+            elif harvest_masked.count() < 100000:
+                point_size = 5
+                edge_width = 0
+            else:
+                point_size = 2
+                edge_width = 0
+            
+            # Use green colormap for harvest area
+            scatter = ax.scatter(data_lons, data_lats, 
+                               c=data_values, 
+                               cmap='YlGn',  # Yellow to Green
+                               s=point_size,
+                               alpha=0.8,
+                               transform=ccrs.PlateCarree(),
+                               edgecolors='black' if edge_width > 0 else 'none',
+                               linewidths=edge_width)
+            
+            # Add colorbar
+            cbar = plt.colorbar(scatter, ax=ax, orientation='horizontal', 
+                              pad=0.05, shrink=0.8, aspect=40)
+            cbar.set_label('Harvest Area (log₁₀ ha)', fontsize=10)
+            cbar.ax.tick_params(labelsize=9)
+        
+        # Set title
+        if title is None:
+            crop_type = self.config.crop_type.title()
+            title = f'Global {crop_type} Harvest Area'
+        
+        ax.set_title(title, fontsize=14, fontweight='bold', pad=20)
+        
+        # Set global extent
+        ax.set_global()
+        
+        # Adjust layout
+        try:
+            plt.tight_layout()
+        except Exception:
+            pass  # Ignore colorbar layout warnings
+        
+        # Save if path provided
+        if output_path:
+            self.logger.info(f"Saving harvest area map to {output_path}")
+            fig.savefig(output_path, dpi=dpi, bbox_inches='tight', 
+                       facecolor='white', edgecolor='none')
+        
+        self.logger.info("Global harvest area map created successfully")
+        return fig

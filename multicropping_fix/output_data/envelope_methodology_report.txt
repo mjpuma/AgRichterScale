@@ -1,0 +1,451 @@
+H-P ENVELOPE CALCULATION WITH MULTICROPPING ANALYSIS
+=================================================================
+Capping Applied: Yes
+Theoretical Cell Area: 85.5 km²
+Crops Analyzed: bana, barl, bean, cass, chic, citr, cnut, coco, coff, cott, cowp, grou, lent, maiz, mill, ocer, ofib, oilp, onio, ooil, opul, orts, pige, plnt, pmil, pota, rape, rcof, rest, rice, rubb, sesa, sorg, soyb, sugb, sugc, sunf, swpo, teas, temf, toba, toma, trof, vege, whea, yams
+
+MULTICROPPING CAPPING RESULTS:
+-----------------------------------
+Total cells affected: 55,142
+Total area reduced: 968408068.85 ha
+Crops processed: bana, barl, bean, cass, chic, citr, cnut, coco, coff, cott, cowp, grou, lent, maiz, mill, ocer, ofib, oilp, onio, ooil, opul, orts, pige, plnt, pmil, pota, rape, rcof, rest, rice, rubb, sesa, sorg, soyb, sugb, sugc, sunf, swpo, teas, temf, toba, toma, trof, vege, whea, yams
+
+ENVELOPE PROPERTIES:
+--------------------
+Total crops: 46
+Total valid cells: 1,740,314
+Total harvest area: 9769426.66 km²
+Total production: 263914024.81 mt
+Average envelope width: 5.1%
+Convergence quality: moderate
+Monotonicity preserved: Yes
+
+CROP-SPECIFIC RESULTS:
+-------------------------
+
+BANA:
+  Valid cells: 51,818
+  Harvest area: 155591.20 km²
+  Production: 1071356.38 mt
+  Envelope width: 0.0%
+  Issues:
+    - Unrealistic maximum yield: 192300 mt/km²
+
+BARL:
+  Valid cells: 17,654
+  Harvest area: 50156.59 km²
+  Production: 1944535.00 mt
+  Envelope width: 2.0%
+  Issues:
+    - Unrealistic maximum yield: 446700 mt/km²
+
+BEAN:
+  Valid cells: 72,858
+  Harvest area: 49183.72 km²
+  Production: 6086181.00 mt
+  Envelope width: 14.9%
+  Issues:
+    - Poor convergence: 14.9% gap at maximum harvest
+    - Unrealistic maximum yield: 1001600 mt/km²
+
+CASS:
+  Valid cells: 85,225
+  Harvest area: 708345.25 km²
+  Production: 10946195.00 mt
+  Envelope width: -0.0%
+  Issues:
+    - Unrealistic maximum yield: 442000 mt/km²
+    - Lower bound exceeds upper bound
+
+CHIC:
+  Valid cells: 11,947
+  Harvest area: 12903.44 km²
+  Production: 2182215.50 mt
+  Envelope width: -0.0%
+  Issues:
+    - Unrealistic maximum yield: 3076350 mt/km²
+    - Lower bound exceeds upper bound
+
+CITR:
+  Valid cells: 41,474
+  Harvest area: 206540.43 km²
+  Production: 1778763.50 mt
+  Envelope width: 0.0%
+  Issues:
+    - Unrealistic maximum yield: 388467 mt/km²
+
+CNUT:
+  Valid cells: 16,499
+  Harvest area: 52791.21 km²
+  Production: 1296149.62 mt
+  Envelope width: 16.1%
+  Issues:
+    - Poor convergence: 16.1% gap at maximum harvest
+    - Unrealistic maximum yield: 902440 mt/km²
+
+COCO:
+  Valid cells: 12,561
+  Harvest area: 16034.14 km²
+  Production: 2402811.25 mt
+  Envelope width: -0.0%
+  Issues:
+    - Unrealistic maximum yield: 2393500 mt/km²
+    - Lower bound exceeds upper bound
+
+COFF:
+  Valid cells: 6,410
+  Harvest area: 3366.48 km²
+  Production: 309892.62 mt
+  Envelope width: -0.0%
+  Issues:
+    - Unrealistic maximum yield: 704650 mt/km²
+    - Lower bound exceeds upper bound
+
+COTT:
+  Valid cells: 26,642
+  Harvest area: 72144.47 km²
+  Production: 4053777.75 mt
+  Envelope width: -0.0%
+  Issues:
+    - Unrealistic maximum yield: 2968900 mt/km²
+    - Lower bound exceeds upper bound
+
+COWP:
+  Valid cells: 13,634
+  Harvest area: 20643.17 km²
+  Production: 2608426.25 mt
+  Envelope width: 9.3%
+  Issues:
+    - Unrealistic maximum yield: 972900 mt/km²
+
+GROU:
+  Valid cells: 67,066
+  Harvest area: 120785.47 km²
+  Production: 7860348.00 mt
+  Envelope width: -0.0%
+  Issues:
+    - Unrealistic maximum yield: 1024200 mt/km²
+    - Lower bound exceeds upper bound
+
+LENT:
+  Valid cells: 18,045
+  Harvest area: 5657.93 km²
+  Production: 607677.00 mt
+  Envelope width: 0.0%
+  Issues:
+    - Unrealistic maximum yield: 928600 mt/km²
+
+MAIZ:
+  Valid cells: 117,729
+  Harvest area: 1100106.50 km²
+  Production: 36242436.00 mt
+  Envelope width: -0.0%
+  Issues:
+    - Unrealistic maximum yield: 1593600 mt/km²
+    - Lower bound exceeds upper bound
+
+MILL:
+  Valid cells: 8,911
+  Harvest area: 3749.31 km²
+  Production: 243764.50 mt
+  Envelope width: -0.0%
+  Issues:
+    - Unrealistic maximum yield: 347133 mt/km²
+    - Lower bound exceeds upper bound
+
+OCER:
+  Valid cells: 22,304
+  Harvest area: 13627.35 km²
+  Production: 908145.00 mt
+  Envelope width: 0.0%
+  Issues:
+    - Unrealistic maximum yield: 277800 mt/km²
+
+OFIB:
+  Valid cells: 9,391
+  Harvest area: 4994.94 km²
+  Production: 212051.09 mt
+  Envelope width: -0.0%
+  Issues:
+    - Unrealistic maximum yield: 1783100 mt/km²
+    - Lower bound exceeds upper bound
+
+OILP:
+  Valid cells: 11,215
+  Harvest area: 241667.91 km²
+  Production: 6959693.00 mt
+  Envelope width: -0.0%
+  Issues:
+    - Unrealistic maximum yield: 4167900 mt/km²
+    - Lower bound exceeds upper bound
+
+ONIO:
+  Valid cells: 57,165
+  Harvest area: 184118.76 km²
+  Production: 1392791.88 mt
+  Envelope width: 0.0%
+  Issues:
+    - Unrealistic maximum yield: 92700 mt/km²
+
+OOIL:
+  Valid cells: 18,334
+  Harvest area: 20012.81 km²
+  Production: 1106338.50 mt
+  Envelope width: 17.8%
+  Issues:
+    - Poor convergence: 17.8% gap at maximum harvest
+    - Unrealistic maximum yield: 592867 mt/km²
+
+OPUL:
+  Valid cells: 42,469
+  Harvest area: 18752.93 km²
+  Production: 1689790.62 mt
+  Envelope width: 10.8%
+  Issues:
+    - Poor convergence: 10.8% gap at maximum harvest
+    - Unrealistic maximum yield: 266100 mt/km²
+
+ORTS:
+  Valid cells: 23,913
+  Harvest area: 34136.72 km²
+  Production: 752525.88 mt
+  Envelope width: 2.9%
+  Issues:
+    - Unrealistic maximum yield: 188600 mt/km²
+
+PIGE:
+  Valid cells: 6,708
+  Harvest area: 5322.28 km²
+  Production: 608986.81 mt
+  Envelope width: 0.0%
+  Issues:
+    - Unrealistic maximum yield: 801450 mt/km²
+
+PLNT:
+  Valid cells: 9,180
+  Harvest area: 53586.97 km²
+  Production: 1018079.06 mt
+  Envelope width: 4.7%
+  Issues:
+    - Unrealistic maximum yield: 541450 mt/km²
+
+PMIL:
+  Valid cells: 20,487
+  Harvest area: 46283.86 km²
+  Production: 3457596.75 mt
+  Envelope width: 7.9%
+  Issues:
+    - Unrealistic maximum yield: 816650 mt/km²
+
+POTA:
+  Valid cells: 45,238
+  Harvest area: 383633.53 km²
+  Production: 2574191.00 mt
+  Envelope width: -0.0%
+  Issues:
+    - Unrealistic maximum yield: 343450 mt/km²
+    - Lower bound exceeds upper bound
+
+RAPE:
+  Valid cells: 25,859
+  Harvest area: 79283.80 km²
+  Production: 3403009.25 mt
+  Envelope width: -0.0%
+  Issues:
+    - Unrealistic maximum yield: 519500 mt/km²
+    - Lower bound exceeds upper bound
+
+RCOF:
+  Valid cells: 8,365
+  Harvest area: 5320.74 km²
+  Production: 568594.81 mt
+  Envelope width: 0.0%
+  Issues:
+    - Unrealistic maximum yield: 1234200 mt/km²
+
+REST:
+  Valid cells: 71,153
+  Harvest area: 75962.33 km²
+  Production: 5525032.50 mt
+  Envelope width: -0.0%
+  Issues:
+    - Unrealistic maximum yield: 1011700 mt/km²
+    - Lower bound exceeds upper bound
+
+RICE:
+  Valid cells: 156,543
+  Harvest area: 1805205.62 km²
+  Production: 75269192.00 mt
+  Envelope width: -0.0%
+  Issues:
+    - Unrealistic maximum yield: 5364500 mt/km²
+    - Lower bound exceeds upper bound
+
+RUBB:
+  Valid cells: 9,069
+  Harvest area: 14403.92 km²
+  Production: 1655991.25 mt
+  Envelope width: 0.0%
+  Issues:
+    - Unrealistic maximum yield: 2555700 mt/km²
+
+SESA:
+  Valid cells: 31,822
+  Harvest area: 10266.77 km²
+  Production: 1678529.75 mt
+  Envelope width: 0.0%
+  Issues:
+    - Unrealistic maximum yield: 649675 mt/km²
+
+SORG:
+  Valid cells: 54,949
+  Harvest area: 114274.59 km²
+  Production: 7553220.00 mt
+  Envelope width: -0.0%
+  Issues:
+    - Unrealistic maximum yield: 870300 mt/km²
+    - Lower bound exceeds upper bound
+
+SOYB:
+  Valid cells: 53,843
+  Harvest area: 224809.41 km²
+  Production: 12354736.00 mt
+  Envelope width: -0.0%
+  Issues:
+    - Unrealistic maximum yield: 2539900 mt/km²
+    - Lower bound exceeds upper bound
+
+SUGB:
+  Valid cells: 5,598
+  Harvest area: 31360.89 km²
+  Production: 106535.59 mt
+  Envelope width: 16.9%
+  Issues:
+    - Poor convergence: 16.9% gap at maximum harvest
+    - Unrealistic maximum yield: 388350 mt/km²
+
+SUGC:
+  Valid cells: 31,836
+  Harvest area: 531623.06 km²
+  Production: 3481831.50 mt
+  Envelope width: -0.0%
+  Issues:
+    - Unrealistic maximum yield: 1388600 mt/km²
+    - Lower bound exceeds upper bound
+
+SUNF:
+  Valid cells: 18,676
+  Harvest area: 41674.66 km²
+  Production: 1942526.00 mt
+  Envelope width: 6.3%
+  Issues:
+    - Unrealistic maximum yield: 580700 mt/km²
+
+SWPO:
+  Valid cells: 56,513
+  Harvest area: 172180.11 km²
+  Production: 2019516.00 mt
+  Envelope width: 0.0%
+  Issues:
+    - Unrealistic maximum yield: 298900 mt/km²
+
+TEAS:
+  Valid cells: 6,804
+  Harvest area: 24374.22 km²
+  Production: 593093.50 mt
+  Envelope width: 8.1%
+  Issues:
+    - Unrealistic maximum yield: 398300 mt/km²
+
+TEMF:
+  Valid cells: 61,358
+  Harvest area: 291947.22 km²
+  Production: 3270524.00 mt
+  Envelope width: -0.0%
+  Issues:
+    - Unrealistic maximum yield: 330800 mt/km²
+    - Lower bound exceeds upper bound
+
+TOBA:
+  Valid cells: 20,712
+  Harvest area: 7380.62 km²
+  Production: 373826.56 mt
+  Envelope width: -0.0%
+  Issues:
+    - Unrealistic maximum yield: 446700 mt/km²
+    - Lower bound exceeds upper bound
+
+TOMA:
+  Valid cells: 57,737
+  Harvest area: 301194.77 km²
+  Production: 1199582.88 mt
+  Envelope width: 0.0%
+  Issues:
+    - Unrealistic maximum yield: 64700 mt/km²
+
+TROF:
+  Valid cells: 83,950
+  Harvest area: 437503.47 km²
+  Production: 3924092.25 mt
+  Envelope width: -0.0%
+  Issues:
+    - Unrealistic maximum yield: 497700 mt/km²
+    - Lower bound exceeds upper bound
+
+VEGE:
+  Valid cells: 89,771
+  Harvest area: 1198865.62 km²
+  Production: 13061970.00 mt
+  Envelope width: -0.0%
+  Issues:
+    - Unrealistic maximum yield: 736100 mt/km²
+    - Lower bound exceeds upper bound
+
+WHEA:
+  Valid cells: 31,604
+  Harvest area: 537575.81 km²
+  Production: 21143312.00 mt
+  Envelope width: -0.0%
+  Issues:
+    - Unrealistic maximum yield: 4599900 mt/km²
+    - Lower bound exceeds upper bound
+
+YAMS:
+  Valid cells: 29,275
+  Harvest area: 280081.66 km²
+  Production: 4474190.00 mt
+  Envelope width: -0.0%
+  Issues:
+    - Unrealistic maximum yield: 1197700 mt/km²
+    - Lower bound exceeds upper bound
+
+METHODOLOGY:
+---------------
+Multicropping Approach: Area capping at theoretical cell limits
+Theoretical Cell Area: 85.5 km² based on SPAM 2020 grid resolution
+
+ASSUMPTIONS:
+- Harvest areas capped at theoretical maximum cell area
+- Production scales proportionally with capped harvest areas
+- Multicropping effects distributed uniformly within cells
+- Grid cells represent homogeneous agricultural areas
+- Yield patterns remain stable during disruption events
+- Envelope bounds represent theoretical production limits
+
+LIMITATIONS:
+- bean: Poor convergence (14.9%)
+- cnut: Poor convergence (16.1%)
+- cowp: Poor convergence (9.3%)
+- ooil: Poor convergence (17.8%)
+- opul: Poor convergence (10.8%)
+- pmil: Poor convergence (7.9%)
+- sugb: Poor convergence (16.9%)
+- sunf: Poor convergence (6.3%)
+- teas: Poor convergence (8.1%)
+- Does not account for crop rotation constraints
+- Assumes perfect substitutability within crop types
+- Spatial correlation effects not modeled
+- Seasonal timing effects not considered
+
+DATA QUALITY NOTES:
+- Capped 55142 cells across all crops

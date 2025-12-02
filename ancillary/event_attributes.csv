@@ -1,0 +1,24 @@
+event_name,event_type,primary_cause,year_start,year_end,region,notes
+GreatFamine,Climate-induced famine,Extreme weather (cold/wet),1315,1317,Europe,Crop failure from excessive rain and cold
+Laki1783,Volcanic famine,Volcanic eruption,1783,1784,Iceland/Europe,Laki volcanic eruption caused crop failures
+NoSummer,Volcanic famine,Volcanic eruption,1816,1816,Global,Year Without a Summer from Tambora eruption
+PotatoFamine,Disease-induced famine,Crop disease (blight),1845,1852,Ireland,Potato blight destroyed primary food crop
+Drought18761878,Climate-induced famine,Drought,1876,1878,Asia/Africa,Great Drought affecting India and China
+SovietFamine1921,Compound crisis,Drought + conflict,1921,1922,Soviet Union,Drought exacerbated by civil war disruption
+ChineseFamine1960,Policy-induced famine,Policy failure,1959,1961,China,Great Leap Forward policies
+DustBowl,Climate-induced crisis,Drought + land degradation,1930,1936,USA Great Plains,Severe drought and soil erosion
+SahelDrought2010,Climate-induced crisis,Drought,2010,2011,Sahel region,Severe drought in West Africa
+MillenniumDrought,Climate-induced crisis,Drought,2000,2009,Australia,Decade-long drought
+NorthKorea1990s,Compound crisis,Flood + policy,1994,1998,North Korea,Floods combined with economic collapse
+ENSO2015_2016,Climate-induced crisis,El Niño drought,2015,2016,Global tropics,Strong El Niño event
+Solomon,Climate-induced crisis,Drought,2015,2016,Solomon Islands,El Niño-related drought
+Vanuatu,Natural disaster,Cyclone,2015,2015,Vanuatu,Tropical Cyclone Pam
+EastTimor,Climate-induced crisis,Drought,2015,2016,East Timor,El Niño-related drought
+Haiti,Natural disaster,Earthquake + hurricane,2010,2016,Haiti,2010 earthquake and subsequent hurricanes
+SierraLeone,Conflict-induced crisis,Civil war,1991,2002,Sierra Leone,Civil war disrupted agriculture
+Liberia,Conflict-induced crisis,Civil war,1989,2003,Liberia,Civil wars disrupted food production
+Yemen,Conflict-induced crisis,Civil war,2015,ongoing,Yemen,Ongoing conflict and blockade
+Ethiopia,Climate-induced famine,Drought,1983,1985,Ethiopia,Severe drought (also 2015-2016)
+Laos,Climate-induced crisis,Drought,2015,2016,Laos,El Niño-related drought
+Bangladesh,Natural disaster,Flood + cyclone,1974,1974,Bangladesh,Catastrophic flooding
+Syria,Conflict-induced crisis,Drought + civil war,2011,ongoing,Syria,Drought preceded civil war

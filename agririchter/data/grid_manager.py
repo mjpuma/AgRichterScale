@@ -2,11 +2,9 @@
 
 import logging
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Any
 import pandas as pd
 import numpy as np
-import geopandas as gpd
-from shapely.geometry import Point
 
 from ..core.config import Config
 
@@ -32,8 +30,9 @@ class GridDataManager:
         self.config = config
         self.production_df: Optional[pd.DataFrame] = None
         self.harvest_area_df: Optional[pd.DataFrame] = None
-        self.production_gdf: Optional[gpd.GeoDataFrame] = None
-        self.harvest_area_gdf: Optional[gpd.GeoDataFrame] = None
+        # Type hint as Any to avoid ImportError if geopandas is missing
+        self.production_gdf: Optional[Any] = None
+        self.harvest_area_gdf: Optional[Any] = None
         self._data_loaded = False
         self._spatial_index_created = False
         self._cache: Dict = {}
@@ -136,6 +135,72 @@ class GridDataManager:
         # Validate data structure
         self._validate_data_structure()
         
+        # Align production and harvest dataframes to common coordinates
+        if len(self.production_df) != len(self.harvest_area_df):
+            logger.warning(
+                f"Production and harvest area data have different row counts: "
+                f"{len(self.production_df)} vs {len(self.harvest_area_df)}. "
+                f"Aligning to common grid cells..."
+            )
+            
+            # Simple coordinate-based merge using pandas merge (much more reliable)
+            # This preserves all data and ensures proper alignment
+            
+            # Create coordinate keys for merging
+            self.production_df['coord_key'] = (
+                self.production_df['x'].round(6).astype(str) + '_' + 
+                self.production_df['y'].round(6).astype(str)
+            )
+            self.harvest_area_df['coord_key'] = (
+                self.harvest_area_df['x'].round(6).astype(str) + '_' + 
+                self.harvest_area_df['y'].round(6).astype(str)
+            )
+            
+            # Find common coordinates
+            common_coords = set(self.production_df['coord_key']).intersection(
+                set(self.harvest_area_df['coord_key'])
+            )
+            
+            logger.info(f"Found {len(common_coords):,} common coordinate locations")
+            
+            # Filter to common coordinates
+            prod_mask = self.production_df['coord_key'].isin(common_coords)
+            harv_mask = self.harvest_area_df['coord_key'].isin(common_coords)
+            
+            self.production_df = self.production_df[prod_mask].copy()
+            self.harvest_area_df = self.harvest_area_df[harv_mask].copy()
+            
+            # CRITICAL FIX: Sort both dataframes by coordinate key to ensure same order
+            self.production_df = self.production_df.sort_values('coord_key').reset_index(drop=True)
+            self.harvest_area_df = self.harvest_area_df.sort_values('coord_key').reset_index(drop=True)
+            
+            # Verify alignment by checking coordinate keys match
+            prod_keys = self.production_df['coord_key'].values
+            harv_keys = self.harvest_area_df['coord_key'].values
+            keys_match = (prod_keys == harv_keys).all()
+            
+            if keys_match:
+                logger.info("✅ Production and harvest dataframes properly aligned by coordinates")
+            else:
+                logger.error("❌ CRITICAL ERROR: Production and harvest dataframes not aligned after sorting!")
+            
+            # Remove temporary coordinate key
+            self.production_df = self.production_df.drop('coord_key', axis=1)
+            self.harvest_area_df = self.harvest_area_df.drop('coord_key', axis=1)
+            
+            # Check southern hemisphere preservation
+            prod_south_after = (self.production_df['y'] < -35).sum()
+            harv_south_after = (self.harvest_area_df['y'] < -35).sum()
+            
+            if prod_south_after > 0:
+                logger.info(f"✅ Southern hemisphere data preserved: {prod_south_after:,} cells")
+            else:
+                logger.warning("⚠️ No southern hemisphere data after alignment")
+        
+        # Apply global filtering to remove cells with zero/NaN values for the selected crop type
+        self._apply_global_crop_filter()
+
+        
         # Preserve coordinates
         self._ensure_coordinates()
         
@@ -145,6 +210,56 @@ class GridDataManager:
         logger.info(f"SPAM data loaded successfully in {load_time:.2f} seconds")
         
         return self.production_df, self.harvest_area_df
+    
+    def _apply_global_crop_filter(self) -> None:
+        """
+        Apply global filtering to remove cells with zero/NaN values for selected crops.
+        
+        This ensures that events and envelope use the exact same set of valid grid cells.
+        The filtering matches the logic used in the envelope calculation.
+        """
+        # Get crop columns for the current crop type
+        crop_indices = self.config.get_crop_indices()
+        crop_columns = self._get_crop_column_names(crop_indices)
+        
+        if not crop_columns:
+            logger.warning("No crop columns found for filtering")
+            return
+        
+        logger.info(f"Applying global filter for crop type '{self.config.crop_type}' with columns: {crop_columns}")
+        
+        # Check which columns exist in both dataframes
+        prod_cols = [col for col in crop_columns if col in self.production_df.columns]
+        harv_cols = [col for col in crop_columns if col in self.harvest_area_df.columns]
+        
+        if not prod_cols or not harv_cols:
+            logger.warning(f"Crop columns not found in data. Prod: {prod_cols}, Harv: {harv_cols}")
+            return
+        
+        # Calculate total production and harvest for selected crops
+        total_production = self.production_df[prod_cols].sum(axis=1)
+        total_harvest = self.harvest_area_df[harv_cols].sum(axis=1)
+        
+        # Apply the same filtering logic as the envelope:
+        # Keep only cells where BOTH production and harvest are > 0
+        min_threshold = 1e-10  # Very small threshold to catch near-zero values
+        
+        valid_mask = (total_production > min_threshold) & (total_harvest > min_threshold)
+        
+        cells_before = len(self.production_df)
+        cells_removed = (~valid_mask).sum()
+        
+        # Apply filter to both dataframes
+        self.production_df = self.production_df[valid_mask].copy()
+        self.harvest_area_df = self.harvest_area_df[valid_mask].copy()
+        
+        logger.info(
+            f"Global crop filter applied: {cells_removed} cells removed "
+            f"({cells_before} → {len(self.production_df)} cells)"
+        )
+        logger.info(
+            f"Remaining cells have non-zero production AND harvest for {self.config.crop_type}"
+        )
     
     def _get_optimized_dtypes(self) -> Dict[str, str]:
         """
@@ -321,6 +436,7 @@ class GridDataManager:
         
         Raises:
             RuntimeError: If data not loaded
+            ImportError: If geopandas or shapely is not installed
         """
         if not self._data_loaded:
             raise RuntimeError("SPAM data not loaded. Call load_spam_data() first.")
@@ -328,6 +444,13 @@ class GridDataManager:
         if self._spatial_index_created:
             logger.info("Spatial index already created, reusing existing index")
             return
+        
+        try:
+            import geopandas as gpd
+            from shapely.geometry import Point
+        except ImportError as e:
+            logger.error(f"Failed to import geospatial libraries: {e}")
+            raise ImportError("geopandas and shapely are required for spatial indexing") from e
         
         import time
         start_time = time.time()
@@ -512,16 +635,16 @@ class GridDataManager:
         Returns:
             List of SPAM column names (e.g., ['WHEA_A', 'RICE_A'])
         """
-        # SPAM 2020 crop column mapping (1-based index to column name)
-        # Based on CROP_INDICES in constants.py
+        # SPAM 2020 crop column mapping (0-based index to column name)
+        # Based on actual SPAM 2020 column positions
         crop_map = {
-            14: 'BARL_A',   # Barley
-            26: 'MAIZ_A',   # Maize
-            28: 'OCER_A',   # Other cereals
-            37: 'PMIL_A',   # Pearl millet
-            42: 'RICE_A',   # Rice
-            45: 'SORG_A',   # Sorghum
-            57: 'WHEA_A',   # Wheat
+            13: 'BARL_A',   # Barley
+            25: 'MAIZ_A',   # Maize
+            27: 'OCER_A',   # Other cereals
+            26: 'MILL_A',   # Millet (pearl millet)
+            41: 'RICE_A',   # Rice
+            44: 'SORG_A',   # Sorghum
+            56: 'WHEA_A',   # Wheat
         }
         
         column_names = []
@@ -569,24 +692,45 @@ class GridDataManager:
             logger.warning(f"None of the requested crop columns found in data: {crop_columns}")
             return 0.0
         
-        # Use vectorized NumPy sum for better performance
-        # This is faster than pandas sum().sum() for large datasets
-        total_production_mt = np.nansum(grid_cells[available_columns].values)
-        
         if convert_to_kcal:
-            # Convert metric tons to grams to kcal using vectorized operation
-            caloric_content = self.config.get_caloric_content()  # kcal/g
-            grams_per_mt = self.config.get_unit_conversions()['grams_per_metric_ton']
-            total_production_kcal = total_production_mt * grams_per_mt * caloric_content
+            # CRITICAL FIX: Apply per-crop caloric content BEFORE summing
+            # This matches the MATLAB algorithm and envelope calculation
+            from ..core.constants import CALORIC_CONTENT
             
-            logger.debug(
-                f"Production: {total_production_mt:.2f} MT = "
-                f"{total_production_kcal:.2e} kcal "
-                f"(caloric content: {caloric_content} kcal/g)"
-            )
+            crop_caloric_map = {
+                'BARL_A': CALORIC_CONTENT['Barley'],
+                'MAIZ_A': CALORIC_CONTENT['Corn'],
+                'OCER_A': CALORIC_CONTENT['MixedGrain'],
+                'PMIL_A': CALORIC_CONTENT['Millet'],
+                'RICE_A': CALORIC_CONTENT['Rice'],
+                'SORG_A': CALORIC_CONTENT['Sorghum'],
+                'WHEA_A': CALORIC_CONTENT['Wheat'],
+                'SMIL_A': CALORIC_CONTENT['Millet']
+            }
+            
+            grams_per_mt = self.config.get_unit_conversions()['grams_per_metric_ton']
+            
+            # Convert each crop separately, then sum
+            total_production_kcal = 0.0
+            crop_details = []
+            for crop_col in available_columns:
+                crop_mt = np.nansum(grid_cells[crop_col].values)
+                caloric_content = crop_caloric_map.get(crop_col, CALORIC_CONTENT['MixedGrain'])
+                crop_kcal = crop_mt * grams_per_mt * caloric_content
+                total_production_kcal += crop_kcal
+                if crop_mt > 0:
+                    crop_details.append(f"{crop_col}={crop_mt:.1f}MT@{caloric_content}kcal/g")
+            
+            if len(grid_cells) > 100:  # Only log for significant queries
+                logger.info(
+                    f"Production (per-crop): {total_production_kcal:.2e} kcal from {len(available_columns)} crops, "
+                    f"{len(grid_cells)} cells. Crops: {', '.join(crop_details[:3])}"
+                )
             
             return float(total_production_kcal)
         else:
+            # For metric tons, just sum across crops
+            total_production_mt = np.nansum(grid_cells[available_columns].values)
             return float(total_production_mt)
     
     def get_crop_harvest_area(

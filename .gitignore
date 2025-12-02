@@ -55,6 +55,8 @@ test_comparison_reports/
 matlab_outputs/
 python_outputs/
 comparison_reports/
+ARCHIVE_OLD_OUTPUTS/
+multicropping_fix/output_data/*.json
 
 # Large data files (SPAM data - must be downloaded separately)
 spam2020V2r0_global_production/
@@ -74,6 +76,9 @@ ancillary/gdam_v2_country.txt
 *.tmp
 *.bak
 *.log
+mpl_cache/
+.kiro/
+.cache/
 
 # OS files
 Thumbs.db

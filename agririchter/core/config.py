@@ -27,7 +27,7 @@ class Config:
     
     def __init__(self, crop_type: str, root_dir: Optional[Union[str, Path]] = None, 
                  use_dynamic_thresholds: bool = True, usda_year_range: Optional[tuple] = None,
-                 spam_version: str = '2020'):
+                 spam_version: str = '2020', convergence_validation: Optional[Dict] = None):
         """
         Initialize configuration.
         
@@ -37,6 +37,7 @@ class Config:
             use_dynamic_thresholds: Whether to use USDA-based dynamic thresholds
             usda_year_range: Year range for USDA threshold calculation (default: 1990-2020)
             spam_version: SPAM data version to use ('2010' or '2020', default: '2020')
+            convergence_validation: Configuration for envelope convergence validation
         
         Raises:
             ConfigError: If crop_type is invalid or spam_version is invalid
@@ -46,6 +47,7 @@ class Config:
         self.use_dynamic_thresholds = use_dynamic_thresholds
         self.usda_year_range = usda_year_range or (1990, 2020)
         self.spam_version = self._validate_spam_version(spam_version)
+        self.convergence_validation = self._setup_convergence_validation(convergence_validation)
         
         # Initialize USDA system if using dynamic thresholds
         self.usda_loader = None
@@ -83,6 +85,39 @@ class Config:
             )
         return spam_version
     
+    def _setup_convergence_validation(self, convergence_validation: Optional[Dict]) -> Dict:
+        """Set up convergence validation configuration with defaults."""
+        default_config = {
+            'enabled': True,
+            'enforce_convergence': True,
+            'fallback_on_failure': True,
+            'tolerance': 1e-6,
+            'max_iterations': 10,
+            'log_validation_details': False,
+            'backward_compatible': True
+        }
+        
+        if convergence_validation is None:
+            return default_config
+        
+        # Merge user config with defaults
+        config = default_config.copy()
+        config.update(convergence_validation)
+        
+        # Validate configuration values
+        if not isinstance(config['enabled'], bool):
+            raise ConfigError("convergence_validation.enabled must be boolean")
+        if not isinstance(config['enforce_convergence'], bool):
+            raise ConfigError("convergence_validation.enforce_convergence must be boolean")
+        if not isinstance(config['fallback_on_failure'], bool):
+            raise ConfigError("convergence_validation.fallback_on_failure must be boolean")
+        if not isinstance(config['tolerance'], (int, float)) or config['tolerance'] <= 0:
+            raise ConfigError("convergence_validation.tolerance must be positive number")
+        if not isinstance(config['max_iterations'], int) or config['max_iterations'] <= 0:
+            raise ConfigError("convergence_validation.max_iterations must be positive integer")
+        
+        return config
+    
     def _setup_paths(self) -> None:
         """Set up file paths for data inputs and outputs."""
         self.paths = {
@@ -96,17 +131,22 @@ class Config:
         if self.spam_version == '2020':
             spam_prod_dir = self.root_dir / 'spam2020V2r0_global_production' / 'spam2020V2r0_global_production'
             spam_harvest_dir = self.root_dir / 'spam2020V2r0_global_harvested_area' / 'spam2020V2r0_global_harvested_area'
+            spam_yield_dir = self.root_dir / 'spam2020V2r0_global_yield' / 'spam2020V2r0_global_yield'
             production_file = spam_prod_dir / 'spam2020V2r0_global_P_TA.csv'
             harvest_area_file = spam_harvest_dir / 'spam2020V2r0_global_H_TA.csv'
+            yield_file = spam_yield_dir / 'spam2020V2r0_global_Y_TA.csv'
         else:  # 2010
             spam_prod_dir = self.root_dir / 'spam2010_global_production'
             spam_harvest_dir = self.root_dir / 'spam2010_global_harvested_area'
+            spam_yield_dir = self.root_dir / 'spam2010_global_yield'
             production_file = spam_prod_dir / 'spam2010_global_P_TA.csv'
             harvest_area_file = spam_harvest_dir / 'spam2010_global_H_TA.csv'
+            yield_file = spam_yield_dir / 'spam2010_global_Y_TA.csv'
         
         self.data_files = {
             'production': production_file,
             'harvest_area': harvest_area_file,
+            'yield': yield_file,
             'nutrition': self.paths['ancillary'] / 'Nutrition_SPAMcrops.xls',
             'food_codes': self.paths['ancillary'] / 'Foodcodes_SPAMtoFAOSTAT.xls',
             'country_codes': self.paths['ancillary'] / 'CountryCode_Convert.xls',
@@ -118,23 +158,6 @@ class Config:
         """Set up crop-specific parameters."""
         self.crop_indices = CROP_INDICES[self.crop_type]
         
-        # Set thresholds (dynamic or static)
-        if self.use_dynamic_thresholds and self.threshold_calculator:
-            try:
-                self.thresholds = self.threshold_calculator.calculate_dynamic_thresholds(
-                    self.crop_type, self.usda_year_range
-                )
-                logging.info(f"Using dynamic thresholds for {self.crop_type}: {self.thresholds}")
-            except Exception as e:
-                logging.warning(f"Failed to calculate dynamic thresholds, using static: {e}")
-                self.thresholds = THRESHOLDS[self.crop_type]
-        else:
-            self.thresholds = THRESHOLDS[self.crop_type]
-        
-        self.disruption_range = DISRUPTION_RANGES[self.crop_type]
-        self.production_range = PRODUCTION_RANGES[self.crop_type]
-        self.event_colors = EVENT_COLORS[self.crop_type]
-        
         # Set caloric content based on crop type
         if self.crop_type == 'allgrain':
             self.caloric_content = CALORIC_CONTENT['Allgrain']
@@ -144,6 +167,57 @@ class Config:
             self.caloric_content = CALORIC_CONTENT['Rice']
         elif self.crop_type == 'maize':
             self.caloric_content = CALORIC_CONTENT['Corn']
+            
+        # Set thresholds (dynamic consumption-based or static)
+        if self.use_dynamic_thresholds and self.threshold_calculator:
+            try:
+                # Calculate consumption-based thresholds (Months of Supply)
+                # These are returned in Metric Tons
+                # NOTE: This replaces the old T1-T4 thresholds with physically meaningful values:
+                # 1 Month Supply, 3 Months Supply, and Total Ending Stocks
+                raw_thresholds = self.threshold_calculator.calculate_consumption_thresholds(
+                    self.crop_type, self.usda_year_range
+                )
+                
+                # Convert MT to kcal: MT * 10^6 g/MT * kcal/g
+                # This conversion is critical for comparing against production losses which are in kcal
+                conversion_factor = 1_000_000.0 * self.caloric_content
+                
+                self.thresholds = {
+                    k: v * conversion_factor 
+                    for k, v in raw_thresholds.items()
+                }
+                logging.info(f"Using consumption-based thresholds for {self.crop_type}: {self.thresholds}")
+            except Exception as e:
+                logging.warning(f"Failed to calculate dynamic thresholds, using static: {e}")
+                self.thresholds = THRESHOLDS[self.crop_type]
+        else:
+            self.thresholds = THRESHOLDS[self.crop_type]
+        
+        self.disruption_range = DISRUPTION_RANGES[self.crop_type]
+        self.production_range = PRODUCTION_RANGES[self.crop_type]
+        self.event_colors = EVENT_COLORS[self.crop_type]
+    
+    def get_ipc_colors(self) -> Dict[Union[int, str], str]:
+        """Get threshold colors for visualization."""
+        if self.use_dynamic_thresholds:
+             # Colors for consumption-based thresholds
+             return {
+                 '1 Month': '#FFD700',       # Gold/Yellow
+                 '3 Months': '#FF4500',      # OrangeRed (more visible than DarkOrange)
+                 'Total Stocks': '#800080'   # Purple (Systemic)
+             }
+        elif self.threshold_calculator:
+            return self.threshold_calculator.get_ipc_colors()
+        else:
+            # Fallback colors
+            return {
+                1: '#00FF00',  # Green
+                2: '#FFFF00',  # Yellow  
+                3: '#FFA500',  # Orange
+                4: '#FF0000',  # Red
+                5: '#800080'   # Purple
+            }
     
     def get_crop_indices(self) -> List[int]:
         """Get crop indices for current crop type."""
@@ -375,32 +449,3 @@ class Config:
         except Exception as e:
             logging.warning(f"Failed to calculate SUR thresholds: {e}")
             return None
-    
-    def get_ipc_colors(self) -> Dict[int, str]:
-        """Get IPC phase colors for visualization."""
-        if self.threshold_calculator:
-            return self.threshold_calculator.get_ipc_colors()
-        else:
-            # Fallback colors
-            return {
-                1: '#00FF00',  # Green
-                2: '#FFFF00',  # Yellow  
-                3: '#FFA500',  # Orange
-                4: '#FF0000',  # Red
-                5: '#800080'   # Purple
-            }
-    
-    def to_dict(self) -> Dict:
-        """Convert configuration to dictionary for serialization."""
-        return {
-            'crop_type': self.crop_type,
-            'root_dir': str(self.root_dir),
-            'spam_version': self.spam_version,
-            'crop_indices': self.crop_indices,
-            'caloric_content': self.caloric_content,
-            'thresholds': self.thresholds,
-            'disruption_range': self.disruption_range[:10],  # First 10 for brevity
-            'production_range': self.production_range,
-            'use_dynamic_thresholds': self.use_dynamic_thresholds,
-            'usda_year_range': self.usda_year_range
-        }

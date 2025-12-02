@@ -63,12 +63,24 @@ Welcome to the AgriRichter documentation! This directory contains comprehensive 
 
 ```
 docs/
-├── README.md                    # This file - documentation overview
-├── USER_GUIDE.md               # Installation and usage guide
-├── DATA_REQUIREMENTS.md        # Data files and sources
-├── API_REFERENCE.md            # Complete API documentation
-└── TROUBLESHOOTING.md          # Common issues and solutions
+├── README.md                                # This file - documentation overview
+├── USER_GUIDE.md                           # Installation and usage guide
+├── DATA_REQUIREMENTS.md                    # Data files and sources
+├── API_REFERENCE.md                        # Complete API documentation
+├── TROUBLESHOOTING.md                      # Common issues and solutions
+├── ENVELOPE_BUILDER_MATHEMATICAL_GUIDE.md  # Mathematical foundations and theory
+└── development/                            # Development and implementation docs
 ```
+
+### 🔬 Advanced Documentation
+
+5. **[Envelope Builder Mathematical Guide](ENVELOPE_BUILDER_MATHEMATICAL_GUIDE.md)** - Deep dive
+   - Mathematical foundations and theory
+   - Discrete vs continuous nature of data
+   - Proof of dominance theorem
+   - QA validation rules explained
+   - Troubleshooting mathematical properties
+   - Usage examples with synthetic data
 
 ## What is AgriRichter?
 

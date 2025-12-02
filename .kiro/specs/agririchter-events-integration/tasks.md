@@ -171,7 +171,7 @@
     - Flag events with suspicious values for review
     - _Requirements: 8.4, 11.2, 11.3_
 
-- [ ] 5. Integrate events with existing visualizations
+- [x] 5. Integrate events with existing visualizations
 
   - [x] 5.1 Update H-P Envelope visualization to use real events
 
@@ -371,7 +371,7 @@
     - Ensure full analysis completes in under 10 minutes
     - _Requirements: 13.4, 13.5_
 
-- [ ] 10. Create comprehensive tests
+- [x] 10. Create comprehensive tests
 
   - [x] 10.1 Add unit tests for GridDataManager
 

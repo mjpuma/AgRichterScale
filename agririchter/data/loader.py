@@ -172,6 +172,21 @@ class DataLoader(BaseDataLoader):
         
         return data
     
+    def load_spam_yield(self) -> pd.DataFrame:
+        """
+        Load SPAM 2020 yield data.
+        
+        Returns:
+            Yield DataFrame
+        """
+        file_path = self.config.get_file_paths()['yield']
+        data = self.load_data(file_path)
+        
+        # Validate data
+        self.validate_data(data)
+        
+        return data
+    
     def load_nutrition_data(self) -> pd.DataFrame:
         """
         Load crop nutrition data from Excel file.

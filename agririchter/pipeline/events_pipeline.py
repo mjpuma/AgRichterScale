@@ -11,6 +11,7 @@ from agririchter.core.performance import PerformanceMonitor
 from agririchter.data.grid_manager import GridDataManager
 from agririchter.data.spatial_mapper import SpatialMapper
 from agririchter.analysis.event_calculator import EventCalculator
+from agririchter.analysis.convergence_validator import ConvergenceValidator
 
 
 class EventsPipeline:
@@ -21,17 +22,28 @@ class EventsPipeline:
     and results export for historical agricultural disruption events.
     """
     
-    def __init__(self, config: Config, output_dir: str, enable_performance_monitoring: bool = True):
+    def __init__(self, config: Config, output_dir: str, 
+                 tier_selection: str = 'comprehensive',
+                 enable_performance_monitoring: bool = True):
         """
         Initialize the events pipeline.
         
         Args:
             config: Configuration object with data paths and settings
             output_dir: Directory for saving outputs
+            tier_selection: Productivity tier for envelope calculations ('comprehensive', 'commercial')
             enable_performance_monitoring: If True, enable performance monitoring
         """
         self.config = config
         self.output_dir = Path(output_dir)
+        
+        # Validate tier selection (allow 'all' for MultiTierEventsPipeline compatibility)
+        valid_tiers = ['comprehensive', 'commercial', 'all']
+        if tier_selection not in valid_tiers:
+            raise ValueError(f"Invalid tier selection: {tier_selection}. "
+                           f"Must be one of: {valid_tiers}")
+        
+        self.tier_selection = tier_selection
         
         # Set up logging
         self.logger = logging.getLogger(__name__)
@@ -52,6 +64,7 @@ class EventsPipeline:
         self.figures: Dict[str, plt.Figure] = {}
         
         self.logger.info(f"EventsPipeline initialized with output directory: {self.output_dir}")
+        self.logger.info(f"Tier selection: {tier_selection}")
         if enable_performance_monitoring:
             self.logger.info("Performance monitoring enabled")
     
@@ -159,6 +172,11 @@ class EventsPipeline:
                 self.logger.error(f"Failed to load event definition files: {e}")
                 raise
             
+            # Load yield data
+            self.logger.info("Loading yield data...")
+            yield_df = data_loader.load_spam_yield()
+            self.logger.info(f"Loaded yield data: {len(yield_df)} cells")
+            
             # Store loaded data
             self.loaded_data = {
                 'grid_manager': self.grid_manager,
@@ -166,6 +184,7 @@ class EventsPipeline:
                 'events_data': events_data,
                 'production_df': production_df,
                 'harvest_df': harvest_df,
+                'yield_df': yield_df,
                 'country_mapping': country_mapping
             }
             
@@ -286,13 +305,16 @@ class EventsPipeline:
             from agririchter.visualization.maps import GlobalProductionMapper
             from agririchter.visualization.hp_envelope import HPEnvelopeVisualizer
             from agririchter.visualization.agririchter_scale import AgriRichterScaleVisualizer
-            from agririchter.analysis.envelope import HPEnvelopeCalculator
+            from agririchter.analysis.envelope_v2 import HPEnvelopeCalculatorV2
             
-            # 1. Generate global production map
+            # 1. Generate global maps (production, harvest area, yield)
+            mapper = GlobalProductionMapper(self.config)
+            production_df = self.loaded_data.get('production_df')
+            harvest_df = self.loaded_data.get('harvest_df')
+            
+            # 1a. Production map
             self.logger.info("Generating global production map...")
             try:
-                mapper = GlobalProductionMapper(self.config)
-                production_df = self.loaded_data.get('production_df')
                 if production_df is not None:
                     fig_map = mapper.create_global_map(
                         production_df,
@@ -301,19 +323,54 @@ class EventsPipeline:
                     figures['production_map'] = fig_map
                     self.logger.info("Global production map created successfully")
                 else:
-                    self.logger.warning("Production data not available, skipping map")
+                    self.logger.warning("Production data not available, skipping production map")
             except Exception as e:
                 self.logger.warning(f"Failed to create production map: {e}")
             
-            # 2. Generate H-P Envelope with real events
-            self.logger.info("Generating H-P Envelope with real events...")
+            # 1b. Harvest area map
+            self.logger.info("Generating global harvest area map...")
             try:
-                # Calculate envelope
-                envelope_calc = HPEnvelopeCalculator(self.config)
-                envelope_data = envelope_calc.calculate_hp_envelope(
+                if harvest_df is not None:
+                    fig_harvest = mapper.create_harvest_area_map(
+                        harvest_df,
+                        title=f"Global {self.config.crop_type.title()} Harvest Area"
+                    )
+                    figures['harvest_area_map'] = fig_harvest
+                    self.logger.info("Global harvest area map created successfully")
+                else:
+                    self.logger.warning("Harvest data not available, skipping harvest area map")
+            except Exception as e:
+                self.logger.warning(f"Failed to create harvest area map: {e}")
+            
+            # 1c. Yield map (using actual SPAM yield data)
+            self.logger.info("Generating global yield map...")
+            try:
+                yield_df = self.loaded_data.get('yield_df')
+                if yield_df is not None:
+                    fig_yield = mapper.create_yield_map(
+                        yield_df,
+                        title=f"Global {self.config.crop_type.title()} Yield"
+                    )
+                    figures['yield_map'] = fig_yield
+                    self.logger.info("Global yield map created successfully")
+                else:
+                    self.logger.warning("Yield data not available, skipping yield map")
+            except Exception as e:
+                self.logger.warning(f"Failed to create yield map: {e}")
+            
+            # 2. Generate H-P Envelope with real events
+            self.logger.info(f"Generating H-P Envelope with real events (tier: {self.tier_selection})...")
+            try:
+                # Calculate envelope with tier selection support
+                envelope_data = self._calculate_envelope_with_tier_selection(
                     self.loaded_data.get('production_df'),
                     self.loaded_data.get('harvest_df')
                 )
+                
+                # Apply convergence validation if enabled in config
+                convergence_config = getattr(self.config, 'convergence_validation', {})
+                if convergence_config.get('enabled', True):
+                    envelope_data = self._apply_convergence_validation(envelope_data, convergence_config)
                 
                 # Create visualization
                 hp_viz = HPEnvelopeVisualizer(self.config)
@@ -349,6 +406,53 @@ class EventsPipeline:
             if self.performance_monitor:
                 self.performance_monitor.end_stage()
             raise
+    
+    def _calculate_envelope_with_tier_selection(self, production_df: pd.DataFrame, 
+                                              harvest_df: pd.DataFrame) -> Dict[str, Any]:
+        """
+        Calculate envelope bounds with tier selection support.
+        
+        Args:
+            production_df: Production data DataFrame
+            harvest_df: Harvest area data DataFrame
+        
+        Returns:
+            Envelope data dictionary
+        """
+        try:
+            # Import envelope calculator
+            from agririchter.analysis.envelope import HPEnvelopeCalculator
+            
+            # Create calculator and calculate envelope with tier selection
+            envelope_calc = HPEnvelopeCalculator(self.config)
+            envelope_data = envelope_calc.calculate_hp_envelope(
+                production_df, harvest_df, tier=self.tier_selection
+            )
+            
+            # Apply convergence validation if enabled in config
+            convergence_config = getattr(self.config, 'convergence_validation', {})
+            if convergence_config.get('enabled', True):
+                envelope_data = self._apply_convergence_validation(envelope_data, convergence_config)
+            
+            self.logger.info(f"Envelope calculation completed for {self.tier_selection} tier")
+            return envelope_data
+            
+        except Exception as e:
+            self.logger.warning(f"Multi-tier envelope calculation failed, falling back to V2: {e}")
+            
+            # Fallback to existing V2 calculator
+            from agririchter.analysis.envelope_v2 import HPEnvelopeCalculatorV2
+            envelope_calc = HPEnvelopeCalculatorV2(self.config)
+            envelope_data = envelope_calc.calculate_hp_envelope(
+                production_df, harvest_df, None  # Compute yield from P/H
+            )
+            
+            # Apply convergence validation if enabled in config
+            convergence_config = getattr(self.config, 'convergence_validation', {})
+            if convergence_config.get('enabled', True):
+                envelope_data = self._apply_convergence_validation(envelope_data, convergence_config)
+            
+            return envelope_data
     
     def export_results(self, events_df: pd.DataFrame, figures: Dict[str, plt.Figure]) -> Dict[str, List[str]]:
         """
@@ -408,17 +512,25 @@ class EventsPipeline:
                 self.logger.info(f"Saved events data: {csv_path}")
             
             # Export figures in multiple formats
-            figure_formats = ['svg', 'eps', 'jpg', 'png']
-            
+            # Use different formats for maps (raster only) vs plots (vector + raster)
             for fig_name, fig in figures.items():
                 if fig is not None:
+                    # Maps should only be saved as PNG (SVG is too large for gridded data)
+                    if 'map' in fig_name.lower():
+                        figure_formats = ['png']
+                        dpi_setting = 150  # Lower DPI for maps to reduce file size
+                    else:
+                        # Plots (envelope, scale) can use vector formats
+                        figure_formats = ['svg', 'eps', 'jpg', 'png']
+                        dpi_setting = 300
+                    
                     for fmt in figure_formats:
                         fig_filename = f"{fig_name}_{self.config.crop_type}.{fmt}"
                         fig_path = figures_dir / fig_filename
                         
                         try:
                             # Set appropriate DPI for raster formats
-                            dpi = 300 if fmt in ['jpg', 'png'] else None
+                            dpi = dpi_setting if fmt in ['jpg', 'png'] else None
                             
                             self.logger.info(f"Saving {fig_name} as {fmt}...")
                             fig.savefig(fig_path, format=fmt, dpi=dpi, bbox_inches='tight')
@@ -641,6 +753,90 @@ class EventsPipeline:
         except Exception as e:
             self.logger.error(f"Summary report generation failed: {e}")
             raise
+    
+    def _apply_convergence_validation(self, envelope_data: Dict[str, Any], 
+                                    convergence_config: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Apply convergence validation to envelope data.
+        
+        Args:
+            envelope_data: Envelope data dictionary from calculator
+            convergence_config: Configuration for convergence validation
+            
+        Returns:
+            Validated and potentially corrected envelope data
+            
+        Raises:
+            Exception: If convergence validation fails and fallback is disabled
+        """
+        try:
+            self.logger.info("Applying convergence validation to envelope data...")
+            
+            # Initialize convergence validator
+            validator = ConvergenceValidator()
+            
+            # Get total production and harvest area for validation
+            production_df = self.loaded_data.get('production_df')
+            harvest_df = self.loaded_data.get('harvest_df')
+            
+            if production_df is not None and harvest_df is not None:
+                # Calculate totals for the current crop using column names
+                crop_indices = self.config.get_crop_indices()
+                crop_columns = [production_df.columns[i] for i in crop_indices]
+                total_production = production_df[crop_columns].sum().sum()
+                total_harvest = harvest_df[crop_columns].sum().sum()
+                
+                # Validate mathematical properties
+                validation_result = validator.validate_mathematical_properties(
+                    envelope_data, total_production, total_harvest
+                )
+            else:
+                self.logger.warning("Cannot validate convergence: production/harvest data not available")
+                return envelope_data
+            
+            if validation_result.is_valid:
+                self.logger.info("✓ Envelope data passes convergence validation")
+                return envelope_data
+            else:
+                self.logger.warning("⚠ Envelope data failed convergence validation")
+                self.logger.warning(f"Validation issues: {validation_result.issues}")
+                
+                # Check if enforcement is enabled
+                enforce_convergence = convergence_config.get('enforce_convergence', True)
+                if enforce_convergence:
+                    self.logger.info("Attempting to enforce convergence...")
+                    
+                    # Enforce convergence (reuse already calculated totals)
+                    corrected_envelope = validator.enforce_convergence(
+                        envelope_data, total_production, total_harvest
+                    )
+                    
+                    # Re-validate
+                    revalidation_result = validator.validate_mathematical_properties(
+                        corrected_envelope, total_production, total_harvest
+                    )
+                    if revalidation_result.is_valid:
+                        self.logger.info("✓ Convergence enforcement successful")
+                        return corrected_envelope
+                    else:
+                        self.logger.error("✗ Convergence enforcement failed")
+                        if convergence_config.get('fallback_on_failure', True):
+                            self.logger.warning("Using original envelope data as fallback")
+                            return envelope_data
+                        else:
+                            raise Exception("Convergence validation failed and fallback is disabled")
+
+                else:
+                    self.logger.info("Convergence enforcement disabled, using original data")
+                    return envelope_data
+                    
+        except Exception as e:
+            self.logger.error(f"Convergence validation failed: {e}")
+            if convergence_config.get('fallback_on_failure', True):
+                self.logger.warning("Using original envelope data as fallback")
+                return envelope_data
+            else:
+                raise
     
     def run_complete_pipeline(self) -> Dict[str, Any]:
         """

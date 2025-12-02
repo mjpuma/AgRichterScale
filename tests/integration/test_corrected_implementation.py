@@ -69,13 +69,13 @@ def test_envelope_calculation():
     envelope_data = envelope_calc.calculate_hp_envelope(production_df, harvest_df)
     
     # Validate results
-    assert 'disruption_areas' in envelope_data
+    assert 'disrupted_areas' in envelope_data
     assert 'lower_bound_harvest' in envelope_data
     assert 'lower_bound_production' in envelope_data
     assert 'upper_bound_harvest' in envelope_data
     assert 'upper_bound_production' in envelope_data
     
-    logger.info(f"✓ Envelope calculated with {len(envelope_data['disruption_areas'])} points")
+    logger.info(f"✓ Envelope calculated with {len(envelope_data['disrupted_areas'])} points")
     
     # Check that upper bounds >= lower bounds
     valid_mask = (envelope_data['lower_bound_production'] > 0) & (envelope_data['upper_bound_production'] > 0)

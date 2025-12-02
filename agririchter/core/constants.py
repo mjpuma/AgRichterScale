@@ -2,13 +2,13 @@
 
 from typing import Dict, List, Tuple
 
-# SPAM 2020 Crop Indices (1-based positions in crop array)
-# Key grain crops: WHEA_A(57), RICE_A(42), MAIZ_A(26), BARL_A(14), PMIL_A(37), SORG_A(45), OCER_A(28)
+# SPAM 2020 Crop Indices (0-based positions in crop array)
+# Key grain crops: WHEA_A(56), RICE_A(41), MAIZ_A(25), BARL_A(13), MILL_A(26), SORG_A(44), OCER_A(27)
 CROP_INDICES: Dict[str, List[int]] = {
-    'allgrain': [14, 26, 28, 37, 42, 45, 57],  # BARL_A, MAIZ_A, OCER_A, PMIL_A, RICE_A, SORG_A, WHEA_A
-    'wheat': [57],                              # WHEA_A only  
-    'rice': [42],                              # RICE_A only
-    'maize': [26],                             # MAIZ_A only
+    'allgrain': [56, 41, 25, 13, 26, 44, 27],  # WHEA_A, RICE_A, MAIZ_A, BARL_A, MILL_A, SORG_A, OCER_A
+    'wheat': [56],                              # WHEA_A only  
+    'rice': [41],                              # RICE_A only
+    'maize': [25],                             # MAIZ_A only
 }
 
 # Crop names corresponding to SPAM indices

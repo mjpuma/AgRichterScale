@@ -126,20 +126,33 @@ class EventsProcessor:
         if df.empty:
             return {'state_names': [], 'state_codes': []}
         
-        # Expected columns: State Name, State Code, Additional Info
-        data_df = df.iloc[1:] if len(df) > 1 else df
+        # Expected columns: ISO 3166-2, Country Code, Subdivision name
+        # Note: We use Subdivision name (col 2) as the 'code' for lookup 
+        # because SpatialMapper supports name matching on ADM1_NAME
+        data_df = df  # Don't skip first row if headers are already parsed by read_excel
         
         state_names = []
         state_codes = []
         
         for _, row in data_df.iterrows():
-            if len(row) >= 2:
-                state_name = row.iloc[0] if pd.notna(row.iloc[0]) else ""
-                state_code = row.iloc[1] if pd.notna(row.iloc[1]) else 0
+            if len(row) >= 3:
+                # ISO code (e.g. US.CO)
+                iso_sub = row.iloc[0] if pd.notna(row.iloc[0]) else ""
+                # Country code (e.g. 240) - redundant but present
+                country_code = row.iloc[1] if pd.notna(row.iloc[1]) else 0
+                # Subdivision name (e.g. Colorado) - CRITICAL for matching
+                subdivision_name = row.iloc[2] if pd.notna(row.iloc[2]) else ""
                 
-                if state_name or state_code:
-                    state_names.append(str(state_name))
-                    state_codes.append(float(state_code) if pd.notna(state_code) else 0)
+                if subdivision_name:
+                    # We use the name as the 'code' because we match against names
+                    state_names.append(str(subdivision_name))
+                    state_codes.append(str(subdivision_name))
+            elif len(row) >= 2:
+                # Fallback for sheets with fewer columns (unlikely based on inspection)
+                val = row.iloc[0]
+                if pd.notna(val):
+                    state_names.append(str(val))
+                    state_codes.append(str(val))
         
         return {
             'state_names': state_names,

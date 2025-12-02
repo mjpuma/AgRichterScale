@@ -361,9 +361,25 @@ class EventCalculator:
         
         return magnitude
     
+    def _get_event_type(self, event_name: str) -> str:
+        """Get event type from food_disruptions.csv."""
+        try:
+            # Load the CSV file
+            csv_path = self.config.root_dir / 'ancillary' / 'food_disruptions.csv'
+            if csv_path.exists():
+                events_df = pd.read_csv(csv_path)
+                # Find matching event
+                match = events_df[events_df['event_name'] == event_name]
+                if not match.empty:
+                    return match.iloc[0]['event_type']
+            return 'Unknown'
+        except Exception:
+            return 'Unknown'
+    
     def calculate_all_events(
         self, 
-        events_definitions: Dict[str, Dict[str, Any]]
+        events_definitions: Dict[str, Dict[str, Any]],
+        limit_to_country_code: Optional[float] = None
     ) -> pd.DataFrame:
         """
         Calculate losses for all historical events.
@@ -377,6 +393,8 @@ class EventCalculator:
                 - country_codes: List of numeric country codes
                 - state_flags: List of flags (0=country, 1=state level)
                 - state_codes: List of state codes (for state-level events)
+            limit_to_country_code: Optional GDAM country code to filter results.
+                If provided, only losses for this specific country will be calculated.
         
         Returns:
             DataFrame with columns:
@@ -388,20 +406,72 @@ class EventCalculator:
                 - affected_states: Number of affected states
                 - grid_cells_count: Total grid cells affected
         """
-        logger.info(f"Calculating losses for {len(events_definitions)} historical events")
+        if limit_to_country_code is not None:
+            logger.info(f"Calculating losses strictly for country code: {limit_to_country_code}")
+        else:
+            logger.info(f"Calculating losses for {len(events_definitions)} historical events (Global)")
         
         results_list = []
         total_events = len(events_definitions)
         
         for idx, (event_name, event_data) in enumerate(events_definitions.items(), 1):
+            # If filtering by country, we need to modify the event_data on the fly
+            if limit_to_country_code is not None:
+                country_codes = event_data.get('country_codes', [])
+                
+                # Check if target country is in this event
+                if limit_to_country_code not in country_codes:
+                    # Country not affected by this event -> 0 loss
+                    logger.debug(f"Skipping event {event_name} (target country not affected)")
+                    results_list.append({
+                        'event_name': event_name,
+                        'harvest_area_loss_ha': 0.0,
+                        'production_loss_kcal': 0.0,
+                        'magnitude': np.nan,
+                        'affected_countries': 0,
+                        'affected_states': 0,
+                        'grid_cells_count': 0,
+                        'event_type': self._get_event_type(event_name)
+                    })
+                    continue
+                
+                # Create filtered event definition containing ONLY the target country
+                # We need to find the index of the country code to get corresponding state flags/codes
+                indices = [i for i, x in enumerate(country_codes) if x == limit_to_country_code]
+                
+                filtered_event_data = {
+                    'country_codes': [country_codes[i] for i in indices],
+                    'state_flags': [event_data.get('state_flags', [])[i] for i in indices],
+                    # State codes are a bit trickier as they are a flat list corresponding to state_flags=1
+                    # But the current structure seems to be parallel lists? 
+                    # Let's check process_event_sheets output structure again.
+                    # It seems country_codes and state_flags are parallel.
+                    # State codes might be handled differently in process_event_sheets.
+                    # Let's assume for now we pass the whole state_codes list and calculate_single_event handles it?
+                    # Actually calculate_single_event calls calculate_state_level_loss which takes ALL state_codes.
+                    # This implies state_codes are specific to the event, not per country in the data structure?
+                    # Reviewing process_event_sheets: it returns 'state_codes': [list of all state codes for event]
+                    # And calculate_state_level_loss iterates through ALL state_codes and maps them to the country.
+                    # So passing the full list is safe because map_state_to_grid_cells filters by country ISO3.
+                    'state_codes': event_data.get('state_codes', [])
+                }
+                
+                # Use filtered data
+                event_data_to_use = filtered_event_data
+            else:
+                event_data_to_use = event_data
+
             logger.info(f"Processing event {idx}/{total_events}: {event_name}")
             
             try:
                 # Calculate single event losses
-                result = self.calculate_single_event(event_name, event_data)
+                result = self.calculate_single_event(event_name, event_data_to_use)
                 
                 # Calculate magnitude
                 magnitude = self.calculate_magnitude(result['harvest_area_loss_ha'])
+                
+                # Load event type from food_disruptions.csv
+                event_type = self._get_event_type(event_name)
                 
                 # Compile results
                 event_result = {
@@ -411,7 +481,8 @@ class EventCalculator:
                     'magnitude': magnitude,
                     'affected_countries': result['affected_countries'],
                     'affected_states': result['affected_states'],
-                    'grid_cells_count': result['grid_cells_count']
+                    'grid_cells_count': result['grid_cells_count'],
+                    'event_type': event_type
                 }
                 
                 results_list.append(event_result)
@@ -423,7 +494,7 @@ class EventCalculator:
                         f"{result['production_loss_kcal']:.2e} kcal, M={magnitude:.2f}"
                     )
                 else:
-                    logger.warning(
+                    logger.debug( # Demoted to debug to reduce noise when filtering
                         f"  ⚠ {event_name}: No losses calculated (zero grid cells matched)"
                     )
                 
@@ -450,7 +521,11 @@ class EventCalculator:
         total_harvest_loss = results_df['harvest_area_loss_ha'].sum()
         total_production_loss = results_df['production_loss_kcal'].sum()
         events_with_data = (results_df['harvest_area_loss_ha'] > 0).sum()
-        avg_magnitude = results_df['magnitude'].mean()
+        # Avoid mean of empty slice warning
+        if len(results_df['magnitude'].dropna()) > 0:
+            avg_magnitude = results_df['magnitude'].mean()
+        else:
+            avg_magnitude = 0.0
         
         logger.info(
             f"\nBatch processing complete: {events_with_data}/{total_events} events with data"

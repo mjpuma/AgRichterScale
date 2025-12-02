@@ -2,11 +2,12 @@
 
 import logging
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Any
 import pandas as pd
 import numpy as np
-import geopandas as gpd
-from shapely.geometry import Point, Polygon
+# geopandas and shapely imported lazily to avoid segfaults on environments without binary compatibility
+# import geopandas as gpd
+# from shapely.geometry import Point, Polygon
 
 from ..core.config import Config
 from .grid_manager import GridDataManager
@@ -35,8 +36,9 @@ class SpatialMapper:
         self.grid_manager = grid_manager
         self.country_codes_mapping: Optional[pd.DataFrame] = None
         self.boundary_data_loaded = False
-        self.country_boundaries: Optional[gpd.GeoDataFrame] = None
-        self.state_boundaries: Optional[gpd.GeoDataFrame] = None
+        # Type hint as Any for lazy import compatibility
+        self.country_boundaries: Optional[Any] = None
+        self.state_boundaries: Optional[Any] = None
         self._cache: Dict = {}
         self._country_grid_cache: Dict[str, Tuple[pd.DataFrame, pd.DataFrame]] = {}
         self._state_grid_cache: Dict[str, Tuple[pd.DataFrame, pd.DataFrame]] = {}
@@ -569,23 +571,24 @@ class SpatialMapper:
         Returns:
             Tuple of (production_df, harvest_area_df)
         """
-        # Convert country code to ISO3
-        iso3_code = self.get_iso3_from_country_code(country_code, code_system)
+        # Convert country code to FIPS (SPAM uses FIPS codes)
+        fips_code = self.get_fips_from_country_code(country_code, code_system)
         
-        if iso3_code is None:
-            logger.warning(f"Could not map country code {country_code} to ISO3")
+        if fips_code is None:
+            country_name = self.get_country_name_from_code(country_code, code_system)
+            logger.warning(f"Could not map country code {country_code} to FIPS (Country: {country_name})")
             return pd.DataFrame(), pd.DataFrame()
         
         # Ensure grid data is loaded
         if not self.grid_manager.is_loaded():
             self.grid_manager.load_spam_data()
         
-        # Query grid cells by ISO3 code
+        # Query grid cells by FIPS code
         try:
-            production_cells, harvest_area_cells = self.grid_manager.get_grid_cells_by_iso3(iso3_code)
+            production_cells, harvest_area_cells = self.grid_manager.get_grid_cells_by_iso3(fips_code)
             return production_cells, harvest_area_cells
         except Exception as e:
-            logger.error(f"Error querying grid cells for ISO3 {iso3_code}: {e}")
+            logger.error(f"Error querying grid cells for FIPS {fips_code}: {e}")
             return pd.DataFrame(), pd.DataFrame()
     
     def load_boundary_data(
@@ -610,6 +613,12 @@ class SpatialMapper:
         """
         logger.info("Loading boundary data (optional)...")
         
+        try:
+            import geopandas as gpd
+        except ImportError:
+            logger.warning("geopandas not available, cannot load boundary shapefiles")
+            return
+            
         # Try to load country boundaries
         if country_shapefile and country_shapefile.exists():
             try:
@@ -806,22 +815,23 @@ class SpatialMapper:
             logger.debug(f"Returning cached grid cells for state codes {state_codes}")
             return self._cache[cache_key]
         
-        # First get country ISO3 code
-        iso3_code = self.get_iso3_from_country_code(country_code, code_system)
+        # Get FIPS code (SPAM uses FIPS codes)
+        fips_code = self.get_fips_from_country_code(country_code, code_system)
         
-        if iso3_code is None:
-            logger.warning(f"Could not map country code {country_code} to ISO3")
+        if fips_code is None:
+            country_name = self.get_country_name_from_code(country_code, code_system)
+            logger.warning(f"Could not map country code {country_code} to FIPS (Country: {country_name})")
             return [], []
         
         # Ensure grid data is loaded
         if not self.grid_manager.is_loaded():
             self.grid_manager.load_spam_data()
         
-        # Get all grid cells for the country
-        production_cells, harvest_area_cells = self.grid_manager.get_grid_cells_by_iso3(iso3_code)
+        # Get all grid cells for the country using FIPS code
+        production_cells, harvest_area_cells = self.grid_manager.get_grid_cells_by_iso3(fips_code)
         
         if len(production_cells) == 0:
-            logger.warning(f"No grid cells found for country ISO3: {iso3_code}")
+            logger.warning(f"No grid cells found for country FIPS: {fips_code}")
             return [], []
         
         # Filter by state codes/names
@@ -840,7 +850,7 @@ class SpatialMapper:
         if len(production_ids) == 0:
             logger.warning(
                 f"No grid cells found for states {state_codes} in {country_name or 'Unknown'} "
-                f"(ISO3: {iso3_code})"
+                f"(FIPS: {fips_code})"
             )
         else:
             logger.info(
@@ -939,11 +949,12 @@ class SpatialMapper:
         Returns:
             Tuple of (production_df, harvest_area_df)
         """
-        # Get country ISO3 code
-        iso3_code = self.get_iso3_from_country_code(country_code, code_system)
+        # Get FIPS code
+        fips_code = self.get_fips_from_country_code(country_code, code_system)
         
-        if iso3_code is None:
-            logger.warning(f"Could not map country code {country_code} to ISO3")
+        if fips_code is None:
+            country_name = self.get_country_name_from_code(country_code, code_system)
+            logger.warning(f"Could not map country code {country_code} to FIPS (Country: {country_name})")
             return pd.DataFrame(), pd.DataFrame()
         
         # Ensure grid data is loaded
@@ -951,7 +962,7 @@ class SpatialMapper:
             self.grid_manager.load_spam_data()
         
         # Get all grid cells for the country
-        production_cells, harvest_area_cells = self.grid_manager.get_grid_cells_by_iso3(iso3_code)
+        production_cells, harvest_area_cells = self.grid_manager.get_grid_cells_by_iso3(fips_code)
         
         # Filter by state codes
         production_state_cells = self._filter_by_state(production_cells, state_codes)
