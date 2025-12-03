@@ -323,6 +323,26 @@ def main():
         plt.savefig(output_path, dpi=300, bbox_inches='tight', facecolor='white')
         plt.close()
         logger.info(f"✅ Combined 6-panel figure saved: {output_path}")
+        
+        # Export country statistics table
+        stats_list = []
+        for key, data in plot_data.items():
+            # Extract thresholds
+            thresholds = data['config'].thresholds
+            stats = {
+                'Country': key,
+                'Annual Production (kcal)': f"{data['prod']:.2e}",
+                'Harvest Area (km2)': f"{data['harv']:,.0f}",
+                '1-Month Supply (kcal)': f"{thresholds.get('1 Month', 0):.2e}",
+                '3-Month Supply (kcal)': f"{thresholds.get('3 Months', 0):.2e}",
+                'Total Stocks (kcal)': f"{thresholds.get('Total Stocks', 0):.2e}"
+            }
+            stats_list.append(stats)
+            
+        stats_df = pd.DataFrame(stats_list)
+        stats_path = results_dir / 'country_stocks_verification_table.csv'
+        stats_df.to_csv(stats_path, index=False)
+        logger.info(f"✅ Verification table saved: {stats_path}")
 
         return 0
         
