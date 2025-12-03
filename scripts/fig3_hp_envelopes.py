@@ -20,14 +20,14 @@ sys.path.append(str(Path(__file__).parent.parent))
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger('figure3')
 
-# Set journal-quality fonts (Nature style)
+# Set journal-quality fonts (Nature style - Larger)
 mpl.rcParams.update({
-    'font.size': 18,
-    'axes.titlesize': 22,
-    'axes.labelsize': 20,
-    'xtick.labelsize': 16,
-    'ytick.labelsize': 16,
-    'legend.fontsize': 16,
+    'font.size': 20,
+    'axes.titlesize': 24,
+    'axes.labelsize': 22,
+    'xtick.labelsize': 18,
+    'ytick.labelsize': 18,
+    'legend.fontsize': 18,
     'font.weight': 'normal',
     'axes.linewidth': 1.5,
     'lines.linewidth': 2.0,

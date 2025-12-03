@@ -21,14 +21,14 @@ sys.path.append(str(Path(__file__).parent.parent))
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger('figure4')
 
-# Set journal-quality fonts (Nature style)
+# Set journal-quality fonts (Nature style - Larger)
 mpl.rcParams.update({
-    'font.size': 18,
-    'axes.titlesize': 22,
-    'axes.labelsize': 20,
-    'xtick.labelsize': 16,
-    'ytick.labelsize': 16,
-    'legend.fontsize': 16,
+    'font.size': 20,
+    'axes.titlesize': 24,
+    'axes.labelsize': 22,
+    'xtick.labelsize': 18,
+    'ytick.labelsize': 18,
+    'legend.fontsize': 18,
     'font.weight': 'normal',
     'axes.linewidth': 1.5,
     'lines.linewidth': 2.0,
@@ -281,15 +281,19 @@ def main():
                 logger.error(traceback.format_exc())
                 continue
         
-        # Create 4-panel combined figure for CORE countries
-        logger.info("Creating 4-panel combined figure (Core Countries)...")
-        fig, axes = plt.subplots(2, 2, figsize=(20, 16))
+        # Combine all countries into a single 6-panel figure (Core + selected Additional)
+        # Selection: USA, China, India, Brazil, France, Argentina
+        # (Egypt and Australia moved to supplementary/individual)
+        selected_countries = ['USA', 'China', 'India', 'Brazil', 'France', 'Argentina']
+        
+        logger.info("Creating 6-panel combined figure (Selected Countries)...")
+        fig, axes = plt.subplots(2, 3, figsize=(24, 16))
         axes = axes.flatten()
         
         # Debug: Print plot_data keys
         logger.info(f"Available countries in plot_data: {list(plot_data.keys())}")
         
-        for i, country_key in enumerate(core_countries):
+        for i, country_key in enumerate(selected_countries):
             logger.info(f"  Plotting subplot {i}: {country_key}")
             if country_key not in plot_data:
                 logger.warning(f"    ⚠️ {country_key} missing from plot_data!")
@@ -311,41 +315,14 @@ def main():
                 total_harvest=data['harv']
             )
             
-            axes[i].set_title(country_key, fontsize=20, fontweight='bold')
+            axes[i].set_title(country_key, fontsize=24, fontweight='bold')
             logger.info(f"    ✓ Added subplot for {country_key}")
         
         plt.tight_layout(pad=2.0)
         output_path = results_dir / 'figure4_country_envelopes.png'
         plt.savefig(output_path, dpi=300, bbox_inches='tight', facecolor='white')
         plt.close()
-        logger.info(f"✅ Core combined figure saved: {output_path}")
-        
-        # Create 4-panel combined figure for ADDITIONAL countries
-        logger.info("Creating 4-panel combined figure (Additional Countries)...")
-        fig, axes = plt.subplots(2, 2, figsize=(20, 16))
-        axes = axes.flatten()
-        
-        for i, country_key in enumerate(additional_countries):
-            if country_key not in plot_data:
-                continue
-                
-            data = plot_data[country_key]
-            visualizer = HPEnvelopeVisualizer(data['config'])
-            
-            visualizer.create_hp_envelope_plot(
-                data['envelope'], 
-                data['events'],
-                ax=axes[i],
-                total_production=data['prod'],
-                total_harvest=data['harv']
-            )
-            axes[i].set_title(country_key, fontsize=20, fontweight='bold')
-            
-        plt.tight_layout(pad=2.0)
-        output_path_add = results_dir / 'figure4_additional_countries.png'
-        plt.savefig(output_path_add, dpi=300, bbox_inches='tight', facecolor='white')
-        plt.close()
-        logger.info(f"✅ Additional combined figure saved: {output_path_add}")
+        logger.info(f"✅ Combined 6-panel figure saved: {output_path}")
 
         return 0
         
