@@ -73,6 +73,11 @@ def main():
         
         output_path = results_dir / 'figureS1_global_maps.png'
         map_generator.generate_publication_maps(crop_data, output_path)
+        # Also save as SVG - Not supported by generate_publication_maps directly but let's check if we can modify it
+        # The generator saves directly. I should modify the generator or assume it saves png.
+        # Wait, the tool definition shows generate_publication_maps takes output_path.
+        # I'll modify the loop below to save svg as well. 
+        map_generator.generate_publication_maps(crop_data, results_dir / 'figureS1_global_maps.svg')
         
         logger.info("")
         logger.info("🎉 SUCCESS!")

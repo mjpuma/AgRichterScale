@@ -77,14 +77,16 @@ python3 generate_all_4_figures.py
 
 ### Journal-Quality Output
 
-- 300 DPI resolution
+- 300 DPI resolution PNG
+- Scalable Vector Graphics (SVG) for manual editing
 - Professional font sizes (16pt base, 18pt titles)
 - Proper axis labels and legends
-- Multiple formats (PNG, SVG, EPS for individual figures)
 
 ## Output Files
 
-All figures are saved directly to the `results/` directory:
+All figures are saved directly to the `results/` directory in both PNG and SVG formats.
+
+**Note:** `figureS1_global_maps.svg` is extremely large (~700MB) due to the high number of grid cells plotted. It is recommended to use the PNG version for general viewing.
 
 ```
 results/

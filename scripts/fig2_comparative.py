@@ -130,7 +130,8 @@ def generate_comparative_figure():
     output_path = Path('results/figure2_comparative_envelopes.png')
     output_path.parent.mkdir(exist_ok=True)
     plt.savefig(output_path, dpi=300)
-    logger.info(f"Saved to {output_path}")
+    plt.savefig(output_path.with_suffix('.svg'), format='svg')
+    logger.info(f"Saved to {output_path} and {output_path.with_suffix('.svg')}")
 
 if __name__ == "__main__":
     generate_comparative_figure()

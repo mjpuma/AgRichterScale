@@ -129,6 +129,8 @@ def main():
                 events_data, 
                 save_path=results_dir / f'figure3_{crop}_individual.png'
             )
+            # Also save as SVG
+            fig.savefig(results_dir / f'figure3_{crop}_individual.svg', format='svg', bbox_inches='tight')
             plt.close(fig)
             
             logger.info(f"    ✅ {crop} saved")
@@ -172,6 +174,8 @@ def main():
         plt.tight_layout(pad=2.0)
         output_path = results_dir / 'figure3_agrichter_scale.png'
         plt.savefig(output_path, dpi=300, bbox_inches='tight', facecolor='white')
+        # Also save as SVG
+        plt.savefig(results_dir / 'figure3_agrichter_scale.svg', format='svg', bbox_inches='tight', facecolor='white')
         plt.close()
         
         logger.info("")

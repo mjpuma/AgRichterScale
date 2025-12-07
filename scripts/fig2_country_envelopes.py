@@ -271,6 +271,8 @@ def main():
                     total_production=country_prod,
                     total_harvest=country_harv
                 )
+                # Also save as SVG
+                fig.savefig(results_dir / f'figure2_{country_key.lower()}_individual.svg', format='svg', bbox_inches='tight')
                 plt.close(fig)
                 
                 logger.info(f"  ✅ {country_key} saved")
@@ -321,6 +323,8 @@ def main():
         plt.tight_layout(pad=2.0)
         output_path = results_dir / 'figure2_country_envelopes.png'
         plt.savefig(output_path, dpi=300, bbox_inches='tight', facecolor='white')
+        # Also save as SVG
+        plt.savefig(results_dir / 'figure2_country_envelopes.svg', format='svg', bbox_inches='tight', facecolor='white')
         plt.close()
         logger.info(f"✅ Combined 6-panel figure saved: {output_path}")
         
