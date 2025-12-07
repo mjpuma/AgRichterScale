@@ -56,6 +56,7 @@ matlab_outputs/
 python_outputs/
 comparison_reports/
 ARCHIVE_OLD_OUTPUTS/
+archive/
 multicropping_fix/output_data/*.json
 
 # Large data files (SPAM data - must be downloaded separately)
