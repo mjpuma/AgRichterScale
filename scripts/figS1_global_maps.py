@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Figure 1: Global Production and Harvest Area Maps (8 panels)
+Figure S1: Global Production and Harvest Area Maps (8 panels)
 
 Generates publication-ready global maps showing production and harvest area
 for wheat, maize, rice, and all grains combined.
@@ -17,7 +17,7 @@ sys.path.append(str(Path(__file__).parent.parent))
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-logger = logging.getLogger('figure1')
+logger = logging.getLogger('figureS1')
 
 # Set journal-quality fonts (Nature style - Larger)
 mpl.rcParams.update({
@@ -37,9 +37,9 @@ from agririchter.visualization.global_map_generator import GlobalMapGenerator
 
 
 def main():
-    """Generate Figure 1: Global Maps."""
+    """Generate Figure S1: Global Maps."""
     logger.info("=" * 60)
-    logger.info("FIGURE 1: Global Production and Harvest Area Maps")
+    logger.info("FIGURE S1: Global Production and Harvest Area Maps")
     logger.info("=" * 60)
     
     try:
@@ -71,12 +71,12 @@ def main():
         config = Config(crop_type='allgrain', root_dir='.')
         map_generator = GlobalMapGenerator(config)
         
-        output_path = results_dir / 'figure1_global_maps.png'
+        output_path = results_dir / 'figureS1_global_maps.png'
         map_generator.generate_publication_maps(crop_data, output_path)
         
         logger.info("")
         logger.info("🎉 SUCCESS!")
-        logger.info(f"✅ Figure 1 saved: {output_path}")
+        logger.info(f"✅ Figure S1 saved: {output_path}")
         return 0
         
     except Exception as e:

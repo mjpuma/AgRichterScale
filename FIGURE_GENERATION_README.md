@@ -8,28 +8,28 @@ This directory contains 4 standalone scripts to generate the publication figures
 
 ### Individual Figure Scripts
 
-1. **`fig1_global_maps.py`** - Figure 1: Global Production and Harvest Area Maps (8 panels)
-   - Generates maps for wheat, maize, rice, and allgrain
-   - Shows production and harvest area for each crop
-   - Output: `results/figure1_global_maps.png`
-
-2. **`fig2_agrichter_scale.py`** - Figure 2: AgRichter Scale (4 panels)
-   - Generates AgRichter Scale figures for 4 crops
-   - Shows magnitude (M_D = log10(A_H)) vs production loss
-   - Includes historical events with labels
-   - Output: `results/figure2_agrichter_scale.png` + individual crop files
-
-3. **`fig3_hp_envelopes.py`** - Figure 3: H-P Envelopes (4 panels)
+1. **`scripts/fig1_hp_envelopes.py`** - Figure 1: H-P Envelopes (4 panels)
    - Generates H-P envelope figures for 4 crops
    - Shows harvest area disruption vs production loss bounds
    - Includes historical events with labels
-   - Output: `results/figure3_hp_envelopes.png` + individual crop files
+   - Output: `results/figure1_hp_envelopes.png` + individual crop files
 
-4. **`fig4_country_envelopes.py`** - Figure 4: Country H-P Envelopes (4 panels)
+2. **`scripts/fig2_country_envelopes.py`** - Figure 2: Country H-P Envelopes (4 panels)
    - Generates country-level H-P envelopes for USA, China, India, Brazil
    - Uses allgrain data filtered by country
    - Includes country-specific historical events
-   - Output: `results/figure4_country_envelopes.png` + individual country files
+   - Output: `results/figure2_country_envelopes.png` + individual country files
+
+3. **`scripts/fig3_agrichter_scale.py`** - Figure 3: AgRichter Scale (4 panels)
+   - Generates AgRichter Scale figures for 4 crops
+   - Shows magnitude (M_D = log10(A_H)) vs production loss
+   - Includes historical events with labels
+   - Output: `results/figure3_agrichter_scale.png` + individual crop files
+
+4. **`scripts/figS1_global_maps.py`** - Figure S1: Global Production and Harvest Area Maps (8 panels)
+   - Generates maps for wheat, maize, rice, and allgrain
+   - Shows production and harvest area for each crop
+   - Output: `results/figureS1_global_maps.png`
 
 ### Master Script
 
@@ -40,17 +40,17 @@ This directory contains 4 standalone scripts to generate the publication figures
 ### Generate Individual Figures
 
 ```bash
-# Figure 1 only
-python3 fig1_global_maps.py
+# Figure 1 (H-P Envelopes)
+python3 scripts/fig1_hp_envelopes.py
 
-# Figure 2 only
-python3 fig2_agrichter_scale.py
+# Figure 2 (Country Envelopes)
+python3 scripts/fig2_country_envelopes.py
 
-# Figure 3 only
-python3 fig3_hp_envelopes.py
+# Figure 3 (AgRichter Scale)
+python3 scripts/fig3_agrichter_scale.py
 
-# Figure 4 only
-python3 fig4_country_envelopes.py
+# Figure S1 (Global Maps)
+python3 scripts/figS1_global_maps.py
 ```
 
 ### Generate All Figures
@@ -88,22 +88,22 @@ All figures are saved directly to the `results/` directory:
 
 ```
 results/
-├── figure1_global_maps.png
-├── figure2_agrichter_scale.png
-├── figure2_wheat_individual.png
-├── figure2_maize_individual.png
-├── figure2_rice_individual.png
-├── figure2_allgrain_individual.png
-├── figure3_hp_envelopes.png
+├── figure1_hp_envelopes.png
+├── figure1_wheat_individual.png
+├── figure1_maize_individual.png
+├── figure1_rice_individual.png
+├── figure1_allgrain_individual.png
+├── figure2_country_envelopes.png
+├── figure2_usa_individual.png
+├── figure2_china_individual.png
+├── figure2_india_individual.png
+├── figure2_brazil_individual.png
+├── figure3_agrichter_scale.png
 ├── figure3_wheat_individual.png
 ├── figure3_maize_individual.png
 ├── figure3_rice_individual.png
 ├── figure3_allgrain_individual.png
-├── figure4_country_envelopes.png
-├── figure4_usa_individual.png
-├── figure4_china_individual.png
-├── figure4_india_individual.png
-└── figure4_brazil_individual.png
+└── figureS1_global_maps.png
 ```
 
 ## Dependencies

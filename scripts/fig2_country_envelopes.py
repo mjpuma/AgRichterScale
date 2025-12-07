@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Figure 4: Country H-P Envelopes
+Figure 2: Country H-P Envelopes
 
 Generates country-level H-P envelope figures for major producers and additional countries
 to show varying envelope shapes.
@@ -19,7 +19,7 @@ sys.path.append(str(Path(__file__).parent.parent))
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-logger = logging.getLogger('figure4')
+logger = logging.getLogger('figure2')
 
 # Set journal-quality fonts (Nature style - Larger)
 mpl.rcParams.update({
@@ -207,9 +207,9 @@ def get_global_stats():
 
 
 def main():
-    """Generate Figure 4: Country H-P Envelopes."""
+    """Generate Figure 2: Country H-P Envelopes."""
     logger.info("=" * 60)
-    logger.info("FIGURE 4: Country H-P Envelopes")
+    logger.info("FIGURE 2: Country H-P Envelopes")
     logger.info("=" * 60)
     
     try:
@@ -266,7 +266,7 @@ def main():
                 fig = visualizer.create_hp_envelope_plot(
                     envelope_data, 
                     events_data,
-                    save_path=results_dir / f'figure4_{country_key.lower()}_individual.png',
+                    save_path=results_dir / f'figure2_{country_key.lower()}_individual.png',
                     title=f'H-P Envelope - {country_key}',
                     total_production=country_prod,
                     total_harvest=country_harv
@@ -319,7 +319,7 @@ def main():
             logger.info(f"    ✓ Added subplot for {country_key}")
         
         plt.tight_layout(pad=2.0)
-        output_path = results_dir / 'figure4_country_envelopes.png'
+        output_path = results_dir / 'figure2_country_envelopes.png'
         plt.savefig(output_path, dpi=300, bbox_inches='tight', facecolor='white')
         plt.close()
         logger.info(f"✅ Combined 6-panel figure saved: {output_path}")

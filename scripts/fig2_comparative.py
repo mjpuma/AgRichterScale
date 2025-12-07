@@ -127,7 +127,7 @@ def generate_comparative_figure():
 
     plt.tight_layout()
     
-    output_path = Path('results/comparative_envelopes.png')
+    output_path = Path('results/figure2_comparative_envelopes.png')
     output_path.parent.mkdir(exist_ok=True)
     plt.savefig(output_path, dpi=300)
     logger.info(f"Saved to {output_path}")
