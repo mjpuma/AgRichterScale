@@ -76,7 +76,7 @@ class AgriRichterScaleVisualizer:
             return 'Geophysical'
         else:
             return 'Compound/Other'
-
+    
     def _load_event_metadata(self) -> Optional[pd.DataFrame]:
         """Load event metadata from food_disruptions.csv.
         
@@ -259,7 +259,7 @@ class AgriRichterScaleVisualizer:
         else:
             base_production = 8e14
             area_scaling = 2e5
-            
+        
         yield_density = base_production / area_scaling  # kcal/km²
         
         # Plot horizontal threshold lines
@@ -405,27 +405,29 @@ class AgriRichterScaleVisualizer:
             return
         
         logger.info(f"Plotting {len(valid_events)} historical events (Richter style)")
+
+        events = valid_events
         
         # Consolidate event types
-        if self.use_event_types and 'event_type' in events_data.columns:
-            events_data['consolidated_type'] = events_data['event_type'].apply(self._consolidate_event_type)
+        if self.use_event_types and 'event_type' in events.columns:
+            events['consolidated_type'] = events['event_type'].apply(self._consolidate_event_type)
         else:
-            events_data['consolidated_type'] = 'Unknown'
+            events['consolidated_type'] = 'Unknown'
         
         # Plot events grouped by consolidated event type for proper legend
         plotted_types = set()
         for event_type, style in self.event_type_styles.items():
-            type_data = events_data[events_data['consolidated_type'] == event_type]
+            type_data = events[events['consolidated_type'] == event_type]
             if not type_data.empty:
                 # Plot this event type group
                 ax.scatter(type_data['magnitude'], type_data['harvest_area_km2'],
-                               c=style['color'], s=100, alpha=0.8, edgecolors='black', linewidth=1,
-                               marker=style['marker'], label=style['label'], zorder=5)
+                           c=style['color'], s=100, alpha=0.8, edgecolors='black', linewidth=1,
+                           marker=style['marker'], label=style['label'], zorder=5)
                 plotted_types.add(event_type)
         
         # Plot unknown types if any
-        unknown_mask = ~events_data['consolidated_type'].isin(self.event_type_styles.keys())
-        unknown_data = events_data[unknown_mask]
+        unknown_mask = ~events['consolidated_type'].isin(self.event_type_styles.keys())
+        unknown_data = events[unknown_mask]
         if not unknown_data.empty:
              ax.scatter(unknown_data['magnitude'], unknown_data['harvest_area_km2'],
                        c='gray', s=100, alpha=0.8, edgecolors='black', linewidth=1,
@@ -437,18 +439,18 @@ class AgriRichterScaleVisualizer:
             
             # Create text annotations
             texts = []
-            for idx, row in events_data.iterrows():
+            for idx, row in events.iterrows():
                 # Use event type color for text label
                 etype = row.get('consolidated_type', 'Unknown')
                 if etype in self.event_type_styles:
                     text_color = self.event_type_styles[etype]['color']
                 else:
                     text_color = 'black'
-
+                    
                 text = ax.text(row['magnitude'], row['harvest_area_km2'], 
                              f"  {row['event_name']}", fontsize=8,
-                             ha='left', va='center', color=text_color,
-                             fontweight='bold')
+                                 ha='left', va='center', color=text_color,
+                                 fontweight='bold')
                 texts.append(text)
             
             # Adjust text positions to avoid overlap
@@ -462,17 +464,20 @@ class AgriRichterScaleVisualizer:
                           arrowprops=dict(arrowstyle='->', color='gray', lw=0.8, alpha=0.8))
         except ImportError:
             # Fallback if adjustText not available
-            for idx, row in events_data.iterrows():
+            for idx, row in events.iterrows():
+                etype = row.get('consolidated_type', 'Unknown')
+                if etype in self.event_type_styles:
+                    text_color = self.event_type_styles[etype]['color']
+                else:
+                    text_color = 'black'
+
                 # Position label slightly offset from point
-                x_offset = 0.05
-                y_offset = row['harvest_area_km2'] * 1.2
-                
                 ax.annotate(row['event_name'], 
                            xy=(row['magnitude'], row['harvest_area_km2']),
-                           xytext=(5, 5), textcoords='offset points',
-                           fontsize=8, ha='left', color=text_color,
-                           fontweight='bold',
-                           arrowprops=dict(arrowstyle='->', color='gray', lw=0.5, alpha=0.6))
+                              xytext=(5, 5), textcoords='offset points',
+                              fontsize=8, ha='left', color=text_color,
+                              fontweight='bold',
+                              arrowprops=dict(arrowstyle='->', color='gray', lw=0.5, alpha=0.6))
     
     def _save_figure(self, fig: plt.Figure, save_path: Union[str, Path]) -> None:
         """Save figure in multiple formats."""

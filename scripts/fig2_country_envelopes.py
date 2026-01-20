@@ -12,7 +12,6 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import pandas as pd
-import numpy as np
 
 # Add parent directory to path to allow importing from agririchter
 sys.path.append(str(Path(__file__).parent.parent))
@@ -124,30 +123,7 @@ def calculate_country_envelope(country_key: str, country_name_spam: str, global_
     logger.info(f"  Calculating envelope for {country_key} (SPAM name='{country_name_spam}')...")
     
     # Initialize config for allgrain with dynamic thresholds
-    import inspect
-    logger.info(f"Imported Config from: {inspect.getfile(Config)}")
     config = Config(crop_type='allgrain', root_dir='.', use_dynamic_thresholds=True)
-    
-    # WORKAROUND for mysterious AttributeError
-    if not hasattr(config, 'get_ipc_colors'):
-        logger.warning("Patching missing get_ipc_colors method on Config object")
-        def get_ipc_colors_patch():
-            if config.use_dynamic_thresholds:
-                 return {
-                     '1 Month': '#FFD700',       # Gold/Yellow
-                     '3 Months': '#FF4500',      # OrangeRed
-                     'Total Stocks': '#800080'   # Purple
-                 }
-            return {
-                1: '#00FF00', 2: '#FFFF00', 3: '#FFA500', 4: '#FF0000', 5: '#800080'
-            }
-        config.get_ipc_colors = get_ipc_colors_patch
-        
-    if not hasattr(config, 'get_crop_indices'):
-        logger.warning("Patching missing get_crop_indices method on Config object")
-        def get_crop_indices_patch():
-            return config.crop_indices
-        config.get_crop_indices = get_crop_indices_patch
 
     config.data_files['production'] = Path('spam2020V2r0_global_production/spam2020V2r0_global_production/spam2020V2r0_global_P_TA.csv')
     config.data_files['harvest_area'] = Path('spam2020V2r0_global_harvested_area/spam2020V2r0_global_harvested_area/spam2020V2r0_global_H_TA.csv')

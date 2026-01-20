@@ -70,14 +70,19 @@ def main():
         logger.info("Generating 8-panel global maps...")
         config = Config(crop_type='allgrain', root_dir='.')
         map_generator = GlobalMapGenerator(config)
-        
+        if map_generator.projection is None:
+            logger.error("Cartopy is not available. Cannot generate global maps.")
+            return 1
+
+        result = map_generator.generate_publication_maps(crop_data, output_path=None)
+        fig = result.figure
+        fig.suptitle('Figure S1: Global Agricultural Production and Harvest Area Maps',
+                     fontsize=20, fontweight='bold', y=0.97)
+
         output_path = results_dir / 'figureS1_global_maps.png'
-        map_generator.generate_publication_maps(crop_data, output_path)
-        # Also save as SVG - Not supported by generate_publication_maps directly but let's check if we can modify it
-        # The generator saves directly. I should modify the generator or assume it saves png.
-        # Wait, the tool definition shows generate_publication_maps takes output_path.
-        # I'll modify the loop below to save svg as well. 
-        map_generator.generate_publication_maps(crop_data, results_dir / 'figureS1_global_maps.svg')
+        fig.savefig(output_path, dpi=300, bbox_inches='tight', facecolor='white')
+        fig.savefig(results_dir / 'figureS1_global_maps.svg', format='svg', bbox_inches='tight', facecolor='white')
+        plt.close(fig)
         
         logger.info("")
         logger.info("🎉 SUCCESS!")

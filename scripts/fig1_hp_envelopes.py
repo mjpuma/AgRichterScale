@@ -40,7 +40,6 @@ from agririchter.data.events import EventsProcessor
 from agririchter.analysis.event_calculator import EventCalculator
 from agririchter.analysis.envelope_v2 import HPEnvelopeCalculatorV2
 from agririchter.visualization.hp_envelope import HPEnvelopeVisualizer
-import pandas as pd
 
 
 def load_real_events(crop: str, config: Config, grid_manager: GridDataManager):
