@@ -50,7 +50,7 @@ class GlobalMapGenerator:
         else:
             self.logger.warning("Cartopy not available. Map generation will fail.")
             self.projection = None
-            
+        
         # Agricultural extent (including southern hemisphere agriculture)
         self.global_extent = [-180, 180, -56, 75]
         

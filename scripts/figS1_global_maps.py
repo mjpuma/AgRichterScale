@@ -81,7 +81,11 @@ def main():
 
         output_path = results_dir / 'figureS1_global_maps.png'
         fig.savefig(output_path, dpi=300, bbox_inches='tight', facecolor='white')
-        fig.savefig(results_dir / 'figureS1_global_maps.svg', format='svg', bbox_inches='tight', facecolor='white')
+        
+        # SKIP SVG for S1 - File is too large (~600MB) for GitHub and most viewers.
+        # Only save SVG if explicitly needed for high-quality editing.
+        # fig.savefig(results_dir / 'figureS1_global_maps.svg', format='svg', bbox_inches='tight', facecolor='white')
+        
         plt.close(fig)
         
         logger.info("")

@@ -197,7 +197,7 @@ class Config:
         self.disruption_range = DISRUPTION_RANGES[self.crop_type]
         self.production_range = PRODUCTION_RANGES[self.crop_type]
         self.event_colors = EVENT_COLORS[self.crop_type]
-    
+        
     def get_ipc_colors(self) -> Dict[Union[int, str], str]:
         """Get threshold colors for visualization."""
         if self.use_dynamic_thresholds:
@@ -449,3 +449,4 @@ class Config:
         except Exception as e:
             logging.warning(f"Failed to calculate SUR thresholds: {e}")
             return None
+    
