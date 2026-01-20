@@ -231,6 +231,17 @@ class HPEnvelopeVisualizer:
         ax.plot(lower_magnitude, lower_bound, 'b-', linewidth=2, 
                label='Lower Bound', alpha=0.8)
     
+    def _format_kcal(self, value: float) -> str:
+        """Format kcal values with appropriate units (P, T, G)."""
+        if value >= 1e15:
+            return f"{value/1e15:.1f}P kcal"
+        elif value >= 1e12:
+            return f"{value/1e12:.1f}T kcal"
+        elif value >= 1e9:
+            return f"{value/1e9:.1f}G kcal"
+        else:
+            return f"{value:.1e} kcal"
+
     def _plot_agriPhase_thresholds(self, ax: plt.Axes) -> None:
         """Plot AgriPhase/Supply threshold lines as horizontal dashed lines."""
         # Get thresholds from config (values in kcal)
@@ -256,7 +267,8 @@ class HPEnvelopeVisualizer:
             color = colors.get(name, '#000000')
             
             # Format label
-            label = f"{name} (~{value_kcal/1e15:.1f}P kcal)"
+            formatted_value = self._format_kcal(value_kcal)
+            label = f"{name} (~{formatted_value})"
             
             # Only plot if within reasonable range (or just let matplotlib handle clipping)
             # Adding a label at the right edge is helpful

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Figure 2: Country H-P Envelopes
+Figure 3: Country H-P Envelopes
 
 Generates country-level H-P envelope figures for major producers and additional countries
 to show varying envelope shapes.
@@ -18,7 +18,7 @@ sys.path.append(str(Path(__file__).parent.parent))
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-logger = logging.getLogger('figure2')
+logger = logging.getLogger('figure3')
 
 # Set journal-quality fonts (Nature style - Larger)
 mpl.rcParams.update({
@@ -183,9 +183,9 @@ def get_global_stats():
 
 
 def main():
-    """Generate Figure 2: Country H-P Envelopes."""
+    """Generate Figure 3: Country H-P Envelopes."""
     logger.info("=" * 60)
-    logger.info("FIGURE 2: Country H-P Envelopes")
+    logger.info("FIGURE 3: Country H-P Envelopes")
     logger.info("=" * 60)
     
     try:
@@ -242,14 +242,14 @@ def main():
                 fig = visualizer.create_hp_envelope_plot(
                     envelope_data, 
                     events_data,
-                    save_path=results_dir / f'figure2_{country_key.lower()}_individual.png',
+                    save_path=results_dir / f'figure3_{country_key.lower()}_individual.png',
                     title=f'H-P Envelope - {country_key}',
                     show_events=True, # Keep events for individual plots
                     total_production=country_prod,
                     total_harvest=country_harv
                 )
                 # Also save as SVG
-                fig.savefig(results_dir / f'figure2_{country_key.lower()}_individual.svg', format='svg', bbox_inches='tight')
+                fig.savefig(results_dir / f'figure3_{country_key.lower()}_individual.svg', format='svg', bbox_inches='tight')
                 plt.close(fig)
                 
                 logger.info(f"  ✅ {country_key} saved")
@@ -299,10 +299,10 @@ def main():
             logger.info(f"    ✓ Added subplot for {country_key}")
         
         plt.tight_layout(pad=2.0)
-        output_path = results_dir / 'figure2_country_envelopes.png'
+        output_path = results_dir / 'figure3_country_envelopes.png'
         plt.savefig(output_path, dpi=300, bbox_inches='tight', facecolor='white')
         # Also save as SVG
-        plt.savefig(results_dir / 'figure2_country_envelopes.svg', format='svg', bbox_inches='tight', facecolor='white')
+        plt.savefig(results_dir / 'figure3_country_envelopes.svg', format='svg', bbox_inches='tight', facecolor='white')
         plt.close()
         logger.info(f"✅ Combined 6-panel figure saved: {output_path}")
         

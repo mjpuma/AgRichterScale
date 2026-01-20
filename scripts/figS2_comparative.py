@@ -124,7 +124,7 @@ def generate_comparative_figure():
         # Formatting
         ax.set_xlabel('Disrupted Harvest Area (km²)', fontsize=14)
         ax.set_ylabel('Production Loss (% of National Total)', fontsize=14)
-        ax.set_title(f'Comparative National Vulnerability Fingerprints\n(H-P Envelopes Normalized - {suffix})', fontsize=16)
+        ax.set_title(f'Figure S2: Comparative National Vulnerability Fingerprints\n(H-P Envelopes Normalized - {suffix})', fontsize=16)
         
         ax.grid(True, which="both", ls="-", alpha=0.2)
         ax.legend(fontsize=10, loc='upper left', ncol=2)

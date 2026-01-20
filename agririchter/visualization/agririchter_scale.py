@@ -236,6 +236,15 @@ class AgriRichterScaleVisualizer:
                alpha=0.8, zorder=2,
                label='Magnitude-Area Relationship (A_H = 10^M_D)')
     
+    def _format_area(self, value: float) -> str:
+        """Format area values with appropriate units (M, k)."""
+        if value >= 1e6:
+            return f"{value/1e6:.1f}M km²"
+        elif value >= 1e3:
+            return f"{value/1e3:.1f}k km²"
+        else:
+            return f"{value:.0f} km²"
+
     def _plot_agriPhase_thresholds_richter_style(self, ax: plt.Axes, xlim: Tuple[float, float]) -> None:
         """Plot AgriPhase/Supply threshold lines with colors."""
         # Get thresholds from config (values in kcal)
@@ -279,7 +288,8 @@ class AgriRichterScaleVisualizer:
             color = colors.get(name, '#000000')
             
             # Format label with area
-            label = f"{name} (~{area_km2/1e3:,.0f}k km²)"
+            formatted_area = self._format_area(area_km2)
+            label = f"{name} (~{formatted_area})"
             
             # Only plot if within reasonable range
             if area_km2 > 10**xlim[0] and area_km2 < 10**xlim[1]:

@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-Figure 3: AgRichter Scale (4 panels)
+Figure 2: H-P Envelopes (4 panels)
 
-Generates AgRichter Scale figures for wheat, maize, rice, and all grains.
-Shows magnitude (M_D = log10(A_H)) vs production loss with historical events.
+Generates H-P envelope figures for wheat, maize, rice, and all grains.
+Shows harvest area disruption vs production loss with historical events.
 """
 
 import logging
@@ -11,13 +11,14 @@ import sys
 from pathlib import Path
 import matplotlib.pyplot as plt
 import matplotlib as mpl
+import pandas as pd
 
 # Add parent directory to path to allow importing from agririchter
 sys.path.append(str(Path(__file__).parent.parent))
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-logger = logging.getLogger('figure3')
+logger = logging.getLogger('figure2')
 
 # Set journal-quality fonts (Nature style - Larger)
 mpl.rcParams.update({
@@ -37,8 +38,8 @@ from agririchter.data.grid_manager import GridDataManager
 from agririchter.data.spatial_mapper import SpatialMapper
 from agririchter.data.events import EventsProcessor
 from agririchter.analysis.event_calculator import EventCalculator
-from agririchter.visualization.agririchter_scale import AgriRichterScaleVisualizer
-import pandas as pd
+from agririchter.analysis.envelope_v2 import HPEnvelopeCalculatorV2
+from agririchter.visualization.hp_envelope import HPEnvelopeVisualizer
 
 
 def load_real_events(crop: str, config: Config, grid_manager: GridDataManager):
@@ -51,8 +52,7 @@ def load_real_events(crop: str, config: Config, grid_manager: GridDataManager):
         state_file = Path('ancillary/DisruptionStateProvince.xls')
         
         if not country_file.exists() or not state_file.exists():
-            logger.error("  ❌ Event Excel files not found! Cannot load real events.")
-            logger.error(f"  Looking for: {country_file} and {state_file}")
+            logger.warning("  Event Excel files not found, using empty DataFrame")
             return pd.DataFrame()
         
         # Load Excel sheets
@@ -77,16 +77,35 @@ def load_real_events(crop: str, config: Config, grid_manager: GridDataManager):
         return events_df
         
     except Exception as e:
-        logger.error(f"  ❌ Failed to load real events: {e}")
-        import traceback
-        logger.error(traceback.format_exc())
+        logger.warning(f"  Failed to load real events: {e}")
         return pd.DataFrame()
 
 
+def calculate_envelope(crop: str):
+    """Calculate H-P envelope for a crop."""
+    logger.info(f"  Calculating envelope for {crop}...")
+    
+    # Initialize config
+    config = Config(crop_type=crop, root_dir='.')
+    config.data_files['production'] = Path('spam2020V2r0_global_production/spam2020V2r0_global_production/spam2020V2r0_global_P_TA.csv')
+    config.data_files['harvest_area'] = Path('spam2020V2r0_global_harvested_area/spam2020V2r0_global_harvested_area/spam2020V2r0_global_H_TA.csv')
+    
+    # Load data
+    grid_manager = GridDataManager(config)
+    prod_df, harv_df = grid_manager.load_spam_data()
+    
+    # Calculate envelope
+    calculator = HPEnvelopeCalculatorV2(config)
+    envelope_data = calculator.calculate_hp_envelope(prod_df, harv_df)
+    
+    logger.info(f"    ✅ Envelope calculated: {len(envelope_data.get('disrupted_areas', []))} points")
+    return envelope_data, config, grid_manager
+
+
 def main():
-    """Generate Figure 3: AgRichter Scale."""
+    """Generate Figure 2: H-P Envelopes."""
     logger.info("=" * 60)
-    logger.info("FIGURE 3: AgRichter Scale (4 panels)")
+    logger.info("FIGURE 2: H-P Envelopes (4 panels)")
     logger.info("=" * 60)
     
     try:
@@ -99,41 +118,30 @@ def main():
         crop_names = {'wheat': 'Wheat', 'maize': 'Maize', 'rice': 'Rice', 'allgrain': 'All Grains'}
         
         # Generate individual figures for each crop
-        logger.info("Generating individual AgRichter figures...")
+        logger.info("Generating individual H-P envelope figures...")
         for crop in crops:
-            logger.info(f"  Processing {crop}...")
+            logger.info(f"Processing {crop}...")
             
-            # Initialize config - using dynamic thresholds automatically
-            # NOTE: We set use_dynamic_thresholds=False for Fig 2 because it shows Area vs Magnitude,
-            # and production thresholds (in kcal) don't map directly without assuming yields.
-            config = Config(crop_type=crop, root_dir='.', use_dynamic_thresholds=False)
-            
-            # Explicitly clear thresholds to ensure NO arbitrary lines appear on Figure 3
-            config.thresholds = {}
-            
-            config.data_files['production'] = Path('spam2020V2r0_global_production/spam2020V2r0_global_production/spam2020V2r0_global_P_TA.csv')
-            config.data_files['harvest_area'] = Path('spam2020V2r0_global_harvested_area/spam2020V2r0_global_harvested_area/spam2020V2r0_global_H_TA.csv')
-            
-            # Load SPAM data
-            grid_manager = GridDataManager(config)
-            grid_manager.load_spam_data()
+            # Calculate envelope
+            envelope_data, config, grid_manager = calculate_envelope(crop)
             
             # Load REAL events (not sample data)
             events_data = load_real_events(crop, config, grid_manager)
             
             # Create visualizer
-            visualizer = AgriRichterScaleVisualizer(config, use_event_types=True)
+            visualizer = HPEnvelopeVisualizer(config)
             
             # Generate figure
-            fig = visualizer.create_agririchter_scale_plot(
-                events_data, 
-                save_path=results_dir / f'figure3_{crop}_individual.png'
+            fig = visualizer.create_hp_envelope_plot(
+                envelope_data, 
+                events_data,
+                save_path=results_dir / f'figure2_{crop}_individual.png'
             )
             # Also save as SVG
-            fig.savefig(results_dir / f'figure3_{crop}_individual.svg', format='svg', bbox_inches='tight')
+            fig.savefig(results_dir / f'figure2_{crop}_individual.svg', format='svg', bbox_inches='tight')
             plt.close(fig)
             
-            logger.info(f"    ✅ {crop} saved")
+            logger.info(f"  ✅ {crop} saved")
         
         # Create 4-panel combined figure
         logger.info("Creating 4-panel combined figure...")
@@ -143,44 +151,35 @@ def main():
         for i, crop in enumerate(crops):
             logger.info(f"  Adding {crop} to combined figure...")
             
-            # Initialize config
-            # NOTE: We set use_dynamic_thresholds=False for Fig 2 because it shows Area vs Magnitude,
-            # and production thresholds (in kcal) don't map directly without assuming yields.
-            config = Config(crop_type=crop, root_dir='.', use_dynamic_thresholds=False)
-            
-            # Explicitly clear thresholds to ensure NO arbitrary lines appear on Figure 3
-            config.thresholds = {}
-            
-            config.data_files['production'] = Path('spam2020V2r0_global_production/spam2020V2r0_global_production/spam2020V2r0_global_P_TA.csv')
-            config.data_files['harvest_area'] = Path('spam2020V2r0_global_harvested_area/spam2020V2r0_global_harvested_area/spam2020V2r0_global_H_TA.csv')
-            
-            # Load SPAM data
-            grid_manager = GridDataManager(config)
-            grid_manager.load_spam_data()
+            # Calculate envelope
+            envelope_data, config, grid_manager = calculate_envelope(crop)
             
             # Load REAL events
             events_data = load_real_events(crop, config, grid_manager)
             
-            # Create visualizer and plot on subplot
-            visualizer = AgriRichterScaleVisualizer(config, use_event_types=True)
-            visualizer.create_agririchter_scale_plot(
+            # Create visualizer
+            visualizer = HPEnvelopeVisualizer(config)
+            
+            # Plot on subplot
+            visualizer.create_hp_envelope_plot(
+                envelope_data, 
                 events_data,
                 ax=axes[i]
             )
             
             # Set subplot title
             axes[i].set_title(crop_names[crop], fontsize=20, fontweight='bold')
-
+        
         plt.tight_layout(pad=2.0)
-        output_path = results_dir / 'figure3_agrichter_scale.png'
+        output_path = results_dir / 'figure2_hp_envelopes.png'
         plt.savefig(output_path, dpi=300, bbox_inches='tight', facecolor='white')
         # Also save as SVG
-        plt.savefig(results_dir / 'figure3_agrichter_scale.svg', format='svg', bbox_inches='tight', facecolor='white')
+        plt.savefig(results_dir / 'figure2_hp_envelopes.svg', format='svg', bbox_inches='tight', facecolor='white')
         plt.close()
         
         logger.info("")
         logger.info("🎉 SUCCESS!")
-        logger.info(f"✅ Individual figures saved: figure3_{{crop}}_individual.png")
+        logger.info(f"✅ Individual figures saved: figure2_{{crop}}_individual.png")
         logger.info(f"✅ Combined figure saved: {output_path}")
         return 0
         

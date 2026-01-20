@@ -37,22 +37,28 @@ pip install -r requirements.txt
 
 Run the following commands from the root of the repository to generate the figures. The output files (PNG and SVG) will be saved to the `results/` directory.
 
-**Figure 1: H-P Envelopes (The Innovation)**
-Shows the Harvest-Production envelopes and historical events for wheat, maize, rice, and all grains.
-```bash
-python3 scripts/fig1_hp_envelopes.py
-```
-
-**Figure 2: Country H-P Envelopes**
-Shows H-P envelopes and scaled thresholds for specific countries (USA, China, India, Brazil, etc.).
-```bash
-python3 scripts/fig2_country_envelopes.py
-```
-
-**Figure 3: AgriRichter Scale**
+**Figure 1: AgriRichter Scale**
 Shows the relationship between AgriRichter Magnitude ($M_D$) and harvest area for historical events.
 ```bash
-python3 scripts/fig3_agrichter_scale.py
+python3 scripts/fig1_agrichter_scale.py
+```
+
+**Figure 2: H-P Envelopes (The Innovation)**
+Shows the Harvest-Production envelopes and historical events for wheat, maize, rice, and all grains.
+```bash
+python3 scripts/fig2_hp_envelopes.py
+```
+
+**Figure 3: Country H-P Envelopes**
+Shows H-P envelopes and scaled thresholds for specific countries (USA, China, India, Brazil, etc.).
+```bash
+python3 scripts/fig3_country_envelopes.py
+```
+
+**Figure 4: Risk Probability Curve**
+Calculates the annual exceedance probability of agricultural disruptions based on the historical record.
+```bash
+python3 scripts/fig4_risk_probability.py
 ```
 
 **Figure S1: Global Maps (Supplementary)**
@@ -61,11 +67,16 @@ Generates global production and harvest area maps for all crops.
 python3 scripts/figS1_global_maps.py
 ```
 
-### Comparative Analysis
-**Comparative National Vulnerability**
-Generates a comparative plot of upper-bound envelopes for multiple countries.
+**Figure S2: Comparative Vulnerability**
+Generates comparative plots of normalized envelopes for multiple countries.
 ```bash
-python3 scripts/fig2_comparative.py
+python3 scripts/figS2_comparative.py
+```
+
+**Figure S3: Resilience Typologies**
+Compares "stiff" vs "wide" envelopes to highlight national agricultural resilience.
+```bash
+python3 scripts/figS3_envelope_bounds.py
 ```
 
 ## Documentation
