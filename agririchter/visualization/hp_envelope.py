@@ -67,6 +67,7 @@ class HPEnvelopeVisualizer:
     def create_hp_envelope_plot(self, envelope_data: Dict, events_data: pd.DataFrame,
                                save_path: Optional[Union[str, Path]] = None,
                                show_convergence: bool = True,
+                               show_events: bool = True,
                                total_production: Optional[float] = None,
                                total_harvest: Optional[float] = None,
                                ax: Optional[plt.Axes] = None,
@@ -80,6 +81,7 @@ class HPEnvelopeVisualizer:
                         (harvest_area_km2 will be calculated from harvest_area_loss_ha)
             save_path: Optional path to save the figure
             show_convergence: Whether to highlight convergence point and add diagnostics
+            show_events: Whether to plot historical events
             total_production: Total production for convergence validation (optional)
             total_harvest: Total harvest area for convergence validation (optional)
             ax: Optional matplotlib axes to plot on. If None, creates a new figure.
@@ -136,19 +138,15 @@ class HPEnvelopeVisualizer:
         # Plot threshold lines
         self._plot_agriPhase_thresholds(ax)
         
-        # CRITICAL: Validate events are within envelope before plotting
-        events_data = self._validate_events_within_envelope(
-            events_data, magnitude, upper_bound, lower_bound
-        )
-        
-        # Plot historical events as red circles with labels
-        self._plot_historical_events(ax, events_data)
-        
-        # Add convergence analysis if requested and data is available
-        # REMOVED for publication clarity per user request
-        # if show_convergence and total_production is not None and total_harvest is not None:
-        #     self._highlight_convergence_point(ax, envelope_data, total_production, total_harvest)
-        #     self._add_convergence_diagnostics(ax, envelope_data, total_production, total_harvest)
+        # Plot events if requested
+        if show_events:
+            # CRITICAL: Validate events are within envelope before plotting
+            events_data = self._validate_events_within_envelope(
+                events_data, magnitude, upper_bound, lower_bound
+            )
+            
+            # Plot historical events as markers with labels
+            self._plot_historical_events(ax, events_data)
         
         # Always highlight convergence point as it is part of the envelope definition
         if show_convergence and total_production is not None and total_harvest is not None:
@@ -244,6 +242,16 @@ class HPEnvelopeVisualizer:
         
         # Plot horizontal threshold lines
         for name, value_kcal in thresholds.items():
+            # SKIP "Total Stocks" for publication clarity if it's very close to "3 Months"
+            # (or just skip it entirely as per user suggestion "maybe only show 3 month?")
+            if name == 'Total Stocks':
+                # Check if "3 Months" exists and calculate log-distance
+                if '3 Months' in thresholds:
+                    dist = abs(np.log10(value_kcal) - np.log10(thresholds['3 Months']))
+                    if dist < 0.1: # If less than 0.1 log units apart, skip it
+                        logger.info(f"Skipping '{name}' threshold line: too close to '3 Months' ({dist:.2f} log units)")
+                        continue
+            
             # Determine color
             color = colors.get(name, '#000000')
             
@@ -541,36 +549,12 @@ class HPEnvelopeVisualizer:
         total_harvest_log = np.log10(total_harvest)
         
         # Mark expected convergence point
-        ax.plot(total_harvest_log, total_production, 'go', markersize=12, 
-               markeredgecolor='darkgreen', markeredgewidth=2,
-               label='Expected Convergence', zorder=10)
+        ax.plot(total_harvest_log, total_production, 'go', markersize=10, 
+               markeredgecolor='darkgreen', markeredgewidth=1.5,
+               label='Convergence', zorder=10)
         
-        # Find actual endpoint
-        if len(lower_harvest) > 0:
-            actual_harvest = lower_harvest[-1]
-            actual_lower_prod = lower_production[-1]
-            actual_upper_prod = upper_production[-1]
-            actual_harvest_log = np.log10(actual_harvest)
-            
-            # Mark actual endpoints
-            ax.plot(actual_harvest_log, actual_lower_prod, 'ro', markersize=10,
-                   markeredgecolor='darkred', markeredgewidth=2,
-                   label='Actual Lower Endpoint', zorder=10)
-            ax.plot(actual_harvest_log, actual_upper_prod, 'bo', markersize=10,
-                   markeredgecolor='darkblue', markeredgewidth=2,
-                   label='Actual Upper Endpoint', zorder=10)
-            
-            # Calculate convergence error
-            lower_error = abs(actual_lower_prod - total_production) / total_production
-            upper_error = abs(actual_upper_prod - total_production) / total_production
-            harvest_error = abs(actual_harvest - total_harvest) / total_harvest
-            
-            # Add convergence error annotation
-            # REMOVED for publication clarity
-            # error_text = f'Convergence Errors:\nLower: {lower_error:.1%}\nUpper: {upper_error:.1%}\nHarvest: {harvest_error:.1%}'
-            # ax.text(0.02, 0.98, error_text, transform=ax.transAxes, 
-            #        verticalalignment='top', fontsize=9,
-            #        bbox=dict(boxstyle='round,pad=0.5', facecolor='lightyellow', alpha=0.8))
+        # REMOVED markers and labels for actual endpoints for publication clarity
+        # These are usually very close to the convergence point anyway.
     
     def _add_convergence_diagnostics(self, ax: plt.Axes, envelope_data: Dict,
                                    total_production: float, total_harvest: float) -> None:

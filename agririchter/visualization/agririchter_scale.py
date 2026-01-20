@@ -264,6 +264,14 @@ class AgriRichterScaleVisualizer:
         
         # Plot horizontal threshold lines
         for name, value_kcal in thresholds.items():
+            # SKIP "Total Stocks" for publication clarity if it's very close to "3 Months"
+            if name == 'Total Stocks':
+                if '3 Months' in thresholds:
+                    dist = abs(np.log10(value_kcal) - np.log10(thresholds['3 Months']))
+                    if dist < 0.1:
+                        logger.info(f"Skipping '{name}' threshold line: too close to '3 Months' ({dist:.2f} log units)")
+                        continue
+
             # Convert kcal threshold to km² equivalent
             area_km2 = value_kcal / yield_density
             

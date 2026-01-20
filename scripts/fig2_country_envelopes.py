@@ -244,6 +244,7 @@ def main():
                     events_data,
                     save_path=results_dir / f'figure2_{country_key.lower()}_individual.png',
                     title=f'H-P Envelope - {country_key}',
+                    show_events=True, # Keep events for individual plots
                     total_production=country_prod,
                     total_harvest=country_harv
                 )
@@ -289,6 +290,7 @@ def main():
                 data['envelope'], 
                 data['events'],
                 ax=axes[i],
+                show_events=False, # HIDE events for combined 6-panel plot for clarity
                 total_production=data['prod'],
                 total_harvest=data['harv']
             )
