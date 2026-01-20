@@ -148,7 +148,7 @@ class AgriRichterScaleVisualizer:
         ax.set_yscale('log')
         
         # Set axis labels - Richter scale style
-        ax.set_xlabel(r'AgRichter Magnitude ($M_D = \log_{10}(A_H)$)', fontsize=13, fontweight='bold')
+        ax.set_xlabel(r'AgRichter Magnitude ($M_D = \log_{10}(A_H / \mathrm{km}^2)$)', fontsize=13, fontweight='bold')
         ax.set_ylabel('Harvest Area Disrupted (km²)', fontsize=13, fontweight='bold')
         
         # Set title

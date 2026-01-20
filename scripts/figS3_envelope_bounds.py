@@ -83,9 +83,9 @@ def generate_typology_figure():
 
     fig, ax = plt.subplots(figsize=(12, 8))
     
-    ax.set_xscale('log')
+    ax.set_xscale('linear')
     ax.set_yscale('log')
-    ax.set_xlim(left=1e2)
+    ax.set_xlim(2, 8)
     ax.set_ylim(1e-2, 110)
 
     for country in TYPOLOGY_CONFIGS:
@@ -102,6 +102,9 @@ def generate_typology_figure():
         P_up = envelope['upper_bound_production']
         P_low = envelope['lower_bound_production']
         
+        # Convert to magnitude
+        magnitude = np.log10(H_km2)
+        
         # Total production for normalization
         total_P = P_up[-1]
         
@@ -110,16 +113,17 @@ def generate_typology_figure():
         P_low_pct = (P_low / total_P) * 100
 
         # Plot shaded band
-        ax.fill_between(H_km2, P_low_pct, P_up_pct, color=color, alpha=0.15, label=f"{label} Range")
+        ax.fill_between(magnitude, P_low_pct, P_up_pct, color=color, alpha=0.15, label=f"{label} Range")
         
         # Plot upper bound line for clarity
-        ax.plot(H_km2, P_up_pct, color=color, linewidth=lw, alpha=0.8)
+        ax.plot(magnitude, P_up_pct, color=color, linewidth=lw, alpha=0.8)
         
         # Mark total point
-        ax.plot(H_km2[-1], 100, marker='o', color=color, markersize=6)
+        total_mag = magnitude[-1]
+        ax.plot(total_mag, 100, marker='o', color=color, markersize=6)
 
-    ax.set_xlabel('Disrupted Harvest Area (km²)', fontsize=14)
-    ax.set_ylabel('Production Loss (% of National/Global Total)', fontsize=14)
+    ax.set_xlabel(r'AgRichter Magnitude ($M_D = \log_{10}(A_H / \mathrm{km}^2)$)', fontsize=13, fontweight='bold')
+    ax.set_ylabel('Production Loss (% of Total)', fontsize=13, fontweight='bold')
     ax.set_title('Figure S3: Agricultural Resilience Typologies\n(Concentrated vs. Dispersed Production Fingerprints)', fontsize=16)
     
     ax.grid(True, which="both", ls="-", alpha=0.2)

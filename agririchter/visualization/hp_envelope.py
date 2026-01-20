@@ -156,8 +156,8 @@ class HPEnvelopeVisualizer:
         ax.set_yscale('log')
         
         # Set axis labels with proper subscript formatting
-        ax.set_xlabel(r'Magnitude $M_D = \log_{10}(A_H)$ [km²]', fontsize=12)
-        ax.set_ylabel('Production Loss [kcal]', fontsize=12)
+        ax.set_xlabel(r'AgRichter Magnitude ($M_D = \log_{10}(A_H / \mathrm{km}^2)$)', fontsize=13, fontweight='bold')
+        ax.set_ylabel('Production Loss (kcal)', fontsize=13, fontweight='bold')
         
         # Set title
         if title:

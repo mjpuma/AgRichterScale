@@ -131,7 +131,7 @@ def generate_risk_figure():
     ax.set_xlim(3, 8)
     ax.set_ylim(5e-4, 1)
     
-    ax.set_xlabel('AgRichter Magnitude ($M_D = \\log_{10}(A_H)$)', fontsize=13, fontweight='bold')
+    ax.set_xlabel(r'AgRichter Magnitude ($M_D = \log_{10}(A_H / \mathrm{km}^2)$)', fontsize=13, fontweight='bold')
     ax.set_ylabel('Annual Exceedance Probability', fontsize=13, fontweight='bold')
     ax.set_title('Figure 4: Risk-Exceedance Curve for Global Agricultural Disruptions', fontsize=15, fontweight='bold')
     

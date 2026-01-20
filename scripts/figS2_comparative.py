@@ -1,6 +1,7 @@
 
 import sys
 import logging
+import numpy as np
 from pathlib import Path
 import matplotlib.pyplot as plt
 
@@ -79,15 +80,15 @@ def generate_comparative_figure():
         # Setup Plot
         fig, ax = plt.subplots(figsize=(12, 8))
         
-        ax.set_xscale(x_scale)
+        ax.set_xscale('linear')
         ax.set_yscale(y_scale)
         
         # Use scientific notation for Y axis if linear
         if y_scale == 'linear':
             ax.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
             
-        # Set X-axis limits to start from Mag 3 (10^3)
-        ax.set_xlim(left=1e3)
+        # Set X-axis limits for AgRichter Magnitude
+        ax.set_xlim(3, 8)
         
         # Plot each country
         for country in COUNTRY_CONFIGS:
@@ -104,6 +105,9 @@ def generate_comparative_figure():
             P_up = envelope['upper_bound_production']
             P_low = envelope['lower_bound_production']
             
+            # Convert harvest area to AgRichter Magnitude
+            magnitude = np.log10(H_km2)
+            
             # Calculate total production for normalization
             total_P = P_up[-1]
             
@@ -112,18 +116,18 @@ def generate_comparative_figure():
             P_low_pct = (P_low / total_P) * 100
             
             # Plot shaded band
-            ax.fill_between(H_km2, P_low_pct, P_up_pct, color=color, alpha=0.2, label=f"{label} range")
+            ax.fill_between(magnitude, P_low_pct, P_up_pct, color=color, alpha=0.2, label=f"{label} range")
             
             # Plot upper bound line for emphasis
-            ax.plot(H_km2, P_up_pct, color=color, linewidth=lw, alpha=0.8)
+            ax.plot(magnitude, P_up_pct, color=color, linewidth=lw, alpha=0.8)
             
             # Add marker at total (100%)
-            total_H = H_km2[-1]
-            ax.plot(total_H, 100, marker='o', color=color, markersize=6)
+            total_mag = magnitude[-1]
+            ax.plot(total_mag, 100, marker='o', color=color, markersize=6)
 
         # Formatting
-        ax.set_xlabel('Disrupted Harvest Area (km²)', fontsize=14)
-        ax.set_ylabel('Production Loss (% of National Total)', fontsize=14)
+        ax.set_xlabel(r'AgRichter Magnitude ($M_D = \log_{10}(A_H / \mathrm{km}^2)$)', fontsize=13, fontweight='bold')
+        ax.set_ylabel('Production Loss (% of Total)', fontsize=13, fontweight='bold')
         ax.set_title(f'Figure S2: Comparative National Vulnerability Fingerprints\n(H-P Envelopes Normalized - {suffix})', fontsize=16)
         
         ax.grid(True, which="both", ls="-", alpha=0.2)
@@ -135,23 +139,6 @@ def generate_comparative_figure():
         else:
             ax.set_ylim(1e-2, 110) # Log scale needs positive floor
             
-        # Add AgriRichter magnitudes
-        y_min, y_max = ax.get_ylim()
-        x_min, x_max = ax.get_xlim()
-        
-        for mag in range(4, 8):
-            val = 10**mag
-            if val > x_min and val < x_max:
-                ax.axvline(val, color='gray', linestyle='--', alpha=0.5)
-                # Adjust text position based on scale
-                if y_scale == 'log':
-                    text_y = y_min * (y_max/y_min)**0.05 # 5% up in log scale
-                else:
-                    text_y = y_min + (y_max - y_min) * 0.05
-                    
-                ax.text(val, text_y, f"Mag {mag}\n({val:,.0f} km²)", 
-                        rotation=90, verticalalignment='bottom', color='gray')
-
         plt.tight_layout()
         
         output_path = Path(f'results/figureS2_comparative_envelopes_{suffix}.png')
