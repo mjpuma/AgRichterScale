@@ -89,52 +89,52 @@ def generate_comparative_figure():
         # Set X-axis limits to start from Mag 3 (10^3)
         ax.set_xlim(left=1e3)
         
-    # Plot each country
-    for country in COUNTRY_CONFIGS:
-        key = country['key']
-        if key not in envelopes:
-            continue
+        # Plot each country
+        for country in COUNTRY_CONFIGS:
+            key = country['key']
+            if key not in envelopes:
+                continue
+                
+            envelope = envelopes[key]
+            label = country['label']
+            color = country['color']
+            lw = country['linewidth']
             
-        envelope = envelopes[key]
-        label = country['label']
-        color = country['color']
-        lw = country['linewidth']
-        
-        H_km2 = envelope['upper_bound_harvest']
-        P_up = envelope['upper_bound_production']
-        P_low = envelope['lower_bound_production']
-        
-        # Calculate total production for normalization
-        total_P = P_up[-1]
-        
-        # Normalize to percentage
-        P_up_pct = (P_up / total_P) * 100
-        P_low_pct = (P_low / total_P) * 100
-        
-        # Plot shaded band
-        ax.fill_between(H_km2, P_low_pct, P_up_pct, color=color, alpha=0.2, label=f"{label} range")
-        
-        # Plot upper bound line for emphasis
-        ax.plot(H_km2, P_up_pct, color=color, linewidth=lw, alpha=0.8)
-        
-        # Add marker at total (100%)
-        total_H = H_km2[-1]
-        ax.plot(total_H, 100, marker='o', color=color, markersize=6)
+            H_km2 = envelope['upper_bound_harvest']
+            P_up = envelope['upper_bound_production']
+            P_low = envelope['lower_bound_production']
+            
+            # Calculate total production for normalization
+            total_P = P_up[-1]
+            
+            # Normalize to percentage
+            P_up_pct = (P_up / total_P) * 100
+            P_low_pct = (P_low / total_P) * 100
+            
+            # Plot shaded band
+            ax.fill_between(H_km2, P_low_pct, P_up_pct, color=color, alpha=0.2, label=f"{label} range")
+            
+            # Plot upper bound line for emphasis
+            ax.plot(H_km2, P_up_pct, color=color, linewidth=lw, alpha=0.8)
+            
+            # Add marker at total (100%)
+            total_H = H_km2[-1]
+            ax.plot(total_H, 100, marker='o', color=color, markersize=6)
 
-    # Formatting
-    ax.set_xlabel('Disrupted Harvest Area (km²)', fontsize=14)
-    ax.set_ylabel('Production Loss (% of National Total)', fontsize=14)
-    ax.set_title(f'Comparative National Vulnerability Fingerprints\n(H-P Envelopes Normalized - {suffix})', fontsize=16)
-    
-    ax.grid(True, which="both", ls="-", alpha=0.2)
-    ax.legend(fontsize=10, loc='upper left', ncol=2)
-    
-    # Set Y-axis limits for percentage
-    if y_scale == 'linear':
-        ax.set_ylim(0, 105)
-    else:
-        ax.set_ylim(1e-2, 110) # Log scale needs positive floor
+        # Formatting
+        ax.set_xlabel('Disrupted Harvest Area (km²)', fontsize=14)
+        ax.set_ylabel('Production Loss (% of National Total)', fontsize=14)
+        ax.set_title(f'Comparative National Vulnerability Fingerprints\n(H-P Envelopes Normalized - {suffix})', fontsize=16)
         
+        ax.grid(True, which="both", ls="-", alpha=0.2)
+        ax.legend(fontsize=10, loc='upper left', ncol=2)
+        
+        # Set Y-axis limits for percentage
+        if y_scale == 'linear':
+            ax.set_ylim(0, 105)
+        else:
+            ax.set_ylim(1e-2, 110) # Log scale needs positive floor
+            
         # Add AgriRichter magnitudes
         y_min, y_max = ax.get_ylim()
         x_min, x_max = ax.get_xlim()
