@@ -166,9 +166,12 @@ def calculate_shocks():
         'vol_ratio': vol_late / vol_early if vol_early > 0 else 1.0
     }
 
-def generate_risk_figure():
-    """Generate Figure 4 with Bootstrapping and Diagnostics."""
-    logger.info("Generating Figure 4: The Fragility Gap...")
+def generate_risk_figure(mode='zonal'):
+    """
+    Generate Figure 4 with specific shading modes.
+    mode: 'zonal' (Safe/Strained/Extreme regions) or 'exposure' (Shading beyond buffer)
+    """
+    logger.info(f"Generating Figure 4 ({mode} mode): The Fragility Gap...")
     
     # 1. Historical Analysis
     stats = calculate_shocks()
@@ -208,14 +211,11 @@ def generate_risk_figure():
     shocks = stats['shocks']
     
     for i in range(n_boot):
-        # Resample shocks with replacement
         sample = np.random.choice(shocks, size=len(shocks), replace=True)
         sigma_boot = np.std(sample)
-        # Calibrate tail scale: exp(-sigma/scale) = 0.32
         scale_boot = (sigma_boot * current_prod_kcal) / (-np.log(0.32))
         boot_probs[i, :] = np.exp(-losses_at_mags / scale_boot)
     
-    # Calculate quantiles
     prob_median = np.percentile(boot_probs, 50, axis=0)
     prob_low = np.percentile(boot_probs, 2.5, axis=0)
     prob_high = np.percentile(boot_probs, 97.5, axis=0)
@@ -223,40 +223,56 @@ def generate_risk_figure():
     # 4. Plotting
     fig, ax = plt.subplots(figsize=(12, 10))
     
-    # Historical fill
-    ax.axvspan(3, 6, color='gray', alpha=0.04, label='Historical Observation Range')
-    
-    # Risk Curve and CI
-    ax.fill_between(mags_plot, prob_low, prob_high, color='firebrick', alpha=0.15, label='95% Confidence Interval (Bootstrap)')
-    ax.plot(mags_plot, prob_median, color='firebrick', linewidth=4, label='Median Risk Curve (USDA Tail Model)')
-    
-    # Thresholds
+    # Thresholds setup
     thresh_kcal = {
         '1 Month': (stats['avg_cons'] / 12.0) * kcal_per_tmt,
         '3 Months': (stats['avg_cons'] / 4.0) * kcal_per_tmt,
         'Total Stocks': stats['avg_stocks'] * kcal_per_tmt
     }
     
-    colors = {'1 Month': '#FFD700', '3 Months': '#FF4500', 'Total Stocks': '#800080'}
+    # Map thresholds to Magnitudes
+    thresh_mags = {}
+    for label, val in thresh_kcal.items():
+        idx = np.searchsorted(P_up, val)
+        thresh_mags[label] = M_scale[idx] if idx < len(M_scale) else 8.0
+
+    # MODE A: ZONAL SHADING
+    if mode == 'zonal':
+        # Green: Secure (below 1 month)
+        ax.axvspan(3, thresh_mags['1 Month'], color='seagreen', alpha=0.1, label='Zone of Resilience')
+        # Yellow: Strained (between 1m and Total Stocks)
+        ax.axvspan(thresh_mags['1 Month'], thresh_mags['Total Stocks'], color='orange', alpha=0.08, label='Zone of Absorption')
+        # Red: Extreme (beyond Total Stocks)
+        ax.axvspan(thresh_mags['Total Stocks'], 8.0, color='crimson', alpha=0.08, label='Zone of Systemic Failure')
     
-    # Use median sigma for Return Period calculation
+    # MODE B: EXPOSURE SHADING
+    elif mode == 'exposure':
+        # Historical range
+        ax.axvspan(3, 6, color='gray', alpha=0.04, label='Historical Observation Range')
+        # Shade under the curve beyond Total Stocks
+        mask = mags_plot >= thresh_mags['Total Stocks']
+        ax.fill_between(mags_plot, prob_median, 1e-4, where=mask, 
+                        color='crimson', alpha=0.3, hatch='//', label='The Fragility Gap (Unbuffered Risk)')
+
+    # Common Plotting elements
+    ax.fill_between(mags_plot, prob_low, prob_high, color='firebrick', alpha=0.15, label='95% Confidence Interval')
+    ax.plot(mags_plot, prob_median, color='firebrick', linewidth=4, label='Annual Exceedance Probability')
+    
+    colors = {'1 Month': '#FFD700', '3 Months': '#FF4500', 'Total Stocks': '#800080'}
     main_scale = (stats['sigma'] * current_prod_kcal) / (-np.log(0.32))
     
     for label, val in sorted(thresh_kcal.items(), key=lambda x: x[1]):
+        mag = thresh_mags[label]
         color = colors.get(label, 'black')
-        idx = np.searchsorted(P_up, val)
-        if idx < len(M_scale):
-            mag = M_scale[idx]
-            ax.axvline(mag, color=color, linestyle='--', linewidth=3, alpha=0.8)
-            
-            prob_at_thresh = np.exp(-val / main_scale)
-            rp = 1.0 / prob_at_thresh
-            rp_text = f">1,000 yr" if rp > 1000 else f"~{rp:.0f} yr"
-            
-            ax.text(mag + 0.04, 2e-4, f'{label}\n(RP {rp_text})', 
-                    color=color, fontweight='bold', fontsize=11, rotation=90, va='bottom')
+        ax.axvline(mag, color=color, linestyle='--', linewidth=3, alpha=0.8)
+        
+        prob_at_thresh = np.exp(-val / main_scale)
+        rp = 1.0 / prob_at_thresh
+        rp_text = f">1,000 yr" if rp > 1000 else f"~{rp:.0f} yr"
+        ax.text(mag + 0.04, 2e-4, f'{label}\n(RP {rp_text})', 
+                color=color, fontweight='bold', fontsize=11, rotation=90, va='bottom')
 
-    # Diagnostics Text Box
+    # Diagnostics Box
     diag_text = (
         f"DIAGNOSTICS:\n"
         f"Durbin-Watson: {stats['dw_stat']:.2f}\n"
@@ -271,14 +287,11 @@ def generate_risk_figure():
     ax.set_yscale('log')
     ax.set_xlim(3, 7.5)
     ax.set_ylim(1e-4, 1)
-    
     ax.set_xlabel(r'AgRichter Magnitude ($M_D = \log_{10}(A_H / \mathrm{km}^2)$)', fontsize=14, fontweight='bold')
     ax.set_ylabel('Annual Exceedance Probability', fontsize=14, fontweight='bold')
-    ax.set_title('Figure 4: The Fragility Gap\nPredictive Risk of Global Food System Breach', fontsize=16, fontweight='bold')
-    
+    ax.set_title(f'Figure 4: The Fragility Gap ({mode.capitalize()} View)\nPredictive Risk of Global Food System Breach', fontsize=16, fontweight='bold')
     ax.grid(True, which="both", ls="-", alpha=0.15)
     
-    # Return Period axis
     ax_rp = ax.twinx()
     ax_rp.set_yscale('log')
     ax_rp.set_ylim(ax.get_ylim())
@@ -286,16 +299,16 @@ def generate_risk_figure():
     ax_rp.set_yticks(y_ticks)
     ax_rp.set_yticklabels([f'{1/y:.0f}' for y in y_ticks])
     ax_rp.set_ylabel('Return Period (Years)', fontsize=14, fontweight='bold')
-
-    ax.legend(loc='upper right', fontsize=11, framealpha=0.9)
     
+    ax.legend(loc='upper right', fontsize=10, framealpha=0.9)
     plt.tight_layout()
     
-    output_path = Path('results/figure4_risk_probability.png')
+    suffix = f'_{mode}'
+    output_path = Path(f'results/figure4_risk_probability{suffix}.png')
     plt.savefig(output_path, dpi=300, bbox_inches='tight', facecolor='white')
-    plt.savefig(output_path.with_suffix('.svg'), format='svg', bbox_inches='tight', facecolor='white')
-    
-    logger.info(f"Saved corrected Figure 4 to {output_path}")
+    logger.info(f"Saved {output_path}")
 
 if __name__ == "__main__":
-    generate_risk_figure()
+    generate_risk_figure(mode='zonal')
+    generate_risk_figure(mode='exposure')
+
