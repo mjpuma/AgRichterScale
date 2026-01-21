@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """
-Figure 4: Historical Exceedance Probability (Risk Curve)
+Figure 4: Global Systemic Risk (The Fragility Gap)
 
-Calculates the annual exceedance probability of agricultural disruptions
-based on the historical record since 1315.
+Calculates the annual exceedance probability of global agricultural disruptions
+based on historical production variability (USDA PSD 1961-2021) coupled with 
+the AgRichter H-P Envelope.
 """
 
 import logging
@@ -18,9 +19,7 @@ sys.path.append(str(Path(__file__).parent.parent))
 
 from agririchter.core.config import Config
 from agririchter.data.grid_manager import GridDataManager
-from agririchter.data.spatial_mapper import SpatialMapper
-from agririchter.data.events import EventsProcessor
-from agririchter.analysis.event_calculator import EventCalculator
+from agririchter.data.usda import USDADataLoader
 from agririchter.analysis.envelope_v2 import HPEnvelopeCalculatorV2
 
 # Configure logging
@@ -30,62 +29,62 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Constants for risk analysis
-START_YEAR = 1315
-CURRENT_YEAR = 2026
-TOTAL_YEARS = CURRENT_YEAR - START_YEAR
-
-def load_real_events(crop: str, config: Config, grid_manager: GridDataManager):
-    """Load and calculate real historical events."""
-    logger.info(f"Loading real historical events for {crop}...")
+def calculate_shocks():
+    """Calculate historical production shocks from USDA data."""
+    loader = USDADataLoader()
+    crops = ['wheat', 'rice', 'maize']
     
-    country_file = Path('ancillary/DisruptionCountry.xls')
-    state_file = Path('ancillary/DisruptionStateProvince.xls')
+    # Load and aggregate production
+    total_prod_df = None
+    for crop in crops:
+        df = loader.load_crop_data(crop)
+        # Select Year and Production
+        crop_prod = df[['Year', 'Production']].copy()
+        crop_prod = crop_prod.rename(columns={'Production': f'Prod_{crop}'})
+        
+        if total_prod_df is None:
+            total_prod_df = crop_prod
+        else:
+            total_prod_df = pd.merge(total_prod_df, crop_prod, on='Year', how='inner')
+            
+    # Sum the production columns
+    prod_cols = [f'Prod_{crop}' for crop in crops]
+    total_prod_df['Production'] = total_prod_df[prod_cols].sum(axis=1)
     
-    if not country_file.exists() or not state_file.exists():
-        logger.error("Event Excel files not found!")
-        return pd.DataFrame()
+    # Sort by year
+    total_prod_df = total_prod_df.sort_values('Year')
     
-    country_sheets = pd.read_excel(country_file, sheet_name=None, engine='xlrd')
-    state_sheets = pd.read_excel(state_file, sheet_name=None, engine='xlrd')
+    # Calculate detrended shocks (as fraction of production)
+    # Use a simple linear trend for detrending global production
+    z = np.polyfit(total_prod_df['Year'], total_prod_df['Production'], 1)
+    p = np.poly1d(z)
+    total_prod_df['Trend'] = p(total_prod_df['Year'])
+    total_prod_df['Shock_Val'] = total_prod_df['Production'] - total_prod_df['Trend']
+    total_prod_df['Shock_Frac'] = total_prod_df['Shock_Val'] / total_prod_df['Trend']
     
-    events_processor = EventsProcessor(config)
-    raw_events_data = {'country': country_sheets, 'state': state_sheets}
-    events_data = events_processor.process_event_sheets(raw_events_data)
+    # Calculate basic stats
+    shock_std = total_prod_df['Shock_Frac'].std()
     
-    spatial_mapper = SpatialMapper(config, grid_manager)
-    spatial_mapper.load_country_codes_mapping()
-    
-    event_calculator = EventCalculator(config, grid_manager, spatial_mapper)
-    events_df = event_calculator.calculate_all_events(events_data)
-    
-    return events_df
+    return shock_std, total_prod_df['Trend'].iloc[-1]
 
 def generate_risk_figure():
-    """Generate the risk curve figure."""
-    logger.info("Generating Figure 4: Risk Probability Curve...")
+    """Generate Figure 4: Systemic Risk Curve."""
+    logger.info("Generating Figure 4: Predictive Systemic Risk...")
     
-    # Initialize components
+    # 1. Get Historical Variability
+    shock_std, current_trend_prod_mt = calculate_shocks()
+    
+    # Convert trend production to kcal
     config = Config(crop_type='allgrain', root_dir='.')
-    config.data_files['production'] = Path('spam2020V2r0_global_production/spam2020V2r0_global_production/spam2020V2r0_global_P_TA.csv')
-    config.data_files['harvest_area'] = Path('spam2020V2r0_global_harvested_area/spam2020V2r0_global_harvested_area/spam2020V2r0_global_H_TA.csv')
+    caloric_content = config.get_caloric_content() # kcal/g
+    kcal_per_mt = 1_000_000.0 * caloric_content
+    current_prod_kcal = current_trend_prod_mt * kcal_per_mt
     
+    logger.info(f"Global variability (std dev): {shock_std:.4f}")
+    logger.info(f"Current trend production: {current_prod_kcal:.2e} kcal")
+    
+    # 2. Map variability to AgRichter using Global Envelope
     grid_manager = GridDataManager(config)
-    
-    # Load and calculate events
-    events_df = load_real_events('allgrain', config, grid_manager)
-    
-    # Filter valid events
-    valid_events = events_df[events_df['magnitude'].notna()].copy()
-    valid_events = valid_events.sort_values('magnitude', ascending=False)
-    
-    # Calculate Exceedance Probability
-    # P(M >= Mi) = m / (N + 1)
-    valid_events['rank'] = range(1, len(valid_events) + 1)
-    valid_events['probability'] = valid_events['rank'] / (TOTAL_YEARS + 1)
-    valid_events['return_period'] = 1 / valid_events['probability']
-    
-    # Calculate global envelope to find threshold magnitudes
     prod_df, harv_df = grid_manager.load_spam_data()
     calculator = HPEnvelopeCalculatorV2(config)
     global_envelope = calculator.calculate_hp_envelope(prod_df, harv_df)
@@ -94,66 +93,88 @@ def generate_risk_figure():
     P_up = global_envelope['upper_bound_production']
     M_scale = np.log10(H_km2)
     
-    thresholds = config.thresholds
-    buffer_mags = {}
-    for label, val in thresholds.items():
-        # Find M where Upper Bound P hits threshold
+    # 3. Model Exceedance Probability
+    # Use a Fat-Tailed (Exponential) tail model for predictive risk
+    # P(Loss > x) = exp(-x / scale)
+    # where scale is related to historical volatility
+    
+    # We calibrate the scale to the 1-standard-deviation point
+    # P(Loss > sigma) approx 0.32 for Normal, but we use Exponential for the tail
+    # exp(-sigma / scale) = 0.32  =>  scale = -sigma / ln(0.32)
+    # sigma = shock_std * current_prod_kcal
+    sigma_kcal = shock_std * current_prod_kcal
+    tail_scale = sigma_kcal / (-np.log(0.32))
+    
+    # Range of magnitudes to plot
+    mags_plot = np.linspace(3, 8, 100)
+    # Map Magnitude back to production loss using Envelope Upper Bound
+    losses_at_mags = np.interp(mags_plot, M_scale, P_up)
+    
+    # Calculate exceedance probability for each magnitude
+    probs = np.exp(-losses_at_mags / tail_scale)
+    probs = np.clip(probs, 1e-6, 1) # Cap at 1 and floor for plotting
+    
+    # 4. Plotting
+    fig, ax = plt.subplots(figsize=(12, 9))
+    
+    # Background: Gray fill for historical observation range (up to ~Mag 6)
+    ax.axvspan(3, 6, color='gray', alpha=0.05, label='Historical Observation Range')
+    
+    # The Risk Curve
+    ax.plot(mags_plot, probs, color='firebrick', linewidth=4, label='Systemic Risk Curve (USDA Tail Model)')
+    
+    # Fill "Zone of Insecurity"
+    ax.fill_between(mags_plot, probs, 1e-6, color='firebrick', alpha=0.1)
+    
+    # Buffer Thresholds
+    thresholds = config.get_thresholds()
+    # Ensure they are sorted for better annotation
+    sorted_thresh = sorted(thresholds.items(), key=lambda x: x[1])
+    
+    colors = {'1 Month': '#FFD700', '3 Months': '#FF4500', 'Total Stocks': '#800080'}
+    
+    for label, val in sorted_thresh:
+        color = colors.get(label, 'black')
+        # Map threshold kcal to Magnitude
         idx = np.searchsorted(P_up, val)
         if idx < len(M_scale):
-            buffer_mags[label] = M_scale[idx]
+            mag = M_scale[idx]
+            ax.axvline(mag, color=color, linestyle='--', linewidth=2.5, alpha=0.9)
+            
+            # Find probability at this magnitude
+            prob_at_thresh = np.exp(-val / tail_scale)
+            return_period = 1/prob_at_thresh
+            
+            # Formatting for Return Period
+            if return_period >= 1000:
+                rp_text = f">1,000 yr"
+            else:
+                rp_text = f"~{return_period:.0f} yr"
+                
+            ax.text(mag + 0.05, 0.01, f'{label}\n(RP {rp_text})', 
+                    color=color, fontweight='bold', fontsize=11, rotation=90, va='bottom')
 
-    # Plotting
-    fig, ax = plt.subplots(figsize=(10, 8))
-    
-    # Plot historical events
-    ax.scatter(valid_events['magnitude'], valid_events['probability'], 
-               color='black', zorder=5, label='Historical Events (1315-2025)')
-    
-    # Step plot for empirical distribution
-    ax.step(valid_events['magnitude'], valid_events['probability'], 
-            where='post', color='gray', alpha=0.5, linestyle='--')
-    
-    # Annotate key events
-    top_events = ['GreatFamine', 'DustBowl', 'ChineseFamine1960', 'NoSummer', 'Drought18761878']
-    for _, row in valid_events.iterrows():
-        if row['event_name'] in top_events:
-            ax.annotate(row['event_name'], (row['magnitude'], row['probability']),
-                        xytext=(5, 5), textcoords='offset points', fontsize=9)
-
-    # Vertical lines for buffers
-    colors = {'1 Month': 'gold', '3 Months': 'orange', 'Total Stocks': 'purple'}
-    for label, mag in buffer_mags.items():
-        color = colors.get(label, 'red')
-        ax.axvline(mag, color=color, linestyle='-', alpha=0.7, label=f'{label} Breach ($M_D \\approx {mag:.1f}$)')
-        
     # Aesthetics
     ax.set_yscale('log')
-    ax.set_xlim(3, 8)
-    ax.set_ylim(5e-4, 1)
+    ax.set_xlim(3, 7.5)
+    ax.set_ylim(1e-4, 1)
     
-    ax.set_xlabel(r'AgRichter Magnitude ($M_D = \log_{10}(A_H / \mathrm{km}^2)$)', fontsize=13, fontweight='bold')
-    ax.set_ylabel('Annual Exceedance Probability', fontsize=13, fontweight='bold')
-    ax.set_title('Figure 4: Risk-Exceedance Curve for Global Agricultural Disruptions', fontsize=15, fontweight='bold')
+    ax.set_xlabel(r'AgRichter Magnitude ($M_D = \log_{10}(A_H / \mathrm{km}^2)$)', fontsize=14, fontweight='bold')
+    ax.set_ylabel('Annual Exceedance Probability', fontsize=14, fontweight='bold')
+    ax.set_title('Figure 4: The Fragility Gap\nPredictive Risk of Global Food System Breach', fontsize=16, fontweight='bold')
     
     ax.grid(True, which="both", ls="-", alpha=0.2)
     
-    # Add Return Period axis on top
-    ax2 = ax.twiny()
-    ax2.set_xscale(ax.get_xscale()) # No, magnitude is linear, prob is log on Y. 
-    # Return period is 1/Prob. 
-    # Wait, twinX would be for secondary Y. I want secondary X? No, Return Period maps to Probability.
-    # So I want a secondary Y axis for Return Period.
+    # Add Return Period axis on right
     ax_rp = ax.twinx()
     ax_rp.set_yscale('log')
     ax_rp.set_ylim(ax.get_ylim())
-    # Prob 10^-1 -> RP 10^1
-    # Prob 10^-3 -> RP 10^3
-    y_ticks = ax.get_yticks()
+    y_ticks = [1, 0.1, 0.01, 0.001, 0.0001]
     ax_rp.set_yticks(y_ticks)
-    ax_rp.set_yticklabels([f'{1/y:.0f}' if y > 0 else '' for y in y_ticks])
-    ax_rp.set_ylabel('Return Period (Years)', fontsize=13, fontweight='bold')
+    ax_rp.set_yticklabels([f'{1/y:.0f}' for y in y_ticks])
+    ax_rp.set_ylabel('Return Period (Years)', fontsize=14, fontweight='bold')
 
-    ax.legend(loc='upper right', fontsize=10)
+    ax.legend(loc='upper right', fontsize=12)
     
     plt.tight_layout()
     
