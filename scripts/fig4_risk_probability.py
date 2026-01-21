@@ -236,16 +236,25 @@ def generate_risk_figure(mode='zonal'):
         idx = np.searchsorted(P_up, val)
         thresh_mags[label] = M_scale[idx] if idx < len(M_scale) else 8.0
 
-    # MODE A: ZONAL SHADING
+    # MODE A: ZONAL SHADING (Refined Zonal Density View)
     if mode == 'zonal':
-        # Green: Secure (below 1 month)
-        ax.axvspan(3, thresh_mags['1 Month'], color='seagreen', alpha=0.1, label='Zone of Resilience')
-        # Yellow: Strained (between 1m and Total Stocks)
-        ax.axvspan(thresh_mags['1 Month'], thresh_mags['Total Stocks'], color='orange', alpha=0.08, label='Zone of Absorption')
-        # Red: Extreme (beyond Total Stocks)
-        ax.axvspan(thresh_mags['Total Stocks'], 8.0, color='crimson', alpha=0.08, label='Zone of Systemic Failure')
+        # Create masks for each regime
+        resilient_mask = (mags_plot <= thresh_mags['1 Month'])
+        absorption_mask = (mags_plot > thresh_mags['1 Month']) & (mags_plot <= thresh_mags['Total Stocks'])
+        failure_mask = (mags_plot > thresh_mags['Total Stocks'])
+
+        # Shade only UNDER the median probability curve for each regime
+        ax.fill_between(mags_plot, prob_median, 1e-4, where=resilient_mask, 
+                        color='seagreen', alpha=0.25, label='Zone of Resilience (Buffered)')
+        ax.fill_between(mags_plot, prob_median, 1e-4, where=absorption_mask, 
+                        color='goldenrod', alpha=0.25, label='Zone of Absorption (Reserves)')
+        ax.fill_between(mags_plot, prob_median, 1e-4, where=failure_mask, 
+                        color='crimson', alpha=0.25, label='The Fragility Gap (Systemic Breach)')
+        
+        # Overlay the historical range as a subtle background element
+        ax.axvspan(3, 6, color='gray', alpha=0.03, linestyle=':', label='Historical Obs. Range')
     
-    # MODE B: EXPOSURE SHADING
+    # MODE B: EXPOSURE SHADING (Minimalist View)
     elif mode == 'exposure':
         # Historical range
         ax.axvspan(3, 6, color='gray', alpha=0.04, label='Historical Observation Range')
