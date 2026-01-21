@@ -284,7 +284,7 @@ def generate_all_figures():
         ax.set_ylim(1e-4, 1)
         ax.set_xlabel(r'AgRichter Magnitude ($M_D = \log_{10}(A_H / \mathrm{km}^2)$)', fontsize=14, fontweight='bold')
         ax.set_ylabel('Annual Exceedance Probability', fontsize=14, fontweight='bold')
-        ax.set_title(f'Figure 4: The Fragility Gap ({mode.capitalize()} View)\nPredictive Risk of Global Food System Breach', fontsize=16, fontweight='bold')
+        ax.set_title(f'Figure 4: The Fragility Gap\nPredictive Risk of Global Food System Breach', fontsize=16, fontweight='bold')
         ax.grid(True, which="both", ls="-", alpha=0.15)
         
         ax_rp = ax.twinx()
