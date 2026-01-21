@@ -200,7 +200,7 @@ def main():
         core_countries = ['USA', 'China', 'India', 'Brazil']
         
         # Additional countries to explore typology
-        additional_countries = ['France', 'Egypt', 'Australia', 'Argentina']
+        additional_countries = ['France', 'Egypt', 'Australia', 'Argentina', 'Germany', 'Nigeria']
         
         all_countries = core_countries + additional_countries
         
@@ -260,10 +260,8 @@ def main():
                 logger.error(traceback.format_exc())
                 continue
         
-        # Combine all countries into a single 6-panel figure (Core + selected Additional)
-        # Selection: USA, China, India, Brazil, France, Argentina
-        # (Egypt and Australia moved to supplementary/individual)
-        selected_countries = ['USA', 'China', 'India', 'Brazil', 'France', 'Argentina']
+        # Selection: USA, Egypt (Stiff), China, India, Brazil, France
+        selected_countries = ['USA', 'Egypt', 'China', 'India', 'Brazil', 'France']
         
         logger.info("Creating 6-panel combined figure (Selected Countries)...")
         fig, axes = plt.subplots(2, 3, figsize=(24, 16))
