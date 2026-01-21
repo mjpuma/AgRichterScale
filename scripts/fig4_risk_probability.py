@@ -251,8 +251,17 @@ def generate_risk_figure(mode='zonal'):
         ax.axvspan(3, 6, color='gray', alpha=0.04, label='Historical Observation Range')
         # Shade under the curve beyond Total Stocks
         mask = mags_plot >= thresh_mags['Total Stocks']
+        
+        # Increase hatching visibility
+        plt.rcParams['hatch.linewidth'] = 1.5
+        
+        # Double fill: one for color, one for hatching
         ax.fill_between(mags_plot, prob_median, 1e-4, where=mask, 
-                        color='crimson', alpha=0.3, hatch='//', label='The Fragility Gap (Unbuffered Risk)')
+                        color='crimson', alpha=0.1)
+        # Use a simpler but thicker hatch
+        ax.fill_between(mags_plot, prob_median, 1e-4, where=mask, 
+                        facecolor='none', edgecolor='crimson', alpha=0.7, 
+                        hatch='//', label='The Fragility Gap (Unbuffered Risk)')
 
     # Common Plotting elements
     ax.fill_between(mags_plot, prob_low, prob_high, color='firebrick', alpha=0.15, label='95% Confidence Interval')
