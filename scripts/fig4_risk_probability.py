@@ -273,7 +273,7 @@ def generate_risk_figure(mode='zonal'):
                         hatch='//', label='The Fragility Gap (Unbuffered Risk)')
 
     # Common Plotting elements
-    ax.fill_between(mags_plot, prob_low, prob_high, color='firebrick', alpha=0.15, label='95% Confidence Interval')
+    ax.fill_between(mags_plot, prob_low, prob_high, color='gray', alpha=0.2, label='95% Confidence Interval')
     ax.plot(mags_plot, prob_median, color='firebrick', linewidth=4, label='Annual Exceedance Probability')
     
     colors = {'1 Month': '#FFD700', '3 Months': '#FF4500', 'Total Stocks': '#800080'}
