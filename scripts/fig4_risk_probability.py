@@ -72,13 +72,15 @@ def generate_risk_figure():
     logger.info("Generating Figure 4: Predictive Systemic Risk...")
     
     # 1. Get Historical Variability
-    shock_std, current_trend_prod_mt = calculate_shocks()
+    shock_std, current_trend_prod_units = calculate_shocks()
     
+    # USDA data is in 1000 Metric Tons (TMT)
     # Convert trend production to kcal
     config = Config(crop_type='allgrain', root_dir='.')
     caloric_content = config.get_caloric_content() # kcal/g
-    kcal_per_mt = 1_000_000.0 * caloric_content
-    current_prod_kcal = current_trend_prod_mt * kcal_per_mt
+    # 1 TMT = 1000 MT = 1,000,000,000 g
+    kcal_per_tmt = 1_000_000_000.0 * caloric_content
+    current_prod_kcal = current_trend_prod_units * kcal_per_tmt
     
     logger.info(f"Global variability (std dev): {shock_std:.4f}")
     logger.info(f"Current trend production: {current_prod_kcal:.2e} kcal")
@@ -112,7 +114,7 @@ def generate_risk_figure():
     
     # Calculate exceedance probability for each magnitude
     probs = np.exp(-losses_at_mags / tail_scale)
-    probs = np.clip(probs, 1e-6, 1) # Cap at 1 and floor for plotting
+    probs = np.clip(probs, 1e-10, 1) # Lower floor for visibility
     
     # 4. Plotting
     fig, ax = plt.subplots(figsize=(12, 9))
@@ -124,7 +126,7 @@ def generate_risk_figure():
     ax.plot(mags_plot, probs, color='firebrick', linewidth=4, label='Systemic Risk Curve (USDA Tail Model)')
     
     # Fill "Zone of Insecurity"
-    ax.fill_between(mags_plot, probs, 1e-6, color='firebrick', alpha=0.1)
+    ax.fill_between(mags_plot, probs, 1e-10, color='firebrick', alpha=0.1)
     
     # Buffer Thresholds
     thresholds = config.get_thresholds()
