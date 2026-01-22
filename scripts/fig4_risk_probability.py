@@ -6,9 +6,9 @@ This script calculates the annual exceedance probability of global agricultural 
 It integrates historical production variability with the AgRichter H-P Envelope.
 
 DATA PEDIGREE & PROVENANCE:
-- Production Data: USDAdata/grains_world_usdapsd_production_jul142023.csv
-- Consumption Data: USDAdata/grains_world_usdapsd_consumption_jul142023.csv
-- Stocks Data: USDAdata/grains_world_usdapsd_endingstocks_jul142023.csv
+- Production Data: USDAdata/grains_world_usdapsd_production_jan212026.csv
+- Consumption Data: USDAdata/grains_world_usdapsd_consumption_jan212026.csv
+- Stocks Data: USDAdata/grains_world_usdapsd_endingstocks_jan212026.csv
 - Commodity: 'Allgrain' (Aggregate of global grain production/consumption/stocks)
 - Period: 1960/61 to 2023/24
 
@@ -45,14 +45,12 @@ logger = logging.getLogger(__name__)
 def load_usda_wide(data_type="production"):
     """
     Load USDA wide-format data (years as columns) and convert to long format.
-    
-    Args:
-        data_type: one of "production", "consumption", "endingstocks"
     """
+    # Use the refreshed Jan 2026 data
     file_map = {
-        "production": "grains_world_usdapsd_production_jul142023.csv",
-        "consumption": "grains_world_usdapsd_consumption_jul142023.csv",
-        "endingstocks": "grains_world_usdapsd_endingstocks_jul142023.csv"
+        "production": "grains_world_usdapsd_production_jan212026.csv",
+        "consumption": "grains_world_usdapsd_consumption_jan212026.csv",
+        "endingstocks": "grains_world_usdapsd_endingstocks_jan212026.csv"
     }
     
     file_path = Path("USDAdata") / file_map[data_type]

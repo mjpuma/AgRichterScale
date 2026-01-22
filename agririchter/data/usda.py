@@ -20,10 +20,11 @@ class USDADataLoader:
             data_dir: Directory containing USDA PSD CSV files
         """
         self.data_dir = Path(data_dir)
+        # Point to the refreshed 2026 data files
         self.crop_files = {
-            'wheat': self.data_dir / 'usda_psd_1961to2021_wheat.csv',
-            'rice': self.data_dir / 'usda_psd_1961to2021_rice.csv',
-            'maize': self.data_dir / 'usda_psd_1961to2021_maize.csv'
+            'wheat': self.data_dir / 'usda_psd_1961to2025_wheat.csv',
+            'rice': self.data_dir / 'usda_psd_1961to2025_rice.csv',
+            'maize': self.data_dir / 'usda_psd_1961to2025_maize.csv'
         }
         
         # Validate files exist
