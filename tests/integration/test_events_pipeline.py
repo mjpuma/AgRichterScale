@@ -16,8 +16,8 @@ import tempfile
 import shutil
 import logging
 
-from agririchter.core.config import Config
-from agririchter.pipeline.events_pipeline import EventsPipeline
+from agrichter.core.config import Config
+from agrichter.pipeline.events_pipeline import EventsPipeline
 
 
 @pytest.fixture
@@ -213,16 +213,16 @@ class TestPipelineVisualization:
             # Verify figure has axes
             assert len(fig.axes) > 0
     
-    def test_agririchter_scale_generated(self, pipeline):
-        """Test that AgriRichter Scale is generated."""
+    def test_agrichter_scale_generated(self, pipeline):
+        """Test that AgRichter Scale is generated."""
         pipeline.load_all_data()
         events_df = pipeline.calculate_events()
         
         figures = pipeline.generate_visualizations(events_df)
         
-        # Check if AgriRichter Scale was created
-        if 'agririchter_scale' in figures:
-            fig = figures['agririchter_scale']
+        # Check if AgRichter Scale was created
+        if 'agrichter_scale' in figures:
+            fig = figures['agrichter_scale']
             assert isinstance(fig, plt.Figure)
             
             # Verify figure has axes
@@ -406,7 +406,7 @@ class TestCompletePipeline:
         assert len(summary) > 0
         
         # Verify report contains key information
-        assert 'AgriRichter' in summary
+        assert 'AgRichter' in summary
         assert 'Event' in summary or 'event' in summary
     
     def test_pipeline_performance_monitoring(self, pipeline):

@@ -7,12 +7,12 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 
-# Add the agririchter package to path
+# Add the agrichter package to path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from agririchter.output.reporter import AnalysisReporter
-from agririchter.output.organizer import FileOrganizer
-from agririchter.output.manager import OutputManager
+from agrichter.output.reporter import AnalysisReporter
+from agrichter.output.organizer import FileOrganizer
+from agrichter.output.manager import OutputManager
 
 def test_analysis_reporter():
     """Test analysis reporter functionality."""

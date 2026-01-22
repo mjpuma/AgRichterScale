@@ -10,7 +10,7 @@ a unified query grid, verifying:
 
 import numpy as np
 import pytest
-from agririchter.analysis.envelope_builder import build_envelope
+from agrichter.analysis.envelope_builder import build_envelope
 
 
 class TestQueryGridCreation:

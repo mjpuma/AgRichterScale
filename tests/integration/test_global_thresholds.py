@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Global threshold validation test for AgriRichter framework.
+Global threshold validation test for AgRichter framework.
 Validates thresholds against total global production and reserves.
 """
 
@@ -10,13 +10,13 @@ from pathlib import Path
 import pandas as pd
 import numpy as np
 
-# Add the agririchter package to path
+# Add the agrichter package to path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from agririchter.core.config import Config
-from agririchter.data.loader import DataLoader
-from agririchter.processing.processor import DataProcessor
-from agririchter.analysis.agririchter import AgriRichterAnalyzer
+from agrichter.core.config import Config
+from agrichter.data.loader import DataLoader
+from agrichter.processing.processor import DataProcessor
+from agrichter.analysis.agrichter import AgRichterAnalyzer
 
 def estimate_global_production(crop_type: str, full_dataset: bool = False):
     """Estimate total global production for threshold validation."""
@@ -130,7 +130,7 @@ def estimate_global_production(crop_type: str, full_dataset: bool = False):
             "20.0% loss": catastrophic_disruption
         }
         
-        analyzer = AgriRichterAnalyzer(config)
+        analyzer = AgRichterAnalyzer(config)
         
         for scenario, loss_value in scenarios.items():
             classification = analyzer.classify_event_severity(loss_value)
@@ -170,7 +170,7 @@ def main():
     
     logger.info("🌍 Global Threshold Validation")
     logger.info("=" * 60)
-    logger.info("Validating AgriRichter thresholds against estimated global production")
+    logger.info("Validating AgRichter thresholds against estimated global production")
     logger.info("Thresholds should represent reasonable percentages of global production")
     
     results = {}

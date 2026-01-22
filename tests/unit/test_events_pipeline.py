@@ -5,8 +5,8 @@ import logging
 from pathlib import Path
 import pandas as pd
 import matplotlib.pyplot as plt
-from agririchter.core.config import Config
-from agririchter.pipeline.events_pipeline import EventsPipeline
+from agrichter.core.config import Config
+from agrichter.pipeline.events_pipeline import EventsPipeline
 
 
 class TestEventsPipelineInitialization:
@@ -36,7 +36,7 @@ class TestEventsPipelineInitialization:
         pipeline = EventsPipeline(config, str(output_dir))
         
         assert pipeline.logger is not None
-        assert pipeline.logger.name == 'agririchter.pipeline.events_pipeline'
+        assert pipeline.logger.name == 'agrichter.pipeline.events_pipeline'
         assert len(pipeline.logger.handlers) > 0
     
     def test_pipeline_methods_are_implemented(self, tmp_path):
@@ -147,7 +147,7 @@ class TestEventsPipelineDataLoading:
             assert isinstance(figures, dict)
             
             # Check for expected figure keys (may not all be present if data missing)
-            possible_keys = ['production_map', 'hp_envelope', 'agririchter_scale']
+            possible_keys = ['production_map', 'hp_envelope', 'agrichter_scale']
             for key in figures.keys():
                 assert key in possible_keys
             
@@ -235,7 +235,7 @@ class TestEventsPipelineDataLoading:
         assert len(report) > 0
         
         # Check that report contains expected sections
-        assert 'AgriRichter Events Analysis Pipeline' in report
+        assert 'AgRichter Events Analysis Pipeline' in report
         assert 'EVENT STATISTICS' in report
         assert 'GENERATED FILES' in report
         assert 'DATA QUALITY METRICS' in report

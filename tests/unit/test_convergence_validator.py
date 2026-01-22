@@ -5,7 +5,7 @@ import numpy as np
 from unittest.mock import Mock, patch
 import logging
 
-from agririchter.analysis.convergence_validator import (
+from agrichter.analysis.convergence_validator import (
     ConvergenceValidator,
     ValidationResult,
     MathematicalProperties,
@@ -98,7 +98,7 @@ class TestConvergenceValidator:
         """Test validator initialization with default tolerance."""
         validator = ConvergenceValidator()
         assert validator.tolerance == 1e-6
-        assert validator.logger.name == 'agririchter.convergence_validator'
+        assert validator.logger.name == 'agrichter.convergence_validator'
     
     def test_init_custom_tolerance(self):
         """Test validator initialization with custom tolerance."""

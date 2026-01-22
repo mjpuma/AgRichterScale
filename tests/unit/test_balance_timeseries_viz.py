@@ -6,11 +6,11 @@ import logging
 import matplotlib.pyplot as plt
 from pathlib import Path
 
-# Add the agririchter package to path
+# Add the agrichter package to path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from agririchter.core.config import Config
-from agririchter.visualization.balance_timeseries import BalanceTimeSeriesVisualizer, create_balance_timeseries_for_crop
+from agrichter.core.config import Config
+from agrichter.visualization.balance_timeseries import BalanceTimeSeriesVisualizer, create_balance_timeseries_for_crop
 
 def test_balance_timeseries_visualization():
     """Test Balance Time Series visualization."""

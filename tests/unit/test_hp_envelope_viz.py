@@ -6,11 +6,11 @@ import logging
 import matplotlib.pyplot as plt
 from pathlib import Path
 
-# Add the agririchter package to path
+# Add the agrichter package to path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from agririchter.core.config import Config
-from agririchter.visualization.hp_envelope import HPEnvelopeVisualizer, create_sample_envelope_data, create_sample_events_data
+from agrichter.core.config import Config
+from agrichter.visualization.hp_envelope import HPEnvelopeVisualizer, create_sample_envelope_data, create_sample_events_data
 
 def test_hp_envelope_visualization():
     """Test H-P Envelope visualization."""

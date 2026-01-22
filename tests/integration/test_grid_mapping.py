@@ -10,13 +10,13 @@ import matplotlib
 matplotlib.use('Agg')  # Use non-interactive backend
 import matplotlib.pyplot as plt
 
-# Add the agririchter package to path
+# Add the agrichter package to path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from agririchter.core.config import Config
-from agririchter.data.loader import DataLoader
-from agririchter.processing.processor import DataProcessor
-from agririchter.visualization.maps import GlobalProductionMapper
+from agrichter.core.config import Config
+from agrichter.data.loader import DataLoader
+from agrichter.processing.processor import DataProcessor
+from agrichter.visualization.maps import GlobalProductionMapper
 
 def test_grid_mapping(crop_type: str = 'wheat', sample_size: int = 5000):
     """Test grid mapping with proper SPAM grid structure."""

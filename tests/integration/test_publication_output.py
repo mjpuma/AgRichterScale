@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Test publication-quality output functionality for AgriRichter visualizations."""
+"""Test publication-quality output functionality for AgRichter visualizations."""
 
 import logging
 from pathlib import Path
@@ -11,14 +11,14 @@ import matplotlib.pyplot as plt
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-# Import AgriRichter modules
-from agririchter.core.config import Config
-from agririchter.data.loader import DataLoader
-from agririchter.analysis.agririchter import AgriRichterAnalyzer
-from agririchter.analysis.envelope import HPEnvelopeCalculator
-from agririchter.visualization.maps import GlobalProductionMapper
-from agririchter.visualization.plots import AgriRichterPlotter, EnvelopePlotter
-from agririchter.visualization.publication import PublicationFormatter, OutputManager
+# Import AgRichter modules
+from agrichter.core.config import Config
+from agrichter.data.loader import DataLoader
+from agrichter.analysis.agrichter import AgRichterAnalyzer
+from agrichter.analysis.envelope import HPEnvelopeCalculator
+from agrichter.visualization.maps import GlobalProductionMapper
+from agrichter.visualization.plots import AgRichterPlotter, EnvelopePlotter
+from agrichter.visualization.publication import PublicationFormatter, OutputManager
 
 
 def test_publication_output():
@@ -77,17 +77,17 @@ def test_publication_output():
     # Process events for plotting (used by multiple visualizations)
     processed_events = None
     try:
-        analyzer = AgriRichterAnalyzer(config)
+        analyzer = AgRichterAnalyzer(config)
         processed_events = analyzer.process_historical_events(events_df, production_df, harvest_df)
         logger.info(f"Processed {len(processed_events)} historical events")
     except Exception as e:
         logger.warning(f"Failed to process events: {str(e)}")
         processed_events = pd.DataFrame()  # Empty dataframe as fallback
     
-    # Test 2: AgriRichter scale plot with publication formatting
-    logger.info("Creating publication-quality AgriRichter scale plot...")
+    # Test 2: AgRichter scale plot with publication formatting
+    logger.info("Creating publication-quality AgRichter scale plot...")
     try:
-        plotter = AgriRichterPlotter(config)
+        plotter = AgRichterPlotter(config)
         
         # Create scale data
         scale_data = plotter.create_richter_scale_data(
@@ -100,17 +100,17 @@ def test_publication_output():
         fig_scale = plotter.create_scale_plot(
             scale_data=scale_data,
             historical_events=processed_events,
-            title=f'AgriRichter Scale - {crop_type.title()}',
+            title=f'AgRichter Scale - {crop_type.title()}',
             use_publication_style=True,
             figsize=(10, 8),
             dpi=300
         )
         
-        figures['agririchter_scale'] = fig_scale
-        logger.info("✓ AgriRichter scale plot created successfully")
+        figures['agrichter_scale'] = fig_scale
+        logger.info("✓ AgRichter scale plot created successfully")
         
     except Exception as e:
-        logger.error(f"Failed to create AgriRichter scale plot: {str(e)}")
+        logger.error(f"Failed to create AgRichter scale plot: {str(e)}")
     
     # Test 3: H-P envelope plot with publication formatting
     logger.info("Creating publication-quality H-P envelope plot...")

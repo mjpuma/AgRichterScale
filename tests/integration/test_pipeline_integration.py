@@ -13,9 +13,9 @@ import tempfile
 import shutil
 from unittest.mock import Mock, patch
 
-from agririchter.core.config import Config
-from agririchter.pipeline.events_pipeline import EventsPipeline
-from agririchter.pipeline.multi_tier_events_pipeline import (
+from agrichter.core.config import Config
+from agrichter.pipeline.events_pipeline import EventsPipeline
+from agrichter.pipeline.multi_tier_events_pipeline import (
     MultiTierEventsPipeline,
     create_policy_analysis_pipeline,
     create_research_analysis_pipeline,
@@ -368,7 +368,7 @@ class TestPipelineIntegration:
             )
             
             # Test fallback to V2 calculator when multi-tier fails
-            with patch('agririchter.analysis.envelope.HPEnvelopeCalculator') as mock_calc:
+            with patch('agrichter.analysis.envelope.HPEnvelopeCalculator') as mock_calc:
                 # Make the multi-tier calculator fail
                 mock_calc.side_effect = Exception("Multi-tier calculation failed")
                 

@@ -15,7 +15,7 @@ import json
 from pathlib import Path
 import shutil
 
-from agririchter.analysis.envelope_builder import build_envelope, export_envelope_results
+from agrichter.analysis.envelope_builder import build_envelope, export_envelope_results
 
 
 @pytest.fixture

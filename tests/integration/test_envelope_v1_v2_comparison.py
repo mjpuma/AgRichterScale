@@ -14,10 +14,10 @@ import pandas as pd
 import logging
 from pathlib import Path
 
-from agririchter.core.config import Config
-from agririchter.analysis.envelope import HPEnvelopeCalculator
-from agririchter.analysis.envelope_v2 import HPEnvelopeCalculatorV2
-from agririchter.data.loader import DataLoader
+from agrichter.core.config import Config
+from agrichter.analysis.envelope import HPEnvelopeCalculator
+from agrichter.analysis.envelope_v2 import HPEnvelopeCalculatorV2
+from agrichter.data.loader import DataLoader
 
 
 # Configure logging

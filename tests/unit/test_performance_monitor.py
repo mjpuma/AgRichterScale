@@ -3,7 +3,7 @@
 import pytest
 import time
 from pathlib import Path
-from agririchter.core.performance import PerformanceMonitor
+from agrichter.core.performance import PerformanceMonitor
 
 
 class TestPerformanceMonitor:

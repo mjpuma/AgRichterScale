@@ -6,8 +6,8 @@ import numpy as np
 from pathlib import Path
 from unittest.mock import Mock, patch
 
-from agririchter.validation.data_validator import DataValidator
-from agririchter.core.config import Config
+from agrichter.validation.data_validator import DataValidator
+from agrichter.core.config import Config
 
 
 @pytest.fixture
@@ -300,7 +300,7 @@ class TestValidationReport:
         """Test report generation with no validation results."""
         report = validator.generate_validation_report()
         
-        assert 'AgriRichter Data Validation Report' in report
+        assert 'AgRichter Data Validation Report' in report
         assert 'Crop Type: wheat' in report
         assert 'SPAM Version: 2020' in report
     

@@ -7,8 +7,8 @@ import geopandas as gpd
 from pathlib import Path
 from unittest.mock import Mock, patch, MagicMock
 
-from agririchter.core.config import Config
-from agririchter.data.grid_manager import GridDataManager
+from agrichter.core.config import Config
+from agrichter.data.grid_manager import GridDataManager
 
 
 @pytest.fixture

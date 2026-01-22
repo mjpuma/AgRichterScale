@@ -10,11 +10,11 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# Add the agririchter package to path
+# Add the agrichter package to path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from agririchter.core.config import Config
-from agririchter.visualization.plots import EnvelopePlotter
+from agrichter.core.config import Config
+from agrichter.visualization.plots import EnvelopePlotter
 
 def test_empty_envelope_data():
     """Test envelope plotting with empty data."""

@@ -14,9 +14,9 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 
-from agririchter.core.config import Config
-from agririchter.data.country_framework import CountryFramework, CountryTemplate
-from agririchter.data.country_boundary_manager import CountryConfiguration, CountryBoundaryManager
+from agrichter.core.config import Config
+from agrichter.data.country_framework import CountryFramework, CountryTemplate
+from agrichter.data.country_boundary_manager import CountryConfiguration, CountryBoundaryManager
 
 
 class TestCountryTemplate(unittest.TestCase):

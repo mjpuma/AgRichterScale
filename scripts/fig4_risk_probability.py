@@ -28,12 +28,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-# Add parent directory to path to allow importing from agririchter
+# Add parent directory to path to allow importing from agrichter
 sys.path.append(str(Path(__file__).parent.parent))
 
-from agririchter.core.config import Config
-from agririchter.data.grid_manager import GridDataManager
-from agririchter.analysis.envelope_v2 import HPEnvelopeCalculatorV2
+from agrichter.core.config import Config
+from agrichter.data.grid_manager import GridDataManager
+from agrichter.analysis.envelope_v2 import HPEnvelopeCalculatorV2
 
 # Configure logging
 logging.basicConfig(

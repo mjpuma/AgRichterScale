@@ -15,11 +15,11 @@ import time
 import psutil
 import os
 
-from agririchter.core.config import Config
-from agririchter.analysis.multi_tier_envelope import MultiTierEnvelopeEngine, MultiTierResults
-from agririchter.analysis.envelope import EnvelopeData
-from agririchter.validation.spam_data_filter import SPAMDataFilter
-from agririchter.core.performance import PerformanceMonitor
+from agrichter.core.config import Config
+from agrichter.analysis.multi_tier_envelope import MultiTierEnvelopeEngine, MultiTierResults
+from agrichter.analysis.envelope import EnvelopeData
+from agrichter.validation.spam_data_filter import SPAMDataFilter
+from agrichter.core.performance import PerformanceMonitor
 
 logger = logging.getLogger(__name__)
 

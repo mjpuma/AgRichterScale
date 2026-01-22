@@ -298,39 +298,39 @@ The codebase is supported by a comprehensive unit testing suite (located in the 
 \subsection*{8. Computational Workflow and Dependencies}
 \addcontentsline{toc}{subsection}{8. Computational Workflow and Dependencies}
 
-The AgriRichter analysis pipeline is structured as a modular system of interdependent routines. The following dependency tree illustrates the flow of data and logic during figure generation, highlighting the integrated validation steps.
+The AgRichter analysis pipeline is structured as a modular system of interdependent routines. The following dependency tree illustrates the flow of data and logic during figure generation, highlighting the integrated validation steps.
 
 \begin{figure}[h]
 \centering
 \begin{verbatim}
 [Main Script] scripts/fig*_*.py
- ├──> [Config] agririchter.core.config.Config
+ ├──> [Config] agrichter.core.config.Config
  │     ├──> Loads: Constants (Crop definitions, Caloric values)
  │     └──> Loads: USDA Data (Consumption/Stocks for thresholds)
  │
- ├──> [Data Manager] agririchter.data.grid_manager.GridDataManager
+ ├──> [Data Manager] agrichter.data.grid_manager.GridDataManager
  │     ├──> Loads: SPAM 2020 Production & Harvest Area
  │     ├──> Validates: Coordinate alignment & Data integrity
  │     └──> Filters: Crop-specific grid cells
  │
- ├──> [Event Calculator] agririchter.analysis.event_calculator.EventCalculator
+ ├──> [Event Calculator] agrichter.analysis.event_calculator.EventCalculator
  │     ├──> Input: Historical Event Metadata (Excel)
  │     ├──> Action: Maps events to grid cells (SpatialMapper)
  │     └──> Output: Calculates M_D and Production Loss for specific events
  │
- └──> [Envelope Calculator] agririchter.analysis.envelope_v2.HPEnvelopeCalculatorV2
-       ├──> [Builder] agririchter.analysis.envelope_builder.build_envelope
+ └──> [Envelope Calculator] agrichter.analysis.envelope_v2.HPEnvelopeCalculatorV2
+       ├──> [Builder] agrichter.analysis.envelope_builder.build_envelope
        │     ├──> Action: Sorts grid cells by yield (Ascending/Descending)
        │     ├──> Action: Computes cumulative sums (Greedy Algorithm)
        │     └──> Action: Interpolates for smooth curve generation
        │
-       └──> [Validator] agririchter.analysis.convergence_validator.ConvergenceValidator
+       └──> [Validator] agrichter.analysis.convergence_validator.ConvergenceValidator
              ├──> Check: Origin Constraint (Start at 0,0)
              ├──> Check: Monotonicity (Harvest Area increases)
              ├──> Check: Dominance (Upper >= Lower Bound)
              └──> Check: Convergence (Upper & Lower meet at Total Production)
 \end{verbatim}
-\caption{Computational dependency tree for the AgriRichter analysis framework. Arrows indicate the direction of data flow and subroutine calls. The \texttt{ConvergenceValidator} runs automatically at the end of every envelope calculation step.}
+\caption{Computational dependency tree for the AgRichter analysis framework. Arrows indicate the direction of data flow and subroutine calls. The \texttt{ConvergenceValidator} runs automatically at the end of every envelope calculation step.}
 \label{fig:dependency_tree}
 \end{figure}
 

@@ -12,7 +12,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 
-# Add parent directory to path to allow importing from agririchter
+# Add parent directory to path to allow importing from agrichter
 sys.path.append(str(Path(__file__).parent.parent))
 
 # Configure logging
@@ -32,12 +32,12 @@ mpl.rcParams.update({
     'lines.linewidth': 2.0,
 })
 
-from agririchter.core.config import Config
-from agririchter.data.grid_manager import GridDataManager
-from agririchter.data.spatial_mapper import SpatialMapper
-from agririchter.data.events import EventsProcessor
-from agririchter.analysis.event_calculator import EventCalculator
-from agririchter.visualization.agririchter_scale import AgriRichterScaleVisualizer
+from agrichter.core.config import Config
+from agrichter.data.grid_manager import GridDataManager
+from agrichter.data.spatial_mapper import SpatialMapper
+from agrichter.data.events import EventsProcessor
+from agrichter.analysis.event_calculator import EventCalculator
+from agrichter.visualization.agrichter_scale import AgRichterScaleVisualizer
 import pandas as pd
 
 
@@ -122,10 +122,10 @@ def main():
             events_data = load_real_events(crop, config, grid_manager)
             
             # Create visualizer
-            visualizer = AgriRichterScaleVisualizer(config, use_event_types=True)
+            visualizer = AgRichterScaleVisualizer(config, use_event_types=True)
             
             # Generate figure
-            fig = visualizer.create_agririchter_scale_plot(
+            fig = visualizer.create_agrichter_scale_plot(
                 events_data, 
                 save_path=results_dir / f'figure1_{crop}_individual.png'
             )
@@ -162,8 +162,8 @@ def main():
             events_data = load_real_events(crop, config, grid_manager)
             
             # Create visualizer and plot on subplot
-            visualizer = AgriRichterScaleVisualizer(config, use_event_types=True)
-            visualizer.create_agririchter_scale_plot(
+            visualizer = AgRichterScaleVisualizer(config, use_event_types=True)
+            visualizer.create_agrichter_scale_plot(
                 events_data,
                 ax=axes[i]
             )

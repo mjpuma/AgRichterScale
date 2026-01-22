@@ -11,11 +11,11 @@ from pathlib import Path
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-# Import AgriRichter modules
-from agririchter.core.config import Config
-from agririchter.analysis.envelope import HPEnvelopeCalculator
-from agririchter.analysis.agririchter import AgriRichterAnalyzer
-from agririchter.visualization.plots import AgriRichterPlotter, EnvelopePlotter
+# Import AgRichter modules
+from agrichter.core.config import Config
+from agrichter.analysis.envelope import HPEnvelopeCalculator
+from agrichter.analysis.agrichter import AgRichterAnalyzer
+from agrichter.visualization.plots import AgRichterPlotter, EnvelopePlotter
 
 
 def create_test_data():
@@ -89,11 +89,11 @@ def test_envelope_calculation():
 
 
 def test_scale_calculation():
-    """Test the corrected AgriRichter scale calculation."""
-    logger.info("Testing AgriRichter scale calculation...")
+    """Test the corrected AgRichter scale calculation."""
+    logger.info("Testing AgRichter scale calculation...")
     
     config = Config(crop_type='wheat')
-    analyzer = AgriRichterAnalyzer(config)
+    analyzer = AgRichterAnalyzer(config)
     
     # Calculate scale data
     scale_data = analyzer.create_richter_scale_data(
@@ -180,13 +180,13 @@ def test_visualization():
     ax1.legend()
     ax1.grid(True, alpha=0.3)
     
-    # Plot 2: AgriRichter Scale
-    scale_plotter = AgriRichterPlotter(config)
+    # Plot 2: AgRichter Scale
+    scale_plotter = AgRichterPlotter(config)
     
     magnitudes = scale_data['magnitudes']
     production = scale_data['production_kcal']
     
-    ax2.plot(magnitudes, production, 'b-', linewidth=2, label='AgriRichter Scale')
+    ax2.plot(magnitudes, production, 'b-', linewidth=2, label='AgRichter Scale')
     
     # Plot events on scale
     for _, event in events_df.iterrows():
@@ -195,7 +195,7 @@ def test_visualization():
         ax2.annotate(event['event_name'], (event_magnitude, event['production_loss_kcal']),
                     xytext=(5, 5), textcoords='offset points', fontsize=8)
     
-    ax2.set_title('AgriRichter Scale (Corrected)', fontsize=14, fontweight='bold')
+    ax2.set_title('AgRichter Scale (Corrected)', fontsize=14, fontweight='bold')
     ax2.set_xlabel('Magnitude')
     ax2.set_ylabel('Production Loss (kcal)')
     ax2.set_yscale('log')
@@ -228,7 +228,7 @@ def main():
         print("CORRECTED IMPLEMENTATION TEST RESULTS")
         print("="*60)
         print("✓ H-P Envelope calculation: PASSED")
-        print("✓ AgriRichter Scale calculation: PASSED")
+        print("✓ AgRichter Scale calculation: PASSED")
         print("✓ Visualization: PASSED")
         print("✓ All tests completed successfully!")
         

@@ -1,5 +1,5 @@
 """
-Unit tests for AgriRichter Scale visualization with real events data.
+Unit tests for AgRichter Scale visualization with real events data.
 """
 
 import pytest
@@ -12,12 +12,12 @@ import sys
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from agririchter.core.config import Config
-from agririchter.visualization.agririchter_scale import AgriRichterScaleVisualizer
+from agrichter.core.config import Config
+from agrichter.visualization.agrichter_scale import AgRichterScaleVisualizer
 
 
-class TestAgriRichterScaleVisualizer:
-    """Test suite for AgriRichter Scale visualization."""
+class TestAgRichterScaleVisualizer:
+    """Test suite for AgRichter Scale visualization."""
     
     @pytest.fixture
     def config_wheat(self):
@@ -67,7 +67,7 @@ class TestAgriRichterScaleVisualizer:
     
     def test_visualizer_initialization(self, config_wheat):
         """Test visualizer initialization."""
-        visualizer = AgriRichterScaleVisualizer(config_wheat)
+        visualizer = AgRichterScaleVisualizer(config_wheat)
         assert visualizer.config == config_wheat
         assert visualizer.crop_type == 'wheat'
         assert 'figsize' in visualizer.figure_params
@@ -75,8 +75,8 @@ class TestAgriRichterScaleVisualizer:
     
     def test_create_plot_with_hectares(self, config_wheat, sample_events_ha):
         """Test creating plot with harvest area in hectares."""
-        visualizer = AgriRichterScaleVisualizer(config_wheat)
-        fig = visualizer.create_agririchter_scale_plot(sample_events_ha)
+        visualizer = AgRichterScaleVisualizer(config_wheat)
+        fig = visualizer.create_agrichter_scale_plot(sample_events_ha)
         
         assert fig is not None
         assert isinstance(fig, plt.Figure)
@@ -84,8 +84,8 @@ class TestAgriRichterScaleVisualizer:
     
     def test_create_plot_with_km2(self, config_wheat, sample_events_km2):
         """Test creating plot with harvest area in km²."""
-        visualizer = AgriRichterScaleVisualizer(config_wheat)
-        fig = visualizer.create_agririchter_scale_plot(sample_events_km2)
+        visualizer = AgRichterScaleVisualizer(config_wheat)
+        fig = visualizer.create_agrichter_scale_plot(sample_events_km2)
         
         assert fig is not None
         assert isinstance(fig, plt.Figure)
@@ -93,7 +93,7 @@ class TestAgriRichterScaleVisualizer:
     
     def test_prepare_events_data_hectares_to_km2(self, config_wheat, sample_events_ha):
         """Test conversion from hectares to km²."""
-        visualizer = AgriRichterScaleVisualizer(config_wheat)
+        visualizer = AgRichterScaleVisualizer(config_wheat)
         prepared = visualizer._prepare_events_data(sample_events_ha)
         
         assert 'harvest_area_km2' in prepared.columns
@@ -103,7 +103,7 @@ class TestAgriRichterScaleVisualizer:
     
     def test_prepare_events_data_filters_invalid(self, config_wheat, events_with_invalid_values):
         """Test filtering of invalid values."""
-        visualizer = AgriRichterScaleVisualizer(config_wheat)
+        visualizer = AgRichterScaleVisualizer(config_wheat)
         prepared = visualizer._prepare_events_data(events_with_invalid_values)
         
         # Should only keep 2 valid events
@@ -115,7 +115,7 @@ class TestAgriRichterScaleVisualizer:
     
     def test_prepare_events_data_no_conversion_needed(self, config_wheat, sample_events_km2):
         """Test that no conversion happens when harvest_area_km2 already exists."""
-        visualizer = AgriRichterScaleVisualizer(config_wheat)
+        visualizer = AgRichterScaleVisualizer(config_wheat)
         prepared = visualizer._prepare_events_data(sample_events_km2)
         
         assert 'harvest_area_km2' in prepared.columns
@@ -125,7 +125,7 @@ class TestAgriRichterScaleVisualizer:
     
     def test_get_axis_limits_wheat(self, config_wheat):
         """Test axis limits for wheat."""
-        visualizer = AgriRichterScaleVisualizer(config_wheat)
+        visualizer = AgRichterScaleVisualizer(config_wheat)
         xlim, ylim = visualizer._get_axis_limits()
         
         assert xlim == (2, 6.5)
@@ -133,7 +133,7 @@ class TestAgriRichterScaleVisualizer:
     
     def test_get_axis_limits_rice(self, config_rice):
         """Test axis limits for rice."""
-        visualizer = AgriRichterScaleVisualizer(config_rice)
+        visualizer = AgRichterScaleVisualizer(config_rice)
         xlim, ylim = visualizer._get_axis_limits()
         
         assert xlim == (2, 6)
@@ -141,7 +141,7 @@ class TestAgriRichterScaleVisualizer:
     
     def test_get_axis_limits_allgrain(self, config_allgrain):
         """Test axis limits for allgrain."""
-        visualizer = AgriRichterScaleVisualizer(config_allgrain)
+        visualizer = AgRichterScaleVisualizer(config_allgrain)
         xlim, ylim = visualizer._get_axis_limits()
         
         assert xlim == (2, 7)
@@ -149,37 +149,37 @@ class TestAgriRichterScaleVisualizer:
     
     def test_plot_with_empty_dataframe(self, config_wheat):
         """Test plotting with empty events DataFrame."""
-        visualizer = AgriRichterScaleVisualizer(config_wheat)
+        visualizer = AgRichterScaleVisualizer(config_wheat)
         empty_df = pd.DataFrame(columns=['event_name', 'harvest_area_km2', 'production_loss_kcal'])
         
-        fig = visualizer.create_agririchter_scale_plot(empty_df)
+        fig = visualizer.create_agrichter_scale_plot(empty_df)
         assert fig is not None
         plt.close(fig)
     
     def test_save_figure_multiple_formats(self, config_wheat, sample_events_ha, tmp_path):
         """Test saving figure in multiple formats."""
-        visualizer = AgriRichterScaleVisualizer(config_wheat)
-        output_path = tmp_path / "test_agririchter_scale.png"
+        visualizer = AgRichterScaleVisualizer(config_wheat)
+        output_path = tmp_path / "test_agrichter_scale.png"
         
-        fig = visualizer.create_agririchter_scale_plot(sample_events_ha, output_path)
+        fig = visualizer.create_agrichter_scale_plot(sample_events_ha, output_path)
         
         # Check that files were created
-        assert (tmp_path / "test_agririchter_scale.png").exists()
-        assert (tmp_path / "test_agririchter_scale.svg").exists()
-        assert (tmp_path / "test_agririchter_scale.eps").exists()
+        assert (tmp_path / "test_agrichter_scale.png").exists()
+        assert (tmp_path / "test_agrichter_scale.svg").exists()
+        assert (tmp_path / "test_agrichter_scale.eps").exists()
         
         plt.close(fig)
     
     def test_magnitude_calculation(self, config_wheat, sample_events_ha):
         """Test magnitude calculation in plot."""
-        visualizer = AgriRichterScaleVisualizer(config_wheat)
+        visualizer = AgRichterScaleVisualizer(config_wheat)
         prepared = visualizer._prepare_events_data(sample_events_ha)
         
         # Calculate magnitude manually
         expected_magnitude = np.log10(prepared['harvest_area_km2'])
         
         # Create plot (which calculates magnitude internally)
-        fig = visualizer.create_agririchter_scale_plot(sample_events_ha)
+        fig = visualizer.create_agrichter_scale_plot(sample_events_ha)
         
         # Verify magnitude is calculated correctly
         assert fig is not None
@@ -187,7 +187,7 @@ class TestAgriRichterScaleVisualizer:
     
     def test_plot_historical_events_with_adjusttext(self, config_wheat, sample_events_ha):
         """Test plotting historical events with adjustText."""
-        visualizer = AgriRichterScaleVisualizer(config_wheat)
+        visualizer = AgRichterScaleVisualizer(config_wheat)
         prepared = visualizer._prepare_events_data(sample_events_ha)
         prepared['magnitude'] = np.log10(prepared['harvest_area_km2'])
         
@@ -200,7 +200,7 @@ class TestAgriRichterScaleVisualizer:
     
     def test_plot_agriPhase_thresholds(self, config_wheat):
         """Test plotting AgriPhase threshold lines."""
-        visualizer = AgriRichterScaleVisualizer(config_wheat)
+        visualizer = AgRichterScaleVisualizer(config_wheat)
         
         fig, ax = plt.subplots()
         xlim = (2, 7)
@@ -212,7 +212,7 @@ class TestAgriRichterScaleVisualizer:
     
     def test_plot_theoretical_line(self, config_wheat):
         """Test plotting theoretical production loss line."""
-        visualizer = AgriRichterScaleVisualizer(config_wheat)
+        visualizer = AgRichterScaleVisualizer(config_wheat)
         
         fig, ax = plt.subplots()
         xlim = (2, 7)
@@ -228,8 +228,8 @@ class TestAgriRichterScaleVisualizer:
         
         for crop_type in crop_types:
             config = Config(crop_type, use_dynamic_thresholds=True)
-            visualizer = AgriRichterScaleVisualizer(config)
-            fig = visualizer.create_agririchter_scale_plot(sample_events_ha)
+            visualizer = AgRichterScaleVisualizer(config)
+            fig = visualizer.create_agrichter_scale_plot(sample_events_ha)
             
             assert fig is not None
             plt.close(fig)
@@ -240,8 +240,8 @@ class TestAgriRichterScaleVisualizer:
             {'event_name': 'Single Event', 'harvest_area_loss_ha': 10000000, 'production_loss_kcal': 5e14}
         ])
         
-        visualizer = AgriRichterScaleVisualizer(config_wheat)
-        fig = visualizer.create_agririchter_scale_plot(single_event)
+        visualizer = AgRichterScaleVisualizer(config_wheat)
+        fig = visualizer.create_agrichter_scale_plot(single_event)
         
         assert fig is not None
         plt.close(fig)
@@ -254,15 +254,15 @@ class TestAgriRichterScaleVisualizer:
             for i in range(20)
         ])
         
-        visualizer = AgriRichterScaleVisualizer(config_wheat)
-        fig = visualizer.create_agririchter_scale_plot(many_events)
+        visualizer = AgRichterScaleVisualizer(config_wheat)
+        fig = visualizer.create_agrichter_scale_plot(many_events)
         
         assert fig is not None
         plt.close(fig)
     
     def test_severity_classification(self, config_wheat):
         """Test event severity classification."""
-        visualizer = AgriRichterScaleVisualizer(config_wheat)
+        visualizer = AgRichterScaleVisualizer(config_wheat)
         thresholds = config_wheat.get_thresholds()
         
         # Test classification at different levels
@@ -283,7 +283,7 @@ class TestAgriRichterScaleVisualizer:
     
     def test_severity_markers_unique(self, config_wheat):
         """Test that different severity levels have unique markers."""
-        visualizer = AgriRichterScaleVisualizer(config_wheat)
+        visualizer = AgRichterScaleVisualizer(config_wheat)
         thresholds = config_wheat.get_thresholds()
         
         test_values = [
@@ -304,7 +304,7 @@ class TestAgriRichterScaleVisualizer:
     
     def test_severity_visualization_in_plot(self, config_wheat):
         """Test that severity classification appears in visualization."""
-        visualizer = AgriRichterScaleVisualizer(config_wheat)
+        visualizer = AgRichterScaleVisualizer(config_wheat)
         thresholds = config_wheat.get_thresholds()
         
         # Create events with varied severity
@@ -314,7 +314,7 @@ class TestAgriRichterScaleVisualizer:
             {'event_name': 'Severe', 'harvest_area_km2': 100000, 'production_loss_kcal': thresholds['T4'] * 1.5},
         ])
         
-        fig = visualizer.create_agririchter_scale_plot(events_data)
+        fig = visualizer.create_agrichter_scale_plot(events_data)
         ax = fig.gca()
         
         # Check that legend has severity classifications
@@ -331,7 +331,7 @@ class TestAgriRichterScaleVisualizer:
     
     def test_severity_colors_from_ipc(self, config_wheat):
         """Test that severity colors come from IPC color scheme."""
-        visualizer = AgriRichterScaleVisualizer(config_wheat)
+        visualizer = AgRichterScaleVisualizer(config_wheat)
         ipc_colors = config_wheat.get_ipc_colors()
         
         # Test that classification uses IPC colors

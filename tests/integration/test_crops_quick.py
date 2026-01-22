@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Quick test script for all crop types in AgriRichter framework.
+Quick test script for all crop types in AgRichter framework.
 """
 
 import sys
@@ -9,13 +9,13 @@ from pathlib import Path
 import pandas as pd
 import numpy as np
 
-# Add the agririchter package to path
+# Add the agrichter package to path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from agririchter.core.config import Config
-from agririchter.data.loader import DataLoader
-from agririchter.processing.processor import DataProcessor
-from agririchter.analysis.agririchter import AgriRichterAnalyzer
+from agrichter.core.config import Config
+from agrichter.data.loader import DataLoader
+from agrichter.processing.processor import DataProcessor
+from agrichter.analysis.agrichter import AgRichterAnalyzer
 
 def test_crop_config(crop_type: str):
     """Test crop configuration and basic functionality."""
@@ -42,7 +42,7 @@ def test_crop_config(crop_type: str):
         # Test data loading (small sample)
         loader = DataLoader(config)
         processor = DataProcessor(config)
-        analyzer = AgriRichterAnalyzer(config)
+        analyzer = AgRichterAnalyzer(config)
         
         logger.info("✓ Components initialized successfully")
         

@@ -11,9 +11,9 @@ import pandas as pd
 import numpy as np
 import logging
 from pathlib import Path
-from agririchter.core.config import Config
-from agririchter.data.grid_manager import GridDataManager
-from agririchter.data.usda import USDADataLoader, AgriPhaseThresholdCalculator
+from agrichter.core.config import Config
+from agrichter.data.grid_manager import GridDataManager
+from agrichter.data.usda import USDADataLoader, AgriPhaseThresholdCalculator
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')

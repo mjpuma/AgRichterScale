@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Test script for AgriRichter scale visualization.
+Test script for AgRichter scale visualization.
 """
 
 import sys
@@ -12,16 +12,16 @@ import matplotlib
 matplotlib.use('Agg')  # Use non-interactive backend
 import matplotlib.pyplot as plt
 
-# Add the agririchter package to path
+# Add the agrichter package to path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from agririchter.core.config import Config
-from agririchter.data.loader import DataLoader
-from agririchter.analysis.agririchter import AgriRichterAnalyzer
-from agririchter.visualization.plots import AgriRichterPlotter
+from agrichter.core.config import Config
+from agrichter.data.loader import DataLoader
+from agrichter.analysis.agrichter import AgRichterAnalyzer
+from agrichter.visualization.plots import AgRichterPlotter
 
-def test_agririchter_scale_plot(crop_type: str = 'wheat'):
-    """Test AgriRichter scale visualization."""
+def test_agrichter_scale_plot(crop_type: str = 'wheat'):
+    """Test AgRichter scale visualization."""
     
     logger = logging.getLogger(__name__)
     
@@ -32,11 +32,11 @@ def test_agririchter_scale_plot(crop_type: str = 'wheat'):
         
         # Initialize components
         config = Config(crop_type=crop_type, root_dir='.')
-        analyzer = AgriRichterAnalyzer(config)
-        plotter = AgriRichterPlotter(config)
+        analyzer = AgRichterAnalyzer(config)
+        plotter = AgRichterPlotter(config)
         
         # Create theoretical scale data
-        logger.info("Creating theoretical AgriRichter scale data...")
+        logger.info("Creating theoretical AgRichter scale data...")
         scale_data = plotter.create_richter_scale_data(
             min_magnitude=0.0, 
             max_magnitude=6.0, 
@@ -60,12 +60,12 @@ def test_agririchter_scale_plot(crop_type: str = 'wheat'):
         output_dir.mkdir(exist_ok=True)
         
         # Test 1: Scale plot with theoretical data only
-        logger.info("Creating AgriRichter scale plot (theoretical data only)...")
-        output_path_1 = output_dir / f'agririchter_scale_theory_{crop_type}.png'
+        logger.info("Creating AgRichter scale plot (theoretical data only)...")
+        output_path_1 = output_dir / f'agrichter_scale_theory_{crop_type}.png'
         
         fig1 = plotter.create_scale_plot(
             scale_data=scale_data,
-            title=f'AgriRichter Scale - {crop_type.title()} (Theoretical)',
+            title=f'AgRichter Scale - {crop_type.title()} (Theoretical)',
             output_path=output_path_1,
             dpi=200,
             figsize=(10, 8)
@@ -78,13 +78,13 @@ def test_agririchter_scale_plot(crop_type: str = 'wheat'):
             logger.info(f"   File size: {output_path_1.stat().st_size / 1024:.1f} KB")
         
         # Test 2: Scale plot with historical events
-        logger.info("Creating AgriRichter scale plot with historical events...")
-        output_path_2 = output_dir / f'agririchter_scale_events_{crop_type}.png'
+        logger.info("Creating AgRichter scale plot with historical events...")
+        output_path_2 = output_dir / f'agrichter_scale_events_{crop_type}.png'
         
         fig2 = plotter.create_scale_plot(
             scale_data=scale_data,
             historical_events=sample_events,
-            title=f'AgriRichter Scale - {crop_type.title()} (with Historical Events)',
+            title=f'AgRichter Scale - {crop_type.title()} (with Historical Events)',
             output_path=output_path_2,
             dpi=200,
             figsize=(10, 8)
@@ -97,12 +97,12 @@ def test_agririchter_scale_plot(crop_type: str = 'wheat'):
             logger.info(f"   File size: {output_path_2.stat().st_size / 1024:.1f} KB")
         
         # Test 3: Events only plot
-        logger.info("Creating AgriRichter scale plot (events only)...")
-        output_path_3 = output_dir / f'agririchter_scale_events_only_{crop_type}.png'
+        logger.info("Creating AgRichter scale plot (events only)...")
+        output_path_3 = output_dir / f'agrichter_scale_events_only_{crop_type}.png'
         
         fig3 = plotter.create_scale_plot(
             historical_events=sample_events,
-            title=f'AgriRichter Scale - {crop_type.title()} (Historical Events Only)',
+            title=f'AgRichter Scale - {crop_type.title()} (Historical Events Only)',
             output_path=output_path_3,
             dpi=200,
             figsize=(10, 8)
@@ -121,17 +121,17 @@ def test_agririchter_scale_plot(crop_type: str = 'wheat'):
             log_value = np.log10(value) if value > 0 else 0
             logger.info(f"  {level}: {value:.2e} kcal (log10: {log_value:.2f})")
         
-        logger.info(f"✅ {crop_type.upper()} AgriRichter scale visualization test PASSED")
+        logger.info(f"✅ {crop_type.upper()} AgRichter scale visualization test PASSED")
         return True
         
     except Exception as e:
-        logger.error(f"❌ {crop_type.upper()} AgriRichter scale test FAILED: {str(e)}")
+        logger.error(f"❌ {crop_type.upper()} AgRichter scale test FAILED: {str(e)}")
         import traceback
         traceback.print_exc()
         return False
 
 def main():
-    """Test AgriRichter scale visualization for all crop types."""
+    """Test AgRichter scale visualization for all crop types."""
     
     # Set up logging
     logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
@@ -139,13 +139,13 @@ def main():
     
     crop_types = ['wheat', 'rice', 'maize', 'allgrain']
     
-    logger.info("📊 AgriRichter Scale Visualization Testing")
+    logger.info("📊 AgRichter Scale Visualization Testing")
     logger.info("=" * 60)
     logger.info("Testing magnitude vs production loss plotting with historical events")
     
     results = {}
     for crop_type in crop_types:
-        results[crop_type] = test_agririchter_scale_plot(crop_type)
+        results[crop_type] = test_agrichter_scale_plot(crop_type)
     
     # Summary
     logger.info(f"\n{'='*60}")
@@ -171,9 +171,9 @@ def main():
         # List generated files
         output_dir = Path('test_outputs')
         if output_dir.exists():
-            scale_files = list(output_dir.glob('agririchter_scale_*.png'))
+            scale_files = list(output_dir.glob('agrichter_scale_*.png'))
             if scale_files:
-                logger.info(f"\n📁 Generated AgriRichter scale files:")
+                logger.info(f"\n📁 Generated AgRichter scale files:")
                 for file_path in scale_files:
                     logger.info(f"   {file_path}")
     

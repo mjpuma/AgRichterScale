@@ -15,10 +15,10 @@ import os
 from pathlib import Path
 from typing import Dict, List, Any, Tuple
 
-from agririchter.core.config import Config
-from agririchter.data.grid_manager import GridDataManager
-from agririchter.analysis.multi_tier_envelope import MultiTierEnvelopeEngine, MultiTierResults
-from agririchter.analysis.envelope import EnvelopeData
+from agrichter.core.config import Config
+from agrichter.data.grid_manager import GridDataManager
+from agrichter.analysis.multi_tier_envelope import MultiTierEnvelopeEngine, MultiTierResults
+from agrichter.analysis.envelope import EnvelopeData
 
 logger = logging.getLogger(__name__)
 

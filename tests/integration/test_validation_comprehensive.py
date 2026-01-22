@@ -1,4 +1,4 @@
-"""Comprehensive validation tests for AgriRichter analysis.
+"""Comprehensive validation tests for AgRichter analysis.
 
 This test module covers:
 - MATLAB comparison with reference data
@@ -17,11 +17,11 @@ from unittest.mock import Mock, patch, MagicMock
 import matplotlib.pyplot as plt
 import matplotlib
 
-from agririchter.validation.data_validator import DataValidator
-from agririchter.core.config import Config
-from agririchter.data.grid_manager import GridDataManager
-from agririchter.data.spatial_mapper import SpatialMapper
-from agririchter.analysis.event_calculator import EventCalculator
+from agrichter.validation.data_validator import DataValidator
+from agrichter.core.config import Config
+from agrichter.data.grid_manager import GridDataManager
+from agrichter.data.spatial_mapper import SpatialMapper
+from agrichter.analysis.event_calculator import EventCalculator
 
 
 @pytest.fixture
@@ -552,7 +552,7 @@ class TestValidationReportGeneration:
             event_validation=event_validation
         )
         
-        assert 'AgriRichter Data Validation Report' in report
+        assert 'AgRichter Data Validation Report' in report
         assert 'SPAM DATA VALIDATION' in report
         assert 'EVENT RESULTS VALIDATION' in report
     

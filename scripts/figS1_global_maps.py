@@ -12,7 +12,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 
-# Add parent directory to path to allow importing from agririchter
+# Add parent directory to path to allow importing from agrichter
 sys.path.append(str(Path(__file__).parent.parent))
 
 # Configure logging
@@ -31,9 +31,9 @@ mpl.rcParams.update({
     'axes.linewidth': 1.5,
 })
 
-from agririchter.core.config import Config
-from agririchter.data.grid_manager import GridDataManager
-from agririchter.visualization.global_map_generator import GlobalMapGenerator
+from agrichter.core.config import Config
+from agrichter.data.grid_manager import GridDataManager
+from agrichter.visualization.global_map_generator import GlobalMapGenerator
 
 
 def main():

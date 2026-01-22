@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Test script to verify AgriRichter framework works with all crop types.
+Test script to verify AgRichter framework works with all crop types.
 """
 
 import sys
@@ -9,13 +9,13 @@ from pathlib import Path
 import pandas as pd
 import numpy as np
 
-# Add the agririchter package to path
+# Add the agrichter package to path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from agririchter.core.config import Config
-from agririchter.data.loader import DataLoader
-from agririchter.processing.processor import DataProcessor
-from agririchter.analysis.agririchter import AgriRichterAnalyzer
+from agrichter.core.config import Config
+from agrichter.data.loader import DataLoader
+from agrichter.processing.processor import DataProcessor
+from agrichter.analysis.agrichter import AgRichterAnalyzer
 
 def test_crop_type(crop_type: str, sample_size: int = 2000):
     """Test a specific crop type."""
@@ -41,7 +41,7 @@ def test_crop_type(crop_type: str, sample_size: int = 2000):
         # Initialize components
         loader = DataLoader(config)
         processor = DataProcessor(config)
-        analyzer = AgriRichterAnalyzer(config)
+        analyzer = AgRichterAnalyzer(config)
         
         # Load sample data
         logger.info(f"Loading sample data ({sample_size} cells)...")

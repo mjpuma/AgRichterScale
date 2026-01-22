@@ -6,10 +6,10 @@ import numpy as np
 from pathlib import Path
 from unittest.mock import Mock, patch, MagicMock
 
-from agririchter.core.config import Config
-from agririchter.data.grid_manager import GridDataManager
-from agririchter.data.spatial_mapper import SpatialMapper
-from agririchter.analysis.event_calculator import EventCalculator
+from agrichter.core.config import Config
+from agrichter.data.grid_manager import GridDataManager
+from agrichter.data.spatial_mapper import SpatialMapper
+from agrichter.analysis.event_calculator import EventCalculator
 
 
 @pytest.fixture

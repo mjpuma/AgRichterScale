@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Threshold validation test for AgriRichter framework.
+Threshold validation test for AgRichter framework.
 Validates that thresholds are reasonable based on global production data.
 """
 
@@ -10,13 +10,13 @@ from pathlib import Path
 import pandas as pd
 import numpy as np
 
-# Add the agririchter package to path
+# Add the agrichter package to path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from agririchter.core.config import Config
-from agririchter.data.loader import DataLoader
-from agririchter.processing.processor import DataProcessor
-from agririchter.analysis.agririchter import AgriRichterAnalyzer
+from agrichter.core.config import Config
+from agrichter.data.loader import DataLoader
+from agrichter.processing.processor import DataProcessor
+from agrichter.analysis.agrichter import AgRichterAnalyzer
 
 def analyze_global_production(crop_type: str, sample_size: int = 10000):
     """Analyze global production to validate thresholds."""
@@ -32,7 +32,7 @@ def analyze_global_production(crop_type: str, sample_size: int = 10000):
         config = Config(crop_type=crop_type, root_dir='.')
         loader = DataLoader(config)
         processor = DataProcessor(config)
-        analyzer = AgriRichterAnalyzer(config)
+        analyzer = AgRichterAnalyzer(config)
         
         # Get configuration
         thresholds = config.get_thresholds()
@@ -144,7 +144,7 @@ def main():
     
     crop_types = ['wheat', 'rice', 'maize', 'allgrain']
     
-    logger.info("🎯 AgriRichter Threshold Validation")
+    logger.info("🎯 AgRichter Threshold Validation")
     logger.info("=" * 60)
     logger.info("This test validates that the hardcoded thresholds are reasonable")
     logger.info("based on actual global production data patterns.")

@@ -14,11 +14,11 @@ import shutil
 from pathlib import Path
 from typing import Dict, Any
 
-from agririchter.core.config import Config
-from agririchter.core.envelope_cache import EnvelopeCalculationCache
-from agririchter.core.parallel_calculator import ParallelMultiTierCalculator
-from agririchter.analysis.multi_tier_envelope import MultiTierEnvelopeEngine
-from agririchter.analysis.envelope import HPEnvelopeCalculator
+from agrichter.core.config import Config
+from agrichter.core.envelope_cache import EnvelopeCalculationCache
+from agrichter.core.parallel_calculator import ParallelMultiTierCalculator
+from agrichter.analysis.multi_tier_envelope import MultiTierEnvelopeEngine
+from agrichter.analysis.envelope import HPEnvelopeCalculator
 
 
 class TestPerformanceOptimizations:

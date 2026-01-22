@@ -381,7 +381,7 @@ def build_discrete_envelope(Y_mt_per_ha: np.ndarray, H_ha: np.ndarray, P_mt: np.
     Build discrete envelope sequences (no interpolation).
     
     This is a minimal implementation for testing mathematical properties.
-    The full implementation will be in agririchter/analysis/envelope_builder.py
+    The full implementation will be in agrichter/analysis/envelope_builder.py
     
     Parameters
     ----------

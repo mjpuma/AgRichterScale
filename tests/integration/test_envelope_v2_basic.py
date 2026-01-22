@@ -9,8 +9,8 @@ import numpy as np
 import pandas as pd
 import logging
 
-from agririchter.core.config import Config
-from agririchter.analysis.envelope_v2 import HPEnvelopeCalculatorV2
+from agrichter.core.config import Config
+from agrichter.analysis.envelope_v2 import HPEnvelopeCalculatorV2
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

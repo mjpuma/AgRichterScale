@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Test script to verify AgriRichter analysis engine with SPAM 2020 data.
+Test script to verify AgRichter analysis engine with SPAM 2020 data.
 """
 
 import sys
@@ -9,17 +9,17 @@ from pathlib import Path
 import pandas as pd
 import numpy as np
 
-# Add the agririchter package to path
+# Add the agrichter package to path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from agririchter.core.config import Config
-from agririchter.data.loader import DataLoader
-from agririchter.processing.processor import DataProcessor
-from agririchter.analysis.agririchter import AgriRichterAnalyzer
-from agririchter.analysis.envelope import HPEnvelopeCalculator
+from agrichter.core.config import Config
+from agrichter.data.loader import DataLoader
+from agrichter.processing.processor import DataProcessor
+from agrichter.analysis.agrichter import AgRichterAnalyzer
+from agrichter.analysis.envelope import HPEnvelopeCalculator
 
 def test_analysis_engine():
-    """Test the AgriRichter analysis engine."""
+    """Test the AgRichter analysis engine."""
     
     # Set up logging
     logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
@@ -33,7 +33,7 @@ def test_analysis_engine():
         # Initialize components
         loader = DataLoader(config)
         processor = DataProcessor(config)
-        analyzer = AgriRichterAnalyzer(config)
+        analyzer = AgRichterAnalyzer(config)
         
         # Load and process a sample of data (to keep test fast)
         logger.info("Loading sample data...")
@@ -89,8 +89,8 @@ def test_analysis_engine():
         else:
             logger.warning("⚠️  Insufficient matching coordinates for envelope calculation")
         
-        # Test AgriRichter magnitude calculation
-        logger.info("Testing AgriRichter magnitude calculation...")
+        # Test AgRichter magnitude calculation
+        logger.info("Testing AgRichter magnitude calculation...")
         
         # Test with sample harvest areas
         test_areas = np.array([1.0, 10.0, 100.0, 1000.0, 10000.0])  # km²
@@ -180,7 +180,7 @@ def test_analysis_engine():
                 f.write(report)
             logger.info("📄 Analysis report saved to 'analysis_report.txt'")
         
-        logger.info("🎉 AgriRichter analysis engine test SUCCESSFUL!")
+        logger.info("🎉 AgRichter analysis engine test SUCCESSFUL!")
         return True
         
     except Exception as e:

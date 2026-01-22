@@ -8,12 +8,12 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from pathlib import Path
 
-# Add the agririchter package to path
+# Add the agrichter package to path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from agririchter.output.manager import OutputManager
-from agririchter.output.organizer import FileOrganizer
-from agririchter.output.exporter import DataExporter, FigureExporter
+from agrichter.output.manager import OutputManager
+from agrichter.output.organizer import FileOrganizer
+from agrichter.output.exporter import DataExporter, FigureExporter
 
 def test_file_organizer():
     """Test file organizer functionality."""
@@ -25,7 +25,7 @@ def test_file_organizer():
         print("  ✓ File organizer created")
         
         # Test path generation
-        figure_path = organizer.get_figure_path('wheat', 'agririchter_scale', 'png')
+        figure_path = organizer.get_figure_path('wheat', 'agrichter_scale', 'png')
         print(f"  ✓ Figure path: {figure_path}")
         
         data_path = organizer.get_data_path('wheat', 'event_losses', 'csv')
@@ -134,7 +134,7 @@ def test_figure_exporter():
         ax.grid(True, alpha=0.3)
         
         # Export figure
-        exported_paths = exporter.export_figure(fig, 'wheat', 'agririchter_scale', ['png', 'svg'])
+        exported_paths = exporter.export_figure(fig, 'wheat', 'agrichter_scale', ['png', 'svg'])
         print(f"  ✓ Figure exported to {len(exported_paths)} formats")
         
         # Verify files exist
@@ -203,7 +203,7 @@ def test_output_manager():
         ax1.scatter([3, 4, 5], [1e14, 5e14, 2e15], c='red', s=100)
         ax1.set_xlabel('Magnitude')
         ax1.set_ylabel('Production Loss (kcal)')
-        ax1.set_title('AgriRichter Scale - Wheat')
+        ax1.set_title('AgRichter Scale - Wheat')
         ax1.set_yscale('log')
         
         fig2, ax2 = plt.subplots(figsize=(10, 8))
@@ -217,7 +217,7 @@ def test_output_manager():
         ax2.set_yscale('log')
         
         sample_analysis['figures'] = {
-            'agririchter_scale': fig1,
+            'agrichter_scale': fig1,
             'hp_envelope': fig2
         }
         
@@ -273,7 +273,7 @@ def test_file_organization():
         # Create sample files
         sample_files = [
             "wheat_production_map.png",
-            "rice_agririchter_scale.svg",
+            "rice_agrichter_scale.svg",
             "event_losses_wheat.csv",
             "envelope_data_allgrain.xlsx",
             "analysis_report.txt"

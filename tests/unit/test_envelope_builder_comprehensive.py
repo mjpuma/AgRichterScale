@@ -13,7 +13,7 @@ All tests follow the TEST-FIRST approach and verify mathematical properties.
 
 import numpy as np
 import pytest
-from agririchter.analysis.envelope_builder import (
+from agrichter.analysis.envelope_builder import (
     build_envelope,
     _validate_and_prepare_inputs,
     _build_discrete_sequence,

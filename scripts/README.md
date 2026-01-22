@@ -1,4 +1,4 @@
-# AgriRichter Scripts
+# AgRichter Scripts
 
 This directory contains the Python scripts for generating the publication figures and running the analysis pipeline.
 
@@ -19,9 +19,9 @@ python3 scripts/fig1_hp_envelopes.py
 
 ## Analysis Pipeline
 
--   **`run_agririchter_analysis.py`**: A comprehensive command-line interface to execute the complete AgriRichter events analysis pipeline (data loading, calculation, results export).
+-   **`run_agrichter_analysis.py`**: A comprehensive command-line interface to execute the complete AgRichter events analysis pipeline (data loading, calculation, results export).
 
 Usage:
 ```bash
-python3 scripts/run_agririchter_analysis.py --all
+python3 scripts/run_agrichter_analysis.py --all
 ```

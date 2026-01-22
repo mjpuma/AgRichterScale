@@ -13,13 +13,13 @@ from pathlib import Path
 from typing import Dict, List, Any, Tuple
 import json
 
-from agririchter.core.config import Config
-from agririchter.data.grid_manager import GridDataManager
-from agririchter.data.spatial_mapper import SpatialMapper
-from agririchter.data.country_boundary_manager import CountryBoundaryManager
-from agririchter.analysis.multi_tier_envelope import MultiTierEnvelopeEngine, MultiTierResults
-from agririchter.analysis.national_envelope_analyzer import NationalEnvelopeAnalyzer
-from agririchter.analysis.convergence_validator import ConvergenceValidator
+from agrichter.core.config import Config
+from agrichter.data.grid_manager import GridDataManager
+from agrichter.data.spatial_mapper import SpatialMapper
+from agrichter.data.country_boundary_manager import CountryBoundaryManager
+from agrichter.analysis.multi_tier_envelope import MultiTierEnvelopeEngine, MultiTierResults
+from agrichter.analysis.national_envelope_analyzer import NationalEnvelopeAnalyzer
+from agrichter.analysis.convergence_validator import ConvergenceValidator
 
 
 class ValidationReport:

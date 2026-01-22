@@ -12,14 +12,14 @@ import matplotlib
 matplotlib.use('Agg')  # Use non-interactive backend
 import matplotlib.pyplot as plt
 
-# Add the agririchter package to path
+# Add the agrichter package to path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from agririchter.core.config import Config
-from agririchter.data.loader import DataLoader
-from agririchter.processing.processor import DataProcessor
-from agririchter.analysis.agririchter import AgriRichterAnalyzer
-from agririchter.visualization.plots import EnvelopePlotter
+from agrichter.core.config import Config
+from agrichter.data.loader import DataLoader
+from agrichter.processing.processor import DataProcessor
+from agrichter.analysis.agrichter import AgRichterAnalyzer
+from agrichter.visualization.plots import EnvelopePlotter
 
 def test_hp_envelope_plot(crop_type: str = 'wheat', sample_size: int = 5000):
     """Test H-P envelope visualization."""
@@ -35,7 +35,7 @@ def test_hp_envelope_plot(crop_type: str = 'wheat', sample_size: int = 5000):
         config = Config(crop_type=crop_type, root_dir='.')
         loader = DataLoader(config)
         processor = DataProcessor(config)
-        analyzer = AgriRichterAnalyzer(config)
+        analyzer = AgRichterAnalyzer(config)
         plotter = EnvelopePlotter(config)
         
         # Load and process data

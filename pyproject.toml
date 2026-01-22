@@ -3,12 +3,12 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "agririchter"
+name = "agrichter"
 version = "1.0.0"
 description = "A Python framework for analyzing agricultural production disruptions using Richter-scale measurements"
 readme = "README.md"
 authors = [
-    {name = "AgriRichter Development Team"}
+    {name = "AgRichter Development Team"}
 ]
 license = {text = "MIT"}
 classifiers = [
@@ -49,16 +49,16 @@ dev = [
 ]
 
 [project.scripts]
-agririchter = "agririchter.cli.main:main"
+agrichter = "agrichter.cli.main:main"
 
 [project.urls]
-Homepage = "https://github.com/agririchter/agririchter-python"
-Documentation = "https://agririchter-python.readthedocs.io/"
-Repository = "https://github.com/agririchter/agririchter-python.git"
-Issues = "https://github.com/agririchter/agririchter-python/issues"
+Homepage = "https://github.com/agrichter/agrichter-python"
+Documentation = "https://agrichter-python.readthedocs.io/"
+Repository = "https://github.com/agrichter/agrichter-python.git"
+Issues = "https://github.com/agrichter/agrichter-python/issues"
 
 [tool.setuptools.packages.find]
-include = ["agririchter*"]
+include = ["agrichter*"]
 
 [tool.black]
 line-length = 88
@@ -84,4 +84,4 @@ testpaths = ["tests"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
-addopts = "--cov=agririchter --cov-report=html --cov-report=term-missing"
+addopts = "--cov=agrichter --cov-report=html --cov-report=term-missing"

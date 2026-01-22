@@ -7,12 +7,12 @@ import sys
 import logging
 from pathlib import Path
 
-# Add the agririchter package to path
+# Add the agrichter package to path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from agririchter.core.config import Config
-from agririchter.data.loader import DataLoader
-from agririchter.processing.processor import DataProcessor
+from agrichter.core.config import Config
+from agrichter.data.loader import DataLoader
+from agrichter.processing.processor import DataProcessor
 
 def test_data_loading():
     """Test loading and basic processing of SPAM 2020 data."""

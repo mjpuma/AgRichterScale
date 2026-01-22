@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 import pandas as pd
 
-# Add parent directory to path to allow importing from agririchter
+# Add parent directory to path to allow importing from agrichter
 sys.path.append(str(Path(__file__).parent.parent))
 
 # Configure logging
@@ -33,13 +33,13 @@ mpl.rcParams.update({
     'lines.linewidth': 2.0,
 })
 
-from agririchter.core.config import Config
-from agririchter.data.grid_manager import GridDataManager
-from agririchter.data.spatial_mapper import SpatialMapper
-from agririchter.data.events import EventsProcessor
-from agririchter.analysis.event_calculator import EventCalculator
-from agririchter.analysis.envelope_v2 import HPEnvelopeCalculatorV2
-from agririchter.visualization.hp_envelope import HPEnvelopeVisualizer
+from agrichter.core.config import Config
+from agrichter.data.grid_manager import GridDataManager
+from agrichter.data.spatial_mapper import SpatialMapper
+from agrichter.data.events import EventsProcessor
+from agrichter.analysis.event_calculator import EventCalculator
+from agrichter.analysis.envelope_v2 import HPEnvelopeCalculatorV2
+from agrichter.visualization.hp_envelope import HPEnvelopeVisualizer
 
 
 def load_real_events(crop: str, config: Config, grid_manager: GridDataManager):

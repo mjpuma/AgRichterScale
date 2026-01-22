@@ -13,9 +13,9 @@ from pathlib import Path
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-# Import AgriRichter modules
-from agririchter.core.config import Config
-from agririchter.analysis.envelope import HPEnvelopeCalculator
+# Import AgRichter modules
+from agrichter.core.config import Config
+from agrichter.analysis.envelope import HPEnvelopeCalculator
 
 
 def create_test_data(crop_type='wheat', n_cells=50000):

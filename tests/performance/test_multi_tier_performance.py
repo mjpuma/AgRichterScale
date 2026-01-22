@@ -13,12 +13,12 @@ from typing import Dict, Any
 import json
 import logging
 
-from agririchter.core.config import Config
-from agririchter.data.grid_manager import GridDataManager
-from agririchter.data.spatial_mapper import SpatialMapper
-from agririchter.data.country_boundary_manager import CountryBoundaryManager
-from agririchter.analysis.multi_tier_envelope import MultiTierEnvelopeEngine
-from agririchter.analysis.national_envelope_analyzer import NationalEnvelopeAnalyzer
+from agrichter.core.config import Config
+from agrichter.data.grid_manager import GridDataManager
+from agrichter.data.spatial_mapper import SpatialMapper
+from agrichter.data.country_boundary_manager import CountryBoundaryManager
+from agrichter.analysis.multi_tier_envelope import MultiTierEnvelopeEngine
+from agrichter.analysis.national_envelope_analyzer import NationalEnvelopeAnalyzer
 
 
 class PerformanceBenchmark:

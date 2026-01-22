@@ -19,11 +19,11 @@ from typing import Dict, Any, Tuple
 import tempfile
 import os
 
-from agririchter.core.config import Config
-from agririchter.analysis.envelope_v2 import HPEnvelopeCalculatorV2
-from agririchter.analysis.envelope import HPEnvelopeCalculator
-from agririchter.analysis.convergence_validator import ConvergenceValidator
-from agririchter.data.loader import DataLoader
+from agrichter.core.config import Config
+from agrichter.analysis.envelope_v2 import HPEnvelopeCalculatorV2
+from agrichter.analysis.envelope import HPEnvelopeCalculator
+from agrichter.analysis.convergence_validator import ConvergenceValidator
+from agrichter.data.loader import DataLoader
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -542,7 +542,7 @@ class TestEnvelopeConvergenceCorrected:
         
         # Check for key sections
         expected_sections = [
-            'AgriRichter H-P Envelope Analysis Report',
+            'AgRichter H-P Envelope Analysis Report',
             'Calculator Version',
             'Crop Type',
             'DISRUPTION AREA RANGE',

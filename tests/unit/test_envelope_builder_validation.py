@@ -9,7 +9,7 @@ This module tests the validation logic in envelope_builder.py to ensure:
 
 import numpy as np
 import pytest
-from agririchter.analysis.envelope_builder import build_envelope
+from agrichter.analysis.envelope_builder import build_envelope
 
 
 class TestInputValidation:

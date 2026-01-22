@@ -5,8 +5,8 @@ import pandas as pd
 import numpy as np
 from pathlib import Path
 
-from agririchter.core.config import Config
-from agririchter.data.grid_manager import GridDataManager
+from agrichter.core.config import Config
+from agrichter.data.grid_manager import GridDataManager
 
 
 class TestGridDataManager:

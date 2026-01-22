@@ -7,14 +7,14 @@ import numpy as np
 import pandas as pd
 from unittest.mock import Mock, patch
 
-from agririchter.core.config import Config
-from agririchter.analysis.multi_tier_envelope import (
+from agrichter.core.config import Config
+from agrichter.analysis.multi_tier_envelope import (
     MultiTierEnvelopeEngine, 
     MultiTierResults, 
     TierConfiguration,
     TIER_CONFIGURATIONS
 )
-from agririchter.validation.spam_data_filter import SPAMDataFilter
+from agrichter.validation.spam_data_filter import SPAMDataFilter
 
 
 class TestMultiTierEnvelopeEngine:
@@ -186,7 +186,7 @@ class TestMultiTierEnvelopeEngine:
     def test_calculate_width_analysis(self, engine):
         """Test width reduction calculation."""
         # Create mock envelope data
-        from agririchter.analysis.envelope import EnvelopeData
+        from agrichter.analysis.envelope import EnvelopeData
         
         # Comprehensive envelope (wider)
         comprehensive_envelope = EnvelopeData(
@@ -234,7 +234,7 @@ class TestMultiTierEnvelopeEngine:
     
     def test_calculate_representative_width(self, engine):
         """Test representative width calculation."""
-        from agririchter.analysis.envelope import EnvelopeData
+        from agrichter.analysis.envelope import EnvelopeData
         
         envelope_data = EnvelopeData(
             disruption_areas=np.array([100, 200, 300]),
@@ -282,7 +282,7 @@ class TestMultiTierEnvelopeEngine:
     
     def test_multi_tier_results_class(self):
         """Test MultiTierResults class functionality."""
-        from agririchter.analysis.envelope import EnvelopeData
+        from agrichter.analysis.envelope import EnvelopeData
         
         # Create test envelope data
         envelope_data = EnvelopeData(

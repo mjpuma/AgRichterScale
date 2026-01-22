@@ -9,10 +9,10 @@ import tempfile
 import os
 from pathlib import Path
 
-from agririchter.visualization.hp_envelope import HPEnvelopeVisualizer
-from agririchter.analysis.envelope_diagnostics import EnvelopeDiagnostics
-from agririchter.analysis.convergence_validator import ConvergenceValidator, ValidationResult
-from agririchter.core.config import Config
+from agrichter.visualization.hp_envelope import HPEnvelopeVisualizer
+from agrichter.analysis.envelope_diagnostics import EnvelopeDiagnostics
+from agrichter.analysis.convergence_validator import ConvergenceValidator, ValidationResult
+from agrichter.core.config import Config
 
 
 class TestConvergenceVisualization:
@@ -125,7 +125,7 @@ class TestConvergenceVisualization:
         total_harvest = 2000.0
         
         # Mock the convergence validator to return predictable results
-        with patch('agririchter.analysis.convergence_validator.ConvergenceValidator') as mock_validator_class:
+        with patch('agrichter.analysis.convergence_validator.ConvergenceValidator') as mock_validator_class:
             mock_validator = Mock()
             mock_validator_class.return_value = mock_validator
             
@@ -185,7 +185,7 @@ class TestConvergenceVisualization:
         total_harvest = 2000.0
         
         # Mock the convergence validator to return validation errors
-        with patch('agririchter.analysis.convergence_validator.ConvergenceValidator') as mock_validator_class:
+        with patch('agrichter.analysis.convergence_validator.ConvergenceValidator') as mock_validator_class:
             mock_validator = Mock()
             mock_validator_class.return_value = mock_validator
             

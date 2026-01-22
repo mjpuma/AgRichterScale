@@ -1,8 +1,8 @@
-# AgriRichter Project (2025)
+# AgRichter Project (2025)
 
 ## Overview
 
-The AgriRichter project introduces a new scale for quantifying global agricultural production disruptions, analogous to the Richter scale for earthquakes. This repository contains the Python codebase for calculating AgriRichter magnitudes, generating H-P (Harvest-Production) envelopes, and producing the figures for the associated publication.
+The AgRichter project introduces a new scale for quantifying global agricultural production disruptions, analogous to the Richter scale for earthquakes. This repository contains the Python codebase for calculating AgRichter magnitudes, generating H-P (Harvest-Production) envelopes, and producing the figures for the associated publication.
 
 The core analysis relies on:
 -   **SPAM 2020 (V2r0)** global agricultural data (Production and Harvest Area).
@@ -11,7 +11,7 @@ The core analysis relies on:
 
 ## Repository Structure
 
--   **`agririchter/`**: The main Python package containing the core logic.
+-   **`agrichter/`**: The main Python package containing the core logic.
     -   `core/`: Configuration and constants.
     -   `data/`: Data loading, grid management, and spatial mapping.
     -   `analysis/`: H-P envelope calculation and event processing.
@@ -24,7 +24,7 @@ The core analysis relies on:
 
 ## Figure Generation
 
-The publication figures can be generated using the scripts in the `scripts/` directory. These scripts use the `agririchter` package to process real SPAM data and generate high-quality outputs.
+The publication figures can be generated using the scripts in the `scripts/` directory. These scripts use the `agrichter` package to process real SPAM data and generate high-quality outputs.
 
 ### Prerequisites
 
@@ -37,8 +37,8 @@ pip install -r requirements.txt
 
 Run the following commands from the root of the repository to generate the figures. The output files (PNG and SVG) will be saved to the `results/` directory.
 
-**Figure 1: AgriRichter Scale**
-Shows the relationship between AgriRichter Magnitude ($M_D$) and harvest area for historical events.
+**Figure 1: AgRichter Scale**
+Shows the relationship between AgRichter Magnitude ($M_D$) and harvest area for historical events.
 ```bash
 python3 scripts/fig1_agrichter_scale.py
 ```
@@ -81,7 +81,7 @@ python3 scripts/figS3_envelope_bounds.py
 
 ## Documentation
 
-Detailed documentation for the codebase and methodologies can be found in `archive/docs/` if needed for reference, although the current codebase in `agririchter/` is the source of truth.
+Detailed documentation for the codebase and methodologies can be found in `archive/docs/` if needed for reference, although the current codebase in `agrichter/` is the source of truth.
 
 ## License
 

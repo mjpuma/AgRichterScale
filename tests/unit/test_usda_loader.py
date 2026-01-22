@@ -5,11 +5,11 @@ import sys
 import logging
 from pathlib import Path
 
-# Add the agririchter package to path
+# Add the agrichter package to path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from agririchter.data.usda import create_usda_threshold_system
-from agririchter.core.config import Config
+from agrichter.data.usda import create_usda_threshold_system
+from agrichter.core.config import Config
 
 def test_usda_loader():
     """Test USDA data loading functionality."""
