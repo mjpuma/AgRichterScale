@@ -196,6 +196,10 @@ def main():
         # Get global stats for scaling thresholds
         global_production = get_global_stats()
         
+        # Ensure individual plots directory exists
+        individual_dir = results_dir / 'individual_plots'
+        individual_dir.mkdir(exist_ok=True)
+        
         # Core countries for the main combined figure
         core_countries = ['USA', 'China', 'India', 'Brazil']
         
@@ -242,17 +246,17 @@ def main():
                 fig = visualizer.create_hp_envelope_plot(
                     envelope_data, 
                     events_data,
-                    save_path=results_dir / f'figure3_{country_key.lower()}_individual.png',
+                    save_path=individual_dir / f'figure3_{country_key.lower()}_individual.png',
                     title=f'H-P Envelope - {country_key}',
                     show_events=True, # Keep events for individual plots
                     total_production=country_prod,
                     total_harvest=country_harv
                 )
                 # Also save as SVG
-                fig.savefig(results_dir / f'figure3_{country_key.lower()}_individual.svg', format='svg', bbox_inches='tight')
+                fig.savefig(individual_dir / f'figure3_{country_key.lower()}_individual.svg', format='svg', bbox_inches='tight')
                 plt.close(fig)
                 
-                logger.info(f"  ✅ {country_key} saved")
+                logger.info(f"  ✅ {country_key} saved to {individual_dir}")
                 
             except Exception as e:
                 logger.error(f"  ❌ Failed to process {country_key}: {e}")

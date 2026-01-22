@@ -9,22 +9,32 @@ The core analysis relies on:
 -   **Historical Event Data** (e.g., Dust Bowl, Great Famine) mapped to grid cells.
 -   **H-P Envelope Framework** to define upper and lower bounds of production loss for a given disrupted area.
 
+## Repository Architecture
+
+The repository is structured into two main components:
+
+1.  **`agrichter/` (Core Library)**: This is the engine room of the project. It is structured as a modular Python package containing the reusable scientific logic, data loaders, and mathematical algorithms (e.g., H-P envelope calculation, magnitude mapping). Core scripts should **not** be modified for one-off figure adjustments; they provide the "source of truth" for the analysis.
+    -   `core/`: Unified configuration, caloric constants, and unit conversions.
+    -   `data/`: Robust loaders for SPAM 2020 gridded data and USDA FAS PSD time-series.
+    -   `analysis/`: The mathematical core, including the `HPEnvelopeCalculator` and `EventCalculator`.
+    -   `visualization/`: Base plotting modules that ensure consistent styling and dimensional analysis across all outputs.
+
+2.  **`scripts/` (Output Generation)**: These are standalone execution scripts that "call" the `agrichter` library to generate specific publication assets. They handle the "layout" logic (e.g., multi-panel subplots, specific country selections) for the journal.
+
 ## Repository Structure
 
--   **`agrichter/`**: The main Python package containing the core logic.
-    -   `core/`: Configuration and constants.
-    -   `data/`: Data loading, grid management, and spatial mapping.
-    -   `analysis/`: H-P envelope calculation and event processing.
-    -   `visualization/`: Plotting and map generation modules.
--   **`scripts/`**: **Main entry point for figure generation.** Contains standalone scripts to generate publication figures.
+-   **`agrichter/`**: The main Python package containing the core logic (see Architecture above).
+-   **`scripts/`**: Main entry point for figure generation. Contains scripts to generate publication figures.
 -   **`results/`**: Output directory for generated figures and tables.
+    -   Main figures (e.g., `figure1_agrichter_scale.png`) are located in the root of this folder.
+    -   Individual component plots (e.g., single-crop or single-country versions) are saved in the `results/individual_plots/` subfolder.
+-   **`USDAdata/`**: Refreshed USDA PSD data (Jan 2026 update).
 -   **`ancillary/`**: Helper data files (country codes, event definitions, etc.).
--   **`spam2020V2r0_*/`**: SPAM 2020 dataset directories (must be present locally).
--   **`archive/`**: Old scripts, documentation, and outputs (ignored by Git).
+-   **`archive/`**: Obsolete data, legacy scripts, and old outputs (ignored by Git to keep the repo clean).
 
 ## Figure Generation
 
-The publication figures can be generated using the scripts in the `scripts/` directory. These scripts use the `agrichter` package to process real SPAM data and generate high-quality outputs.
+The publication figures are generated using the scripts in the `scripts/` directory. These scripts import the `agrichter` library to process data and generate consistent, high-quality outputs.
 
 ### Prerequisites
 

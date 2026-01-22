@@ -94,6 +94,10 @@ def main():
         results_dir = Path('results')
         results_dir.mkdir(exist_ok=True)
         
+        # Ensure individual plots directory exists
+        individual_dir = results_dir / 'individual_plots'
+        individual_dir.mkdir(exist_ok=True)
+        
         # Updated order: All Grains first
         crops = ['allgrain', 'wheat', 'maize', 'rice']
         crop_names = {'wheat': 'Wheat', 'maize': 'Maize', 'rice': 'Rice', 'allgrain': 'All Grains'}
@@ -127,13 +131,13 @@ def main():
             # Generate figure
             fig = visualizer.create_agrichter_scale_plot(
                 events_data, 
-                save_path=results_dir / f'figure1_{crop}_individual.png'
+                save_path=individual_dir / f'figure1_{crop}_individual.png'
             )
             # Also save as SVG
-            fig.savefig(results_dir / f'figure1_{crop}_individual.svg', format='svg', bbox_inches='tight')
+            fig.savefig(individual_dir / f'figure1_{crop}_individual.svg', format='svg', bbox_inches='tight')
             plt.close(fig)
             
-            logger.info(f"    ✅ {crop} saved")
+            logger.info(f"    ✅ {crop} saved to {individual_dir}")
         
         # Create 4-panel combined figure
         logger.info("Creating 4-panel combined figure...")
