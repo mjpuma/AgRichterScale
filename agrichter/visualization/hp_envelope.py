@@ -499,8 +499,11 @@ class HPEnvelopeVisualizer:
                 else:
                     text_color = 'black'
 
+                # Get publication-ready label
+                display_name = self.config.get_event_label(row['event_name'])
+
                 text = ax.text(row['magnitude'], row['production_loss_kcal'], 
-                             row['event_name'],
+                             display_name,
                              fontsize=8, ha='center', va='bottom', color=text_color, fontweight='bold',
                              bbox=dict(boxstyle='round,pad=0.3', facecolor='white', 
                                      alpha=0.7, edgecolor=text_color, linewidth=0.5))
@@ -521,11 +524,14 @@ class HPEnvelopeVisualizer:
             logger.warning("adjustText not available, using simple label placement")
             # Fallback to simple label placement
             for idx, row in events_data.iterrows():
+                # Get publication-ready label
+                display_name = self.config.get_event_label(row['event_name'])
+
                 # Position label slightly offset from point
                 x_offset = 0.05
                 y_offset = row['production_loss_kcal'] * 1.2
                 
-                ax.annotate(row['event_name'], 
+                ax.annotate(display_name, 
                            xy=(row['magnitude'], row['production_loss_kcal']),
                            xytext=(row['magnitude'] + x_offset, y_offset),
                            fontsize=8, ha='left', va='bottom',

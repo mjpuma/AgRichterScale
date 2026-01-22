@@ -8,7 +8,7 @@ from typing import Dict, List, Optional, Union
 from .constants import (
     CROP_INDICES, CALORIC_CONTENT, THRESHOLDS, DISRUPTION_RANGES,
     PRODUCTION_RANGES, EVENT_COLORS, EVENT_MARKERS, GRAMS_PER_METRIC_TON,
-    HECTARES_TO_KM2, GRID_PARAMS
+    HECTARES_TO_KM2, GRID_PARAMS, EVENT_LABELS
 )
 from .utils import (
     validate_file_permissions, validate_directory_structure,
@@ -270,6 +270,10 @@ class Config:
         color = self.event_colors.get(event_name, 'green')
         marker = EVENT_MARKERS.get(color, 'd')
         return {'color': color, 'marker': marker}
+    
+    def get_event_label(self, event_id: str) -> str:
+        """Get publication-ready label for an event ID."""
+        return EVENT_LABELS.get(event_id, event_id)
     
     def get_unit_conversions(self) -> Dict[str, float]:
         """Get unit conversion constants."""

@@ -33,6 +33,9 @@ sys.path.append(str(Path(__file__).parent.parent))
 
 from agrichter.core.config import Config
 from agrichter.data.grid_manager import GridDataManager
+from agrichter.data.spatial_mapper import SpatialMapper
+from agrichter.data.events import EventsProcessor
+from agrichter.analysis.event_calculator import EventCalculator
 from agrichter.analysis.envelope_v2 import HPEnvelopeCalculatorV2
 
 # Configure logging
@@ -164,6 +167,32 @@ def calculate_shocks():
         'vol_ratio': vol_late / vol_early if vol_early > 0 else 1.0
     }
 
+def load_real_events(config: Config, grid_manager: GridDataManager):
+    """Load and calculate real historical events for All Grains."""
+    logger.info("Loading real historical events for All Grains...")
+    try:
+        country_file = Path('ancillary/DisruptionCountry.xls')
+        state_file = Path('ancillary/DisruptionStateProvince.xls')
+        if not country_file.exists() or not state_file.exists():
+            return pd.DataFrame()
+        
+        country_sheets = pd.read_excel(country_file, sheet_name=None, engine='xlrd')
+        state_sheets = pd.read_excel(state_file, sheet_name=None, engine='xlrd')
+        
+        events_processor = EventsProcessor(config)
+        raw_events_data = {'country': country_sheets, 'state': state_sheets}
+        events_data = events_processor.process_event_sheets(raw_events_data)
+        
+        spatial_mapper = SpatialMapper(config, grid_manager)
+        spatial_mapper.load_country_codes_mapping()
+        
+        event_calculator = EventCalculator(config, grid_manager, spatial_mapper)
+        events_df = event_calculator.calculate_all_events(events_data)
+        return events_df
+    except Exception as e:
+        logger.warning(f"Failed to load historical events: {e}")
+        return pd.DataFrame()
+
 def generate_all_figures():
     """Main entry point to generate both versions of Figure 4 efficiently."""
     logger.info("Generating Figure 4: The Fragility Gap (Dual Versions)...")
@@ -180,6 +209,9 @@ def generate_all_figures():
     prod_df, harv_df = grid_manager.load_spam_data()
     calculator = HPEnvelopeCalculatorV2(config)
     global_envelope = calculator.calculate_hp_envelope(prod_df, harv_df)
+    
+    # Load historical events for plotting
+    events_data = load_real_events(config, grid_manager)
     
     # Clear large dataframes immediately
     del prod_df, harv_df
@@ -253,10 +285,41 @@ def generate_all_figures():
                             facecolor='none', edgecolor='crimson', alpha=0.7, hatch='//', 
                             label='The Fragility Gap (Unbuffered Risk)')
 
-        # Shared elements
         ax.fill_between(mags_plot, prob_low, prob_high, color='gray', alpha=0.2, label='95% Confidence Interval')
         ax.plot(mags_plot, prob_median, color='firebrick', linewidth=4, label='Annual Exceedance Probability')
         
+        # Plot historical events on the risk curve
+        if not events_data.empty:
+            main_scale = (stats['sigma'] * current_prod_kcal) / (-np.log(0.32))
+            
+            # Map event production loss to exceedance probability using the calibrated model
+            event_probs = np.exp(-events_data['production_loss_kcal'] / main_scale)
+            
+            ax.scatter(events_data['magnitude'], event_probs, 
+                       color='black', s=40, alpha=0.6, edgecolors='none', 
+                       label='Historical Events (Model-Mapped)', zorder=15)
+            
+            # Label selected high-impact events for context
+            # (Filtering to avoid label wall)
+            try:
+                from adjustText import adjust_text
+                texts = []
+                for _, row in events_data.iterrows():
+                    # Only label events with Mag > 4.5 or high probability for Figure 4
+                    if row['magnitude'] > 4.5 or np.exp(-row['production_loss_kcal'] / main_scale) > 0.1:
+                        display_name = config.get_event_label(row['event_name'])
+                        prob = np.exp(-row['production_loss_kcal'] / main_scale)
+                        
+                        text = ax.text(row['magnitude'], prob, display_name,
+                                     fontsize=8, ha='left', va='center', fontweight='bold',
+                                     bbox=dict(boxstyle='round,pad=0.2', facecolor='white', alpha=0.6, edgecolor='none'))
+                        texts.append(text)
+                
+                if texts:
+                    adjust_text(texts, ax=ax, arrowprops=dict(arrowstyle='->', color='gray', lw=0.5, alpha=0.5))
+            except ImportError:
+                pass
+
         colors = {'1 Month': '#FFD700', '3 Months': '#FF4500', 'Total Stocks': '#800080'}
         main_scale = (stats['sigma'] * current_prod_kcal) / (-np.log(0.32))
         for label, val in sorted(thresh_kcal.items(), key=lambda x: x[1]):

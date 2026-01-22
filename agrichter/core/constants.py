@@ -80,6 +80,40 @@ HISTORICAL_EVENTS: List[str] = [
     'Syria'
 ]
 
+# Event name standardization mapping (for publication figures)
+EVENT_LABELS: Dict[str, str] = {
+    # Historical (pre-1950)
+    'GreatFamine': 'Great Famine 1315',
+    'Laki1783': 'Laki 1783',
+    'NoSummer': 'No Summer 1816',
+    'PotatoFamine': 'Irish Famine 1845',
+    'Drought18761878': 'Great Drought 1876',
+    'SovietFamine1921': 'Soviet 1921',
+    'DustBowl': 'Dust Bowl 1930s',
+    'ChineseFamine1960': 'China 1959',
+    
+    # Modern (1950-2000)
+    'Bangladesh': 'Bangladesh 1974',
+    'Ethiopia': 'Ethiopia 1983',
+    'Liberia': 'Liberia 1989',
+    'SierraLeone': 'Sierra Leone 1991',
+    'NorthKorea1990s': 'N. Korea 1990s',
+    
+    # Recent (2000+)
+    'MillenniumDrought': 'Australia 2000s',
+    'Haiti': 'Haiti 2010',
+    'SahelDrought2010': 'Sahel 2010',
+    'Syria': 'Syria 2011',
+    'Vanuatu': 'Vanuatu 2015',
+    'Yemen': 'Yemen 2015',
+    'ENSO2015_2016': 'El Niño 2015*',
+    
+    # El Niño sub-events
+    'Solomon': 'Solomon 2015',
+    'EastTimor': 'E. Timor 2015',
+    'Laos': 'Laos 2015'
+}
+
 # Unit conversion constants
 GRAMS_PER_METRIC_TON: float = 1_000_000.0
 HECTARES_TO_KM2: float = 0.01

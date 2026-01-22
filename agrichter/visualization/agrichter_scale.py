@@ -464,9 +464,12 @@ class AgRichterScaleVisualizer:
                     text_color = self.event_type_styles[etype]['color']
                 else:
                     text_color = 'black'
+                
+                # Get publication-ready label
+                display_name = self.config.get_event_label(row['event_name'])
                     
                 text = ax.text(row['magnitude'], row['harvest_area_km2'], 
-                             f"  {row['event_name']}", fontsize=8,
+                             f"  {display_name}", fontsize=8,
                                  ha='left', va='center', color=text_color,
                                  fontweight='bold')
                 texts.append(text)
@@ -489,8 +492,11 @@ class AgRichterScaleVisualizer:
                 else:
                     text_color = 'black'
 
+                # Get publication-ready label
+                display_name = self.config.get_event_label(row['event_name'])
+
                 # Position label slightly offset from point
-                ax.annotate(row['event_name'], 
+                ax.annotate(display_name, 
                            xy=(row['magnitude'], row['harvest_area_km2']),
                               xytext=(5, 5), textcoords='offset points',
                               fontsize=8, ha='left', color=text_color,
