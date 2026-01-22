@@ -297,7 +297,9 @@ def generate_all_figures():
         plt.tight_layout()
         output_path = Path(f'results/figure4_risk_probability_{mode}.png')
         plt.savefig(output_path, dpi=300, bbox_inches='tight', facecolor='white')
-        logger.info(f"Saved {output_path}")
+        # Also save as SVG
+        plt.savefig(output_path.with_suffix('.svg'), format='svg', bbox_inches='tight', facecolor='white')
+        logger.info(f"Saved {output_path} and {output_path.with_suffix('.svg')}")
         plt.close()
 
 if __name__ == "__main__":

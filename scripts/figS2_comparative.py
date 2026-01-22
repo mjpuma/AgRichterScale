@@ -19,24 +19,29 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Country definitions
+# Country definitions - Full Spectrum
 COUNTRY_CONFIGS = [
-    {'key': 'Global', 'label': 'Global', 'spam_name': None, 'color': 'black', 'linewidth': 2.5},
-    {'key': 'USA', 'label': 'USA', 'spam_name': 'United States of America', 'color': 'blue', 'linewidth': 2.0},
-    {'key': 'China', 'label': 'China', 'spam_name': 'China', 'color': 'red', 'linewidth': 2.0},
-    {'key': 'India', 'label': 'India', 'spam_name': 'India', 'color': 'orange', 'linewidth': 2.0},
-    {'key': 'Brazil', 'label': 'Brazil', 'spam_name': 'Brazil', 'color': 'green', 'linewidth': 2.0},
+    {'key': 'Global', 'label': 'Global (Aggregate)', 'spam_name': None, 'color': 'black', 'linewidth': 3.0},
+    {'key': 'USA', 'label': 'USA', 'spam_name': 'United States of America', 'color': '#1f77b4', 'linewidth': 2.0},
+    {'key': 'China', 'label': 'China', 'spam_name': 'China', 'color': '#d62728', 'linewidth': 2.0},
+    {'key': 'India', 'label': 'India', 'spam_name': 'India', 'color': '#ff7f0e', 'linewidth': 2.0},
+    {'key': 'Brazil', 'label': 'Brazil', 'spam_name': 'Brazil', 'color': '#2ca02c', 'linewidth': 2.0},
+    {'key': 'Egypt', 'label': 'Egypt (Stiff)', 'spam_name': 'Egypt', 'color': '#9467bd', 'linewidth': 2.0},
+    {'code': 'FRA', 'label': 'France', 'spam_name': 'France', 'color': '#8c564b', 'linewidth': 1.5},
+    {'code': 'AUS', 'label': 'Australia', 'spam_name': 'Australia', 'color': '#e377c2', 'linewidth': 1.5},
+    {'code': 'ARG', 'label': 'Argentina', 'spam_name': 'Argentina', 'color': '#7f7f7f', 'linewidth': 1.5},
+    {'code': 'DEU', 'label': 'Germany', 'spam_name': 'Germany', 'color': '#bcbd22', 'linewidth': 1.5},
+    {'code': 'NGA', 'label': 'Nigeria', 'spam_name': 'Nigeria', 'color': '#17becf', 'linewidth': 1.5},
 ]
 
 def generate_comparative_figure():
-    """Generate comparative H-P envelope figure."""
-    logger.info("Generating Comparative National Vulnerability Figure...")
+    """Generate comparative H-P envelope figure with all countries."""
+    logger.info("Generating Figure S2: National Fingerprint Gallery...")
     
     # Initialize config
     config = Config(crop_type='allgrain', root_dir='.')
     config.data_files['production'] = Path('spam2020V2r0_global_production/spam2020V2r0_global_production/spam2020V2r0_global_P_TA.csv')
     config.data_files['harvest_area'] = Path('spam2020V2r0_global_harvested_area/spam2020V2r0_global_harvested_area/spam2020V2r0_global_H_TA.csv')
-    config.data_files['country_codes'] = Path('ancillary/CountryCode_Convert.xls')
 
     # Load Data
     grid_manager = GridDataManager(config)
@@ -47,7 +52,7 @@ def generate_comparative_figure():
     calculator = HPEnvelopeCalculatorV2(config)
     
     for country in COUNTRY_CONFIGS:
-        key = country['key']
+        key = country.get('key') or country.get('code')
         spam_name = country['spam_name']
         
         logger.info(f"Calculating {key}...")
@@ -69,85 +74,51 @@ def generate_comparative_figure():
         except Exception as e:
             logger.error(f"Failed to calculate {key}: {e}")
 
-    # Define scales to generate
-    scales = [
-        ('log', 'log', 'loglog'),
-        ('log', 'linear', 'semilogx')
-    ]
+    # Plotting Logic
+    scales = [('log', 'log', 'loglog'), ('log', 'linear', 'semilogx')]
     
     for x_scale, y_scale, suffix in scales:
-        logger.info(f"Plotting {suffix} version...")
-        # Setup Plot
-        fig, ax = plt.subplots(figsize=(12, 8))
-        
+        fig, ax = plt.subplots(figsize=(14, 10))
         ax.set_xscale('linear')
         ax.set_yscale(y_scale)
-        
-        # Use scientific notation for Y axis if linear
-        if y_scale == 'linear':
-            ax.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
-            
-        # Set X-axis limits for AgRichter Magnitude
         ax.set_xlim(3, 8)
         
-        # Plot each country
-        for country in COUNTRY_CONFIGS:
-            key = country['key']
-            if key not in envelopes:
-                continue
-                
-            envelope = envelopes[key]
-            label = country['label']
-            color = country['color']
-            lw = country['linewidth']
-            
-            H_km2 = envelope['upper_bound_harvest']
-            P_up = envelope['upper_bound_production']
-            P_low = envelope['lower_bound_production']
-            
-            # Convert harvest area to AgRichter Magnitude
-            magnitude = np.log10(H_km2)
-            
-            # Calculate total production for normalization
-            total_P = P_up[-1]
-            
-            # Normalize to percentage
-            P_up_pct = (P_up / total_P) * 100
-            P_low_pct = (P_low / total_P) * 100
-            
-            # Plot shaded band
-            ax.fill_between(magnitude, P_low_pct, P_up_pct, color=color, alpha=0.2, label=f"{label} range")
-            
-            # Plot upper bound line for emphasis
-            ax.plot(magnitude, P_up_pct, color=color, linewidth=lw, alpha=0.8)
-            
-            # Add marker at total (100%)
-            total_mag = magnitude[-1]
-            ax.plot(total_mag, 100, marker='o', color=color, markersize=6)
-
-        # Formatting
-        ax.set_xlabel(r'AgRichter Magnitude ($M_D = \log_{10}(A_H / \mathrm{km}^2)$)', fontsize=13, fontweight='bold')
-        ax.set_ylabel('Production Loss (% of Total)', fontsize=13, fontweight='bold')
-        ax.set_title(f'Figure S2: Comparative National Vulnerability Fingerprints\n(H-P Envelopes Normalized - {suffix})', fontsize=16)
-        
-        ax.grid(True, which="both", ls="-", alpha=0.2)
-        ax.legend(fontsize=10, loc='upper left', ncol=2)
-        
-        # Set Y-axis limits for percentage
         if y_scale == 'linear':
             ax.set_ylim(0, 105)
         else:
-            ax.set_ylim(1e-2, 110) # Log scale needs positive floor
+            ax.set_ylim(1e-2, 110)
+
+        # Plot Global first as background
+        global_env = envelopes['Global']
+        magnitude_global = np.log10(global_env['upper_bound_harvest'])
+        P_up_pct_global = (global_env['upper_bound_production'] / global_env['upper_bound_production'][-1]) * 100
+        ax.plot(magnitude_global, P_up_pct_global, color='black', linewidth=3, label='Global Aggregate', zorder=10)
+
+        # Plot other countries
+        for country in COUNTRY_CONFIGS:
+            key = country.get('key') or country.get('code')
+            if key == 'Global' or key not in envelopes: continue
             
+            env = envelopes[key]
+            magnitude = np.log10(env['upper_bound_harvest'])
+            P_up_pct = (env['upper_bound_production'] / env['upper_bound_production'][-1]) * 100
+            
+            ax.plot(magnitude, P_up_pct, color=country['color'], linewidth=country['linewidth'], 
+                    label=country['label'], alpha=0.8)
+
+        ax.set_xlabel(r'AgRichter Magnitude ($M_D = \log_{10}(A_H / \mathrm{km}^2)$)', fontsize=14, fontweight='bold')
+        ax.set_ylabel('Production Loss (% of Total)', fontsize=14, fontweight='bold')
+        ax.set_title(f'Figure S2: National Agricultural Fingerprint Gallery\n(Normalized Envelopes - {suffix} version)', fontsize=18, fontweight='bold')
+        
+        ax.grid(True, which="both", ls="-", alpha=0.15)
+        ax.legend(fontsize=10, loc='upper left', ncol=2, framealpha=0.9)
+        
         plt.tight_layout()
-        
         output_path = Path(f'results/figureS2_comparative_envelopes_{suffix}.png')
-        output_path.parent.mkdir(exist_ok=True)
-        plt.savefig(output_path, dpi=300)
-        plt.savefig(output_path.with_suffix('.svg'), format='svg')
-        logger.info(f"Saved to {output_path}")
-        
-        plt.close(fig)
+        plt.savefig(output_path, dpi=300, bbox_inches='tight', facecolor='white')
+        plt.savefig(output_path.with_suffix('.svg'), format='svg', bbox_inches='tight', facecolor='white')
+        logger.info(f"Saved {output_path}")
+        plt.close()
 
 if __name__ == "__main__":
     generate_comparative_figure()
