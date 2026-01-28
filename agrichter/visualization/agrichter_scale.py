@@ -11,6 +11,7 @@ increases horizontally and physical impact increases vertically.
 
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.ticker import LogLocator
 import pandas as pd
 import logging
 from typing import Dict, List, Optional, Tuple, Union
@@ -58,6 +59,53 @@ class AgRichterScaleVisualizer:
             'Geophysical':       {'color': '#ff7f0e', 'marker': '^', 'label': 'Geophysical'},        # Orange
             'Compound/Other':    {'color': '#7f7f7f', 'marker': '*', 'label': 'Compound/Other'}      # Gray
         }
+
+        # Override table for specific event labels (Nature Publication Refinement)
+        # Format: {crop_type: {event_id: (mag_label, area_km2_label)}}
+        # These coordinates define the STARTING position for adjust_text.
+        self.label_overrides = {
+            'allgrain': {
+                'PotatoFamine': (0.3, 10**6.2),
+                'DustBowl': (0.5, 10**5.8),
+                'NorthKorea1990s': (1.8, 10**4.0),
+                'Bangladesh': (0.5, 10**4.5),
+                'Syria': (5.0, 10**4.3),
+                'SahelDrought2010': (6.5, 10**4.2),
+                'SovietFamine1921': (4.5, 10**6.3),
+                'ChineseFamine1960': (5.5, 10**6.5),
+                'Drought18761878': (6.8, 10**6.8),
+                'ENSO2015_2016': (6.8, 10**6.8)
+            },
+            'wheat': {
+                'GreatFamine': (0.5, 10**5.8),
+                'DustBowl': (2.8, 10**5.5),
+                'Ethiopia': (1.8, 10**4.8),
+                'SahelDrought2010': (3.2, 10**4.3),
+                'Syria': (4.2, 10**5.2),
+                'MillenniumDrought': (4.5, 10**5.8),
+                'SovietFamine1921': (5.8, 10**5.8),
+                'Drought18761878': (6.5, 10**6.2)
+            },
+            'maize': {
+                'GreatFamine': (2.0, 10**4.8),
+                'SovietFamine1921': (4.2, 10**4.5),
+                'SahelDrought2010': (5.0, 10**6.0),
+                'DustBowl': (4.5, 10**5.8),
+                'ChineseFamine1960': (5.8, 10**6.5),
+                'ENSO2015_2016': (5.5, 10**6.2)
+            },
+            'rice': {
+                'Solomon': (1.2, 10**3.5),
+                'EastTimor': (2.5, 10**3.2),
+                'Bangladesh': (3.2, 10**5.2),
+                'Liberia': (4.0, 10**4.2),
+                'SierraLeone': (5.2, 10**4.8),
+                'ChineseFamine1960': (5.5, 10**6.0),
+                'ENSO2015_2016': (6.2, 10**6.5),
+                'Drought18761878': (6.5, 10**6.8),
+                'Laos': (6.0, 10**4.5)
+            }
+        }
     
     def _consolidate_event_type(self, event_type_raw: str) -> str:
         """Consolidate detailed event types into publication categories."""
@@ -98,19 +146,22 @@ class AgRichterScaleVisualizer:
     
     def create_agrichter_scale_plot(self, events_data: pd.DataFrame, 
                                     save_path: Optional[Union[str, Path]] = None,
-                                    ax: Optional[plt.Axes] = None) -> plt.Figure:
+                                    ax: Optional[plt.Axes] = None,
+                                    is_combined: bool = False,
+                                    show_labels: bool = True,
+                                    show_axis_labels: bool = True,
+                                    show_legend: bool = True) -> plt.Figure:
         """
         Create AgRichter Scale visualization (analogous to earthquake Richter scale).
         
-        Plots Magnitude (M_D) on X-axis and Harvest Area Disrupted on Y-axis,
-        matching the familiar Richter scale convention where magnitude increases
-        to the right and physical impact increases upward.
-        
         Args:
-            events_data: DataFrame with columns: event_name, harvest_area_loss_ha, production_loss_kcal
-                        (harvest_area_km2 will be calculated from harvest_area_loss_ha)
+            events_data: DataFrame with event data
             save_path: Optional path to save the figure
-            ax: Optional matplotlib axes to plot on. If None, creates a new figure.
+            ax: Optional matplotlib axes to plot on
+            is_combined: If True, adjust settings for 4-panel combined figure
+            show_labels: If True, show event text labels
+            show_axis_labels: If True, show individual subplot axis labels
+            show_legend: If True, show the legend
         
         Returns:
             matplotlib Figure object
@@ -119,9 +170,9 @@ class AgRichterScaleVisualizer:
         events_data = self._prepare_events_data(events_data)
         
         if ax is None:
-            fig, ax = plt.subplots(figsize=self.figure_params['figsize'], 
-                                  dpi=self.figure_params['dpi'],
-                                  facecolor=self.figure_params['facecolor'])
+            fig, ax = plt.subplots(figsize=(11, 10) if not is_combined else (10, 8), 
+                                  dpi=300,
+                                  facecolor='white')
         else:
             fig = ax.get_figure()
         
@@ -134,61 +185,62 @@ class AgRichterScaleVisualizer:
         ax.set_xlim(xlim)
         ax.set_ylim(ylim)
         
-        # Plot the magnitude-area relationship line (A_H = 10^M_D)
+        # Plot magnitude-area relationship line (A_H = 10^M_D)
         self._plot_magnitude_area_relationship(ax, xlim)
         
-        # REMOVED for publication: Thresholds (Production-based) are arbitrary on Area-based plot
-        # Plot Threshold lines (from Config, converted to Area)
-        # self._plot_agriPhase_thresholds_richter_style(ax, xlim)
+        # Plot AgriPhase/Supply threshold lines (1 Month, 3 Months)
+        self._plot_agriPhase_thresholds_richter_style(ax, xlim)
         
-        # Plot historical events as circles with labels
-        self._plot_historical_events_richter_style(ax, events_data)
+        # Plot historical events as markers with labels
+        self._plot_historical_events_richter_style(ax, events_data, show_labels=show_labels)
         
         # Set logarithmic y-scale (harvest area)
         ax.set_yscale('log')
         
-        # Set axis labels - Richter scale style
-        ax.set_xlabel(r'AgRichter Magnitude ($M_D = \log_{10}(A_H / \mathrm{km}^2)$)', fontsize=13, fontweight='bold')
-        ax.set_ylabel('Harvest Area Disrupted (km²)', fontsize=13, fontweight='bold')
+        # Set even powers only for y-axis (10^0, 10^2, 10^4, 10^6)
+        ax.yaxis.set_major_locator(LogLocator(base=10.0, numticks=4))
+        
+        # Set axis labels - Nature Style
+        if show_axis_labels:
+            ax.set_xlabel(r'AgRichter Magnitude ($M_D = \log_{10}(A_H / \mathrm{km}^2)$)', 
+                         fontsize=14, fontweight='bold')
+            ax.set_ylabel('Harvest Area Disrupted (km²)', 
+                         fontsize=14, fontweight='bold')
+        
+        # Tick parameters
+        ax.tick_params(axis='both', labelsize=12)
         
         # Set title
-        title = f'AgRichter Scale - {self.crop_type.title()}'
-        ax.set_title(title, fontsize=15, fontweight='bold')
+        crop_title = 'All Grains' if self.crop_type == 'allgrain' else self.crop_type.title()
+        ax.set_title(crop_title, fontsize=16, fontweight='bold')
         
         # Add grid
         ax.grid(True, alpha=0.3, linestyle='-', linewidth=0.5)
         
-        # Add legend in bottom right quadrant
-        # Get handles and labels, organize by type
-        handles, labels = ax.get_legend_handles_labels()
+        # Add legend
+        if show_legend:
+            handles, labels = ax.get_legend_handles_labels()
+            
+            # Separate theoretical line from event types
+            theoretical_items = [(h, l) for h, l in zip(handles, labels) 
+                                if 'Relationship' in l]
+            event_items = [(h, l) for h, l in zip(handles, labels) 
+                          if l not in [item[1] for item in theoretical_items]]
+            
+            ordered_handles = [h for h, l in theoretical_items] + [h for h, l in event_items]
+            ordered_labels = [l for h, l in theoretical_items] + [l for h, l in event_items]
+            
+            ax.legend(ordered_handles, ordered_labels, loc='lower right', 
+                      fontsize=10, markerscale=1.5, framealpha=0.9)
         
-        # Separate theoretical line from thresholds from event types
-        theoretical_items = [(h, l) for h, l in zip(handles, labels) 
-                            if 'Theoretical' in l or 'uniform' in l or 'Ending Stocks' in l]
-        threshold_items = [(h, l) for h, l in zip(handles, labels) 
-                          if ('Supply' in l or 'Stocks' in l or 'Phase' in l) and 'Ending Stocks' not in l]
-        event_items = [(h, l) for h, l in zip(handles, labels) 
-                      if l not in [item[1] for item in theoretical_items + threshold_items]]
-        
-        # Combine in order: theoretical, thresholds, event types
-        ordered_handles = [h for h, l in theoretical_items] + [h for h, l in threshold_items] + [h for h, l in event_items]
-        ordered_labels = [l for h, l in theoretical_items] + [l for h, l in threshold_items] + [l for h, l in event_items]
-        
-        # Create legend in bottom right with appropriate columns
-        if len(ordered_labels) > 6:
-            ax.legend(ordered_handles, ordered_labels, loc='lower right', fontsize=9, ncol=2)
-        else:
-            ax.legend(ordered_handles, ordered_labels, loc='lower right', fontsize=10)
-        
-        # Adjust layout only if we created the figure
+        # Adjust layout only if we created the figure or were asked to
         if save_path or ax is None:
-            plt.tight_layout()
+            plt.tight_layout(pad=2.0)
         
         # Save figure if path provided
         if save_path:
             self._save_figure(fig, save_path)
         
-        logger.info(f"Created AgRichter Scale plot for {self.crop_type}")
         return fig
     
     def _get_axis_limits(self) -> Tuple[Tuple[float, float], Tuple[float, float]]:
@@ -219,10 +271,6 @@ class AgRichterScaleVisualizer:
     def _plot_magnitude_area_relationship(self, ax: plt.Axes, xlim: Tuple[float, float]) -> None:
         """
         Plot the fundamental magnitude-area relationship line.
-        
-        This shows the direct relationship: A_H = 10^(M_D)
-        Since M_D = log₁₀(A_H), this appears as a diagonal line on the log-scale plot.
-        This is analogous to the reference line on earthquake Richter scale plots.
         """
         # Create magnitude range
         magnitudes = np.linspace(xlim[0], xlim[1], 100)
@@ -232,7 +280,7 @@ class AgRichterScaleVisualizer:
         
         # Plot the relationship line
         ax.plot(magnitudes, harvest_areas, 
-               color='black', linestyle='-', linewidth=2.5, 
+               color='black', linestyle='-', linewidth=3.0, 
                alpha=0.8, zorder=2,
                label='Magnitude-Area Relationship (A_H = 10^M_D)')
     
@@ -273,13 +321,9 @@ class AgRichterScaleVisualizer:
         
         # Plot horizontal threshold lines
         for name, value_kcal in thresholds.items():
-            # SKIP "Total Stocks" for publication clarity if it's very close to "3 Months"
+            # SKIP "Total Stocks" for publication clarity (User requested removal)
             if name == 'Total Stocks':
-                if '3 Months' in thresholds:
-                    dist = abs(np.log10(value_kcal) - np.log10(thresholds['3 Months']))
-                    if dist < 0.1:
-                        logger.info(f"Skipping '{name}' threshold line: too close to '3 Months' ({dist:.2f} log units)")
-                        continue
+                continue
 
             # Convert kcal threshold to km² equivalent
             area_km2 = value_kcal / yield_density
@@ -397,19 +441,27 @@ class AgRichterScaleVisualizer:
         
         return phase, phase_name, color, marker
     
-    def _plot_historical_events_richter_style(self, ax: plt.Axes, events_data: pd.DataFrame) -> None:
+    def _plot_historical_events_richter_style(self, ax: plt.Axes, events_data: pd.DataFrame, show_labels: bool = True) -> None:
         """
-        Plot historical events (Richter scale style).
-        
-        X-axis: Magnitude (M_D)
-        Y-axis: Harvest Area (km²)
-        
-        If use_event_types=True, colors events by type from food_disruptions.csv
-        Otherwise uses red for all events (backward compatible)
+        Plot historical events (Richter scale style) with priority labels for Nature.
         """
         if events_data.empty:
             logger.warning("No events data to plot")
             return
+        
+        # Priority events for labeling (internal IDs)
+        priority_map = {
+            'allgrain': ['DustBowl', 'ChineseFamine1960', 'Drought18761878', 'ENSO2015_2016', 
+                         'SovietFamine1921', 'Ethiopia', 'Bangladesh', 'SahelDrought2010',
+                         'MillenniumDrought', 'Syria', 'PotatoFamine', 'NorthKorea1990s'],
+            'wheat': ['DustBowl', 'Drought18761878', 'GreatFamine', 'SahelDrought2010',
+                      'SovietFamine1921', 'Ethiopia', 'Syria', 'MillenniumDrought'],
+            'maize': ['DustBowl', 'ChineseFamine1960', 'GreatFamine', 'ENSO2015_2016',
+                      'Haiti', 'SovietFamine1921', 'Ethiopia', 'SahelDrought2010'],
+            'rice': ['Drought18761878', 'ChineseFamine1960', 'Bangladesh', 'ENSO2015_2016',
+                     'Solomon', 'EastTimor', 'SierraLeone', 'Liberia', 'Laos']
+        }
+        priority_ids = priority_map.get(self.crop_type, [])
         
         # Filter out events with zero or NaN harvest area
         valid_events = events_data[
@@ -422,8 +474,6 @@ class AgRichterScaleVisualizer:
             logger.warning("No valid events with non-zero harvest area")
             return
         
-        logger.info(f"Plotting {len(valid_events)} historical events (Richter style)")
-
         events = valid_events
         
         # Consolidate event types
@@ -433,76 +483,98 @@ class AgRichterScaleVisualizer:
             events['consolidated_type'] = 'Unknown'
         
         # Plot events grouped by consolidated event type for proper legend
-        plotted_types = set()
         for event_type, style in self.event_type_styles.items():
             type_data = events[events['consolidated_type'] == event_type]
             if not type_data.empty:
-                # Plot this event type group
                 ax.scatter(type_data['magnitude'], type_data['harvest_area_km2'],
-                           c=style['color'], s=100, alpha=0.8, edgecolors='black', linewidth=1,
+                           c=style['color'], s=70, alpha=0.8, edgecolors='black', linewidth=1,
                            marker=style['marker'], label=style['label'], zorder=5)
-                plotted_types.add(event_type)
         
         # Plot unknown types if any
         unknown_mask = ~events['consolidated_type'].isin(self.event_type_styles.keys())
         unknown_data = events[unknown_mask]
         if not unknown_data.empty:
              ax.scatter(unknown_data['magnitude'], unknown_data['harvest_area_km2'],
-                       c='gray', s=100, alpha=0.8, edgecolors='black', linewidth=1,
+                       c='gray', s=70, alpha=0.8, edgecolors='black', linewidth=1,
                        marker='o', label='Other', zorder=5)
         
-        # Try to use adjustText for better label placement
-        try:
-            from adjustText import adjust_text
-            
-            # Create text annotations
-            texts = []
-            for idx, row in events.iterrows():
-                # Use event type color for text label
-                etype = row.get('consolidated_type', 'Unknown')
-                if etype in self.event_type_styles:
-                    text_color = self.event_type_styles[etype]['color']
-                else:
-                    text_color = 'black'
+        # Handle labels for priority events only if requested
+        if show_labels:
+            try:
+                from adjustText import adjust_text
+                texts = []
+                targets_x = []
+                targets_y = []
+                for idx, row in events.iterrows():
+                    event_id = row['event_name']
+                    if event_id in priority_ids:
+                        # Determine label text (override for specific user request if needed)
+                        # "Great Chinese Famine" for allgrain, "China 1959" for others
+                        if event_id == 'ChineseFamine1960':
+                            display_name = "Great Chinese Famine" if self.crop_type == 'allgrain' else "China 1959"
+                        elif event_id == 'GreatFamine' and self.crop_type == 'maize':
+                            display_name = "Great European\nFamine 1315"
+                        else:
+                            display_name = self.config.get_event_label(event_id)
+                            
+                        # Fix "El Niño 2015*" -> "El Niño 2015" if requested
+                        if "El Niño 2015" in display_name:
+                            display_name = "El Niño 2015"
+                        
+                        etype = row.get('consolidated_type', 'Unknown')
+                        text_color = self.event_type_styles.get(etype, {'color': 'black'})['color']
+                        
+                        # Apply Directional Bias based on Magnitude
+                        mag = row['magnitude']
+                        
+                        # Apply manual overrides if present (Nature Refinement)
+                        overrides = self.label_overrides.get(self.crop_type, {})
+                        if event_id in overrides:
+                            text_x, text_y = overrides[event_id]
+                        else:
+                            # Small M -> UL, Large M -> LR
+                            if mag < 3.5:
+                                x_off, y_off = -0.2, 0.2
+                            elif mag > 5.5:
+                                x_off, y_off = 0.2, -0.2
+                            else:
+                                x_off, y_off = 0, 0.1
+                            text_x, text_y = mag + x_off, row['harvest_area_km2'] * (10**y_off)
+
+                        # Determine alignment based on displacement to point
+                        ha = 'left' if text_x > row['magnitude'] else 'right'
+                        va = 'bottom' if text_y > row['harvest_area_km2'] else 'top'
+
+                        ann = ax.annotate(display_name,
+                                         xy=(row['magnitude'], row['harvest_area_km2']),
+                                         xytext=(text_x, text_y),
+                                         fontsize=9, color='#2C5F8D',
+                                         ha=ha, va=va, fontweight='normal',
+                                         arrowprops=dict(arrowstyle='->', color='#2C5F8D', lw=1.0, alpha=0.8,
+                                                       shrinkA=0, shrinkB=3))
+                        texts.append(ann)
+                        targets_x.append(row['magnitude'])
+                        targets_y.append(row['harvest_area_km2'])
                 
-                # Get publication-ready label
-                display_name = self.config.get_event_label(row['event_name'])
-                    
-                text = ax.text(row['magnitude'], row['harvest_area_km2'], 
-                             f"  {display_name}", fontsize=8,
-                                 ha='left', va='center', color=text_color,
-                                 fontweight='bold')
-                texts.append(text)
-            
-            # Adjust text positions to avoid overlap
-            if texts:
-                adjust_text(texts, ax=ax,
-                          expand_points=(1.8, 1.8),
-                          expand_text=(1.5, 1.5),
-                          force_points=(0.8, 0.8),
-                          force_text=(0.8, 0.8),
-                          lim=1000,
-                          arrowprops=dict(arrowstyle='->', color='gray', lw=0.8, alpha=0.8))
-        except ImportError:
-            # Fallback if adjustText not available
-            for idx, row in events.iterrows():
-                etype = row.get('consolidated_type', 'Unknown')
-                if etype in self.event_type_styles:
-                    text_color = self.event_type_styles[etype]['color']
-                else:
-                    text_color = 'black'
+                if texts:
+                    # Use targets_x and targets_y to ensure labels avoid data points.
+                    # Annotations automatically update arrows when text is moved.
+                    adjust_text(texts, x=targets_x, y=targets_y, ax=ax,
+                              force_points=(0.2, 0.4),
+                              force_text=(0.2, 0.4),
+                              expand_points=(1.1, 1.3),
+                              expand_text=(1.1, 1.3))
+            except ImportError:
+                # Fallback
+                for idx, row in events.iterrows():
+                    event_id = row['event_name']
+                    if event_id in priority_ids:
+                        display_name = self.config.get_event_label(event_id)
+                        ax.annotate(display_name, 
+                                   xy=(row['magnitude'], row['harvest_area_km2']),
+                                   xytext=(5, 5), textcoords='offset points',
+                                   fontsize=9, color='#2C5F8D', fontweight='normal')
 
-                # Get publication-ready label
-                display_name = self.config.get_event_label(row['event_name'])
-
-                # Position label slightly offset from point
-                ax.annotate(display_name, 
-                           xy=(row['magnitude'], row['harvest_area_km2']),
-                              xytext=(5, 5), textcoords='offset points',
-                              fontsize=8, ha='left', color=text_color,
-                              fontweight='bold',
-                              arrowprops=dict(arrowstyle='->', color='gray', lw=0.5, alpha=0.6))
-    
     def _save_figure(self, fig: plt.Figure, save_path: Union[str, Path]) -> None:
         """Save figure in multiple formats."""
         save_path = Path(save_path)

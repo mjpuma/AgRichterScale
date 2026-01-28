@@ -2,6 +2,7 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.ticker import LogLocator
 import pandas as pd
 import logging
 from typing import Dict, List, Optional, Tuple, Union
@@ -45,6 +46,53 @@ class HPEnvelopeVisualizer:
             'Geophysical':       {'color': '#ff7f0e', 'marker': '^', 'label': 'Geophysical'},        # Orange
             'Compound/Other':    {'color': '#7f7f7f', 'marker': '*', 'label': 'Compound/Other'}      # Gray
         }
+
+        # Override table for specific event labels (Nature Publication Refinement)
+        # Format: {crop_type: {event_id: (mag_label, production_kcal_label)}}
+        # These coordinates define the STARTING position for adjust_text.
+        self.label_overrides = {
+            'allgrain': {
+                'PotatoFamine': (0.3, 10**14.7),
+                'DustBowl': (0.5, 10**14.3),
+                'NorthKorea1990s': (1.8, 10**12.5),
+                'Bangladesh': (0.5, 10**13.0),
+                'Syria': (5.0, 10**12.8),
+                'SahelDrought2010': (6.5, 10**12.7),
+                'SovietFamine1921': (4.5, 10**14.8),
+                'ChineseFamine1960': (5.5, 10**15.0),
+                'Drought18761878': (6.8, 10**15.3),
+                'ENSO2015_2016': (6.8, 10**15.3)
+            },
+            'wheat': {
+                'GreatFamine': (0.5, 10**14.3),
+                'DustBowl': (2.8, 10**14.0),
+                'Ethiopia': (1.8, 10**13.3),
+                'SahelDrought2010': (3.2, 10**12.8),
+                'Syria': (4.2, 10**13.7),
+                'MillenniumDrought': (4.5, 10**14.3),
+                'SovietFamine1921': (5.8, 10**14.3),
+                'Drought18761878': (6.5, 10**14.7)
+            },
+            'maize': {
+                'GreatFamine': (2.0, 10**13.3),
+                'SovietFamine1921': (4.2, 10**13.0),
+                'SahelDrought2010': (5.0, 10**14.5),
+                'DustBowl': (4.5, 10**14.3),
+                'ChineseFamine1960': (5.8, 10**15.0),
+                'ENSO2015_2016': (5.5, 10**14.7)
+            },
+            'rice': {
+                'Solomon': (1.2, 10**12.0),
+                'EastTimor': (2.5, 10**11.7),
+                'Bangladesh': (3.2, 10**13.7),
+                'Liberia': (4.0, 10**12.7),
+                'SierraLeone': (5.2, 10**13.3),
+                'ChineseFamine1960': (5.5, 10**14.5),
+                'ENSO2015_2016': (6.2, 10**15.0),
+                'Drought18761878': (6.5, 10**15.3),
+                'Laos': (6.0, 10**13.0)
+            }
+        }
     
     def _consolidate_event_type(self, event_type_raw: str) -> str:
         """Consolidate detailed event types into publication categories."""
@@ -68,6 +116,10 @@ class HPEnvelopeVisualizer:
                                save_path: Optional[Union[str, Path]] = None,
                                show_convergence: bool = True,
                                show_events: bool = True,
+                               show_labels: bool = True,
+                               show_axis_labels: bool = True,
+                               show_legend: bool = True,
+                               is_combined: bool = False,
                                total_production: Optional[float] = None,
                                total_harvest: Optional[float] = None,
                                ax: Optional[plt.Axes] = None,
@@ -76,27 +128,27 @@ class HPEnvelopeVisualizer:
         Create MATLAB-exact H-P Envelope visualization with convergence analysis.
         
         Args:
-            envelope_data: Dictionary with 'disrupted_areas', 'upper_bound', 'lower_bound'
-            events_data: DataFrame with columns: event_name, harvest_area_loss_ha, production_loss_kcal
-                        (harvest_area_km2 will be calculated from harvest_area_loss_ha)
+            envelope_data: Dictionary with envelope bounds
+            events_data: DataFrame with event data
             save_path: Optional path to save the figure
-            show_convergence: Whether to highlight convergence point and add diagnostics
+            show_convergence: Whether to highlight convergence point
             show_events: Whether to plot historical events
-            total_production: Total production for convergence validation (optional)
-            total_harvest: Total harvest area for convergence validation (optional)
-            ax: Optional matplotlib axes to plot on. If None, creates a new figure.
-            title: Optional custom title for the plot.
-        
-        Returns:
-            matplotlib Figure object
+            show_labels: Whether to show event labels
+            show_axis_labels: Whether to show individual axis labels
+            show_legend: Whether to show the legend
+            is_combined: If True, adjust for 4-panel combined figure
+            total_production: Total production for convergence validation
+            total_harvest: Total harvest area for convergence validation
+            ax: Optional matplotlib axes to plot on
+            title: Optional custom title for the plot
         """
         # Convert harvest area from hectares to km² if needed
         events_data = self._prepare_events_data(events_data)
         
         if ax is None:
-            fig, ax = plt.subplots(figsize=self.figure_params['figsize'], 
-                                  dpi=self.figure_params['dpi'],
-                                  facecolor=self.figure_params['facecolor'])
+            fig, ax = plt.subplots(figsize=(11, 10) if not is_combined else (10, 8), 
+                                  dpi=300,
+                                  facecolor='white')
         else:
             fig = ax.get_figure()
         
@@ -146,7 +198,7 @@ class HPEnvelopeVisualizer:
             )
             
             # Plot historical events as markers with labels
-            self._plot_historical_events(ax, events_data)
+            self._plot_historical_events(ax, events_data, show_labels=show_labels)
         
         # Always highlight convergence point as it is part of the envelope definition
         if show_convergence and total_production is not None and total_harvest is not None:
@@ -155,39 +207,46 @@ class HPEnvelopeVisualizer:
         # Set logarithmic y-scale
         ax.set_yscale('log')
         
+        # Set even powers only for y-axis (10^8, 10^10, 10^12, 10^14, 10^16)
+        ax.yaxis.set_major_locator(LogLocator(base=100.0, numticks=5))
+        
         # Set axis labels with proper subscript formatting
-        ax.set_xlabel(r'AgRichter Magnitude ($M_D = \log_{10}(A_H / \mathrm{km}^2)$)', fontsize=13, fontweight='bold')
-        ax.set_ylabel('Production Loss (kcal)', fontsize=13, fontweight='bold')
+        if show_axis_labels:
+            ax.set_xlabel(r'AgRichter Magnitude ($M_D = \log_{10}(A_H / \mathrm{km}^2)$)', 
+                         fontsize=14, fontweight='bold')
+            ax.set_ylabel('Production Loss (kcal)', 
+                         fontsize=14, fontweight='bold')
+        
+        # Tick parameters
+        ax.tick_params(axis='both', labelsize=12)
         
         # Set title
         if title:
             plot_title = title
         else:
-            plot_title = f'H-P Envelope - {self.crop_type.title()}'
-        ax.set_title(plot_title, fontsize=14, fontweight='bold')
+            crop_name = 'All Grains' if self.crop_type == 'allgrain' else self.crop_type.title()
+            plot_title = crop_name
+        ax.set_title(plot_title, fontsize=16, fontweight='bold')
         
         # Add grid
         ax.grid(True, alpha=0.3, linestyle='-', linewidth=0.5)
         
-        # Add legend in bottom right quadrant
-        # Get handles and labels, organize by type
-        handles, labels = ax.get_legend_handles_labels()
-        
-        # Separate envelope/bounds from event types
-        envelope_items = [(h, l) for h, l in zip(handles, labels) 
-                         if 'Envelope' in l or 'Bound' in l]
-        event_items = [(h, l) for h, l in zip(handles, labels) 
-                      if l not in [item[1] for item in envelope_items]]
-        
-        # Combine in logical order (envelope first, then event types)
-        ordered_handles = [h for h, l in envelope_items] + [h for h, l in event_items]
-        ordered_labels = [l for h, l in envelope_items] + [l for h, l in event_items]
-        
-        # Create legend in bottom right with appropriate columns
-        if len(ordered_labels) > 6:
-            ax.legend(ordered_handles, ordered_labels, loc='lower right', fontsize=9, ncol=2)
-        else:
-            ax.legend(ordered_handles, ordered_labels, loc='lower right', fontsize=10)
+        # Add legend
+        if show_legend:
+            handles, labels = ax.get_legend_handles_labels()
+            
+            # Separate envelope/bounds from event types
+            envelope_items = [(h, l) for h, l in zip(handles, labels) 
+                             if 'Envelope' in l or 'Bound' in l or 'Convergence' in l]
+            event_items = [(h, l) for h, l in zip(handles, labels) 
+                          if l not in [item[1] for item in envelope_items]]
+            
+            # Combine in logical order (envelope first, then event types)
+            ordered_handles = [h for h, l in envelope_items] + [h for h, l in event_items]
+            ordered_labels = [l for h, l in envelope_items] + [l for h, l in event_items]
+            
+            ax.legend(ordered_handles, ordered_labels, loc='lower right', 
+                      fontsize=10, markerscale=1.5, framealpha=0.9)
         
         # Adjust layout only if we created the figure
         if save_path or ax is None:
@@ -253,15 +312,9 @@ class HPEnvelopeVisualizer:
         
         # Plot horizontal threshold lines
         for name, value_kcal in thresholds.items():
-            # SKIP "Total Stocks" for publication clarity if it's very close to "3 Months"
-            # (or just skip it entirely as per user suggestion "maybe only show 3 month?")
+            # SKIP "Total Stocks" for publication clarity (User requested removal)
             if name == 'Total Stocks':
-                # Check if "3 Months" exists and calculate log-distance
-                if '3 Months' in thresholds:
-                    dist = abs(np.log10(value_kcal) - np.log10(thresholds['3 Months']))
-                    if dist < 0.1: # If less than 0.1 log units apart, skip it
-                        logger.info(f"Skipping '{name}' threshold line: too close to '3 Months' ({dist:.2f} log units)")
-                        continue
+                continue
             
             # Determine color
             color = colors.get(name, '#000000')
@@ -275,12 +328,25 @@ class HPEnvelopeVisualizer:
             ax.axhline(y=value_kcal, color=color, linestyle='--', 
                       linewidth=2, alpha=0.8, label=label)
             
-            # Add text annotation on the right side if within view
+            # Add text annotation inside the panel if within view
             if ylim[0] <= value_kcal <= ylim[1]:
-                # Place text at the right edge
                 xlim = ax.get_xlim()
-                ax.text(xlim[1], value_kcal, f" {name}", 
-                       color=color, fontsize=8, va='center', ha='left', fontweight='bold')
+                # Position labels nearly touching the right edge, aligned right
+                x_pos = xlim[1] - 0.01 * (xlim[1] - xlim[0])
+                
+                # Vertical alignment: 3 Months above, 1 Month below with extra spacing
+                y_pos = value_kcal
+                va = 'center'
+                if '3 Months' in name:
+                    va = 'bottom' 
+                    y_pos *= 1.15 # Move 15% up from the line
+                elif '1 Month' in name:
+                    va = 'top'    
+                    y_pos /= 1.15 # Move 15% down from the line
+                
+                ax.text(x_pos, y_pos, f"{name}", 
+                       color=color, fontsize=8, va=va, ha='right', fontweight='bold',
+                       bbox=dict(boxstyle='round,pad=0.1', facecolor='white', alpha=0.6, edgecolor='none'))
     
     def _prepare_events_data(self, events_data: pd.DataFrame) -> pd.DataFrame:
         """
@@ -450,12 +516,26 @@ class HPEnvelopeVisualizer:
         
         return events_data
     
-    def _plot_historical_events(self, ax: plt.Axes, events_data: pd.DataFrame) -> None:
-        """Plot historical events with severity-based colors and markers using adjustText for non-overlapping placement."""
+    def _plot_historical_events(self, ax: plt.Axes, events_data: pd.DataFrame, show_labels: bool = True) -> None:
+        """Plot historical events with severity-based colors and markers."""
         if events_data.empty:
             logger.warning("No events data provided for plotting")
             return
         
+        # Priority events for labeling (same as Fig 1)
+        priority_map = {
+            'allgrain': ['DustBowl', 'ChineseFamine1960', 'Drought18761878', 'ENSO2015_2016', 
+                         'SovietFamine1921', 'Ethiopia', 'Bangladesh', 'SahelDrought2010',
+                         'MillenniumDrought', 'Syria', 'PotatoFamine', 'NorthKorea1990s'],
+            'wheat': ['DustBowl', 'Drought18761878', 'GreatFamine', 'SahelDrought2010',
+                      'SovietFamine1921', 'Ethiopia', 'Syria', 'MillenniumDrought'],
+            'maize': ['DustBowl', 'ChineseFamine1960', 'GreatFamine', 'ENSO2015_2016',
+                      'Haiti', 'SovietFamine1921', 'Ethiopia', 'SahelDrought2010'],
+            'rice': ['Drought18761878', 'ChineseFamine1960', 'Bangladesh', 'ENSO2015_2016',
+                     'Solomon', 'EastTimor', 'SierraLeone', 'Liberia', 'Laos']
+        }
+        priority_ids = priority_map.get(self.crop_type, [])
+
         # Calculate magnitude for events
         events_data = events_data.copy()
         events_data['magnitude'] = np.log10(events_data['harvest_area_km2'])
@@ -467,77 +547,92 @@ class HPEnvelopeVisualizer:
             events_data['consolidated_type'] = 'Unknown'
         
         # Plot events grouped by consolidated event type for proper legend
-        plotted_types = set()
         for event_type, style in self.event_type_styles.items():
             type_data = events_data[events_data['consolidated_type'] == event_type]
             if not type_data.empty:
                 # Plot this event type group
                 ax.scatter(type_data['magnitude'], type_data['production_loss_kcal'],
-                               c=style['color'], s=100, alpha=0.8, edgecolors='black', linewidth=1,
+                               c=style['color'], s=70, alpha=0.8, edgecolors='black', linewidth=1,
                                marker=style['marker'], label=style['label'], zorder=5)
-                plotted_types.add(event_type)
         
         # Plot unknown types if any
         unknown_mask = ~events_data['consolidated_type'].isin(self.event_type_styles.keys())
         unknown_data = events_data[unknown_mask]
         if not unknown_data.empty:
              ax.scatter(unknown_data['magnitude'], unknown_data['production_loss_kcal'],
-                       c='gray', s=100, alpha=0.8, edgecolors='black', linewidth=1,
+                       c='gray', s=70, alpha=0.8, edgecolors='black', linewidth=1,
                        marker='o', label='Other', zorder=5)
         
-        # Try to use adjustText for better label placement
-        try:
-            from adjustText import adjust_text
-            
-            # Create text annotations
-            texts = []
-            for idx, row in events_data.iterrows():
-                # Use event type color for text label
-                etype = row.get('consolidated_type', 'Unknown')
-                if etype in self.event_type_styles:
-                    text_color = self.event_type_styles[etype]['color']
-                else:
-                    text_color = 'black'
+        # Handle labels for priority events only if requested
+        if show_labels:
+            try:
+                from adjustText import adjust_text
+                texts = []
+                targets_x = []
+                targets_y = []
+                for idx, row in events_data.iterrows():
+                    event_id = row['event_name']
+                    if event_id in priority_ids:
+                        if event_id == 'ChineseFamine1960':
+                            display_name = "Great Chinese Famine" if self.crop_type == 'allgrain' else "China 1959"
+                        elif event_id == 'GreatFamine' and self.crop_type == 'maize':
+                            display_name = "Great European\nFamine 1315"
+                        else:
+                            display_name = self.config.get_event_label(event_id)
+                        
+                        if "El Niño 2015" in display_name:
+                            display_name = "El Niño 2015"
 
-                # Get publication-ready label
-                display_name = self.config.get_event_label(row['event_name'])
+                        # Apply Directional Bias based on Magnitude
+                        mag = row['magnitude']
+                        
+                        # Apply manual overrides if present (Nature Refinement)
+                        overrides = self.label_overrides.get(self.crop_type, {})
+                        if event_id in overrides:
+                            text_x, text_y = overrides[event_id]
+                        else:
+                            # Small M -> UL, Large M -> LR
+                            if mag < 3.5:
+                                x_off, y_off = -0.2, 0.2
+                            elif mag > 5.5:
+                                x_off, y_off = 0.2, -0.2
+                            else:
+                                x_off, y_off = 0, 0.1
+                            text_x, text_y = mag + x_off, row['production_loss_kcal'] * (10**y_off)
 
-                text = ax.text(row['magnitude'], row['production_loss_kcal'], 
-                             display_name,
-                             fontsize=8, ha='center', va='bottom', color=text_color, fontweight='bold',
-                             bbox=dict(boxstyle='round,pad=0.3', facecolor='white', 
-                                     alpha=0.7, edgecolor=text_color, linewidth=0.5))
-                texts.append(text)
-            
-            # Adjust text positions to avoid overlaps with aggressive settings
-            adjust_text(texts, ax=ax,
-                       arrowprops=dict(arrowstyle='->', color='gray', alpha=0.6, lw=0.5),
-                       expand_points=(1.8, 1.8),
-                       expand_text=(1.5, 1.5),
-                       force_points=(0.8, 0.8),
-                       force_text=(0.8, 0.8),
-                       lim=1000)
-            
-            logger.info(f"Plotted {len(texts)} events with adjustText label placement")
-            
-        except ImportError:
-            logger.warning("adjustText not available, using simple label placement")
-            # Fallback to simple label placement
-            for idx, row in events_data.iterrows():
-                # Get publication-ready label
-                display_name = self.config.get_event_label(row['event_name'])
+                        # Determine alignment based on displacement to point
+                        ha = 'left' if text_x > row['magnitude'] else 'right'
+                        va = 'bottom' if text_y > row['production_loss_kcal'] else 'top'
 
-                # Position label slightly offset from point
-                x_offset = 0.05
-                y_offset = row['production_loss_kcal'] * 1.2
+                        ann = ax.annotate(display_name,
+                                         xy=(row['magnitude'], row['production_loss_kcal']),
+                                         xytext=(text_x, text_y),
+                                         fontsize=9, color='#2C5F8D',
+                                         ha=ha, va=va, fontweight='normal',
+                                         arrowprops=dict(arrowstyle='->', color='#2C5F8D', lw=1.0, alpha=0.8,
+                                                       shrinkA=0, shrinkB=3))
+                        texts.append(ann)
+                        targets_x.append(row['magnitude'])
+                        targets_y.append(row['production_loss_kcal'])
                 
-                ax.annotate(display_name, 
-                           xy=(row['magnitude'], row['production_loss_kcal']),
-                           xytext=(row['magnitude'] + x_offset, y_offset),
-                           fontsize=8, ha='left', va='bottom',
-                           bbox=dict(boxstyle='round,pad=0.3', facecolor='white', alpha=0.7),
-                           arrowprops=dict(arrowstyle='->', connectionstyle='arc3,rad=0.1',
-                                         color='red', alpha=0.6))
+                if texts:
+                    # Use targets_x and targets_y to ensure labels avoid data points.
+                    # Annotations automatically update arrows when text is moved.
+                    adjust_text(texts, x=targets_x, y=targets_y, ax=ax,
+                               expand_points=(1.5, 1.5),
+                               expand_text=(1.2, 1.2),
+                               force_points=(0.2, 0.4),
+                               force_text=(0.2, 0.4))
+            except ImportError:
+                # Fallback
+                for idx, row in events_data.iterrows():
+                    event_id = row['event_name']
+                    if event_id in priority_ids:
+                        display_name = self.config.get_event_label(event_id)
+                        ax.annotate(display_name, 
+                                   xy=(row['magnitude'], row['production_loss_kcal']),
+                                   xytext=(5, 5), textcoords='offset points',
+                                   fontsize=9, color='#2C5F8D', fontweight='normal')
     
     def _highlight_convergence_point(self, ax: plt.Axes, envelope_data: Dict,
                                    total_production: float, total_harvest: float) -> None:
