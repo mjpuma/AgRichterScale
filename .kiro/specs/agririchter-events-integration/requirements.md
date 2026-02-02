@@ -2,9 +2,9 @@
 
 ## Introduction
 
-This project completes the AgriRichter Python implementation by adding the critical historical events calculation system and ensuring proper integration with SPAM 2020 gridded data. The system must replicate the MATLAB `AgriRichter_Events.m` functionality to calculate actual production losses and disrupted harvest areas for 21 historical agricultural disruption events (famines, droughts, conflicts).
+This project completes the AgRichter Python implementation by adding the critical historical events calculation system and ensuring proper integration with SPAM 2020 gridded data. The system must replicate the MATLAB `AgRichter_Events.m` functionality to calculate actual production losses and disrupted harvest areas for 21 historical agricultural disruption events (famines, droughts, conflicts).
 
-The implementation will enable generation of publication-quality figures with real historical data: (1) Global production/harvest maps, (2) AgriRichter Scale with historical events, and (3) H-P Envelope with historical events plotted.
+The implementation will enable generation of publication-quality figures with real historical data: (1) Global production/harvest maps, (2) AgRichter Scale with historical events, and (3) H-P Envelope with historical events plotted.
 
 ## Requirements
 
@@ -82,7 +82,7 @@ The implementation will enable generation of publication-quality figures with re
 
 ### Requirement 7
 
-**User Story:** As a researcher, I want to calculate AgriRichter magnitudes for historical events, so that I can compare event severity on a logarithmic scale.
+**User Story:** As a researcher, I want to calculate AgRichter magnitudes for historical events, so that I can compare event severity on a logarithmic scale.
 
 #### Acceptance Criteria
 
@@ -118,11 +118,11 @@ The implementation will enable generation of publication-quality figures with re
 
 ### Requirement 10
 
-**User Story:** As a researcher, I want to integrate real events data with the AgriRichter Scale, so that I can display historical events on the magnitude-loss scale.
+**User Story:** As a researcher, I want to integrate real events data with the AgRichter Scale, so that I can display historical events on the magnitude-loss scale.
 
 #### Acceptance Criteria
 
-1. WHEN plotting AgriRichter Scale THEN the system SHALL plot calculated event magnitudes vs production losses
+1. WHEN plotting AgRichter Scale THEN the system SHALL plot calculated event magnitudes vs production losses
 2. WHEN adding event markers THEN the system SHALL use red filled circles for all historical events
 3. WHEN adding event labels THEN the system SHALL position text labels to avoid overlap
 4. WHEN drawing threshold lines THEN the system SHALL use AgriPhase 2-5 thresholds from USDA PSD data

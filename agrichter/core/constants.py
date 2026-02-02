@@ -89,7 +89,7 @@ EVENT_LABELS: Dict[str, str] = {
     'PotatoFamine': 'Irish Famine 1845',
     'Drought18761878': 'Great Drought 1876',
     'SovietFamine1921': 'Soviet 1921',
-    'DustBowl': 'Dust Bowl 1930s',
+    'DustBowl': 'Dust Bowl 1930',
     'ChineseFamine1960': 'China 1959',
     
     # Modern (1950-2000)
@@ -97,16 +97,16 @@ EVENT_LABELS: Dict[str, str] = {
     'Ethiopia': 'Ethiopia 1983',
     'Liberia': 'Liberia 1989',
     'SierraLeone': 'Sierra Leone 1991',
-    'NorthKorea1990s': 'N. Korea 1990s',
+    'NorthKorea1990s': 'N. Korea 1990',
     
     # Recent (2000+)
-    'MillenniumDrought': 'Australia 2000s',
+    'MillenniumDrought': 'Australia 2000',
     'Haiti': 'Haiti 2010',
     'SahelDrought2010': 'Sahel 2010',
     'Syria': 'Syria 2011',
     'Vanuatu': 'Vanuatu 2015',
     'Yemen': 'Yemen 2015',
-    'ENSO2015_2016': 'El Niño 2015*',
+    'ENSO2015_2016': 'El Niño 2015',
     
     # El Niño sub-events
     'Solomon': 'Solomon 2015',

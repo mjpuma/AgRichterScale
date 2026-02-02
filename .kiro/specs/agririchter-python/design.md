@@ -2,9 +2,9 @@
 
 ## Overview
 
-The AgriRichter Python system is designed as a modular, extensible framework for analyzing agricultural production disruptions. The architecture follows a pipeline pattern with distinct stages for data loading, processing, analysis, and visualization. The system transforms SPAM 2020 agricultural data and historical disruption events into quantitative measurements and publication-quality visualizations.
+The AgRichter Python system is designed as a modular, extensible framework for analyzing agricultural production disruptions. The architecture follows a pipeline pattern with distinct stages for data loading, processing, analysis, and visualization. The system transforms SPAM 2020 agricultural data and historical disruption events into quantitative measurements and publication-quality visualizations.
 
-The core innovation is the AgriRichter Scale, which applies earthquake magnitude scaling concepts to agricultural disruptions, enabling comparative analysis of historical events and risk assessment for future scenarios.
+The core innovation is the AgRichter Scale, which applies earthquake magnitude scaling concepts to agricultural disruptions, enabling comparative analysis of historical events and risk assessment for future scenarios.
 
 ## Architecture
 
@@ -24,7 +24,7 @@ graph TD
     J[Crop Nutrition Data] --> C
     
     G --> K[Production Maps]
-    G --> L[AgriRichter Scale]
+    G --> L[AgRichter Scale]
     G --> M[H-P Envelope]
     G --> N[CSV Reports]
 ```
@@ -33,12 +33,12 @@ graph TD
 
 The system is organized into six main modules:
 
-1. **Core Module** (`agririchter/core/`): Configuration, constants, and utilities
-2. **Data Module** (`agririchter/data/`): Data loading and validation
-3. **Processing Module** (`agririchter/processing/`): Data transformation and calculations
-4. **Analysis Module** (`agririchter/analysis/`): AgriRichter scale and envelope computations
-5. **Visualization Module** (`agririchter/visualization/`): Figure generation
-6. **CLI Module** (`agririchter/cli/`): Command-line interface
+1. **Core Module** (`agrichter/core/`): Configuration, constants, and utilities
+2. **Data Module** (`agrichter/data/`): Data loading and validation
+3. **Processing Module** (`agrichter/processing/`): Data transformation and calculations
+4. **Analysis Module** (`agrichter/analysis/`): AgRichter scale and envelope computations
+5. **Visualization Module** (`agrichter/visualization/`): Figure generation
+6. **CLI Module** (`agrichter/cli/`): Command-line interface
 
 ## Components and Interfaces
 
@@ -107,11 +107,11 @@ class DataProcessor:
 
 ### Analysis Engine
 
-**Purpose**: Core AgriRichter scale calculations and envelope computations.
+**Purpose**: Core AgRichter scale calculations and envelope computations.
 
 **Interface**:
 ```python
-class AgriRichterAnalyzer:
+class AgRichterAnalyzer:
     def __init__(self, config: Config)
     def calculate_hp_envelope(self, production: pd.DataFrame, harvest: pd.DataFrame) -> Tuple[np.ndarray, np.ndarray]
     def compute_event_losses(self, events: Dict, production: pd.DataFrame, harvest: pd.DataFrame) -> pd.DataFrame
@@ -122,7 +122,7 @@ class AgriRichterAnalyzer:
 **Key Responsibilities**:
 - Sort grid cells by productivity for envelope calculation
 - Compute cumulative sums for upper and lower bounds
-- Calculate AgriRichter magnitude: M_D = log10(disrupted harvest area in km²)
+- Calculate AgRichter magnitude: M_D = log10(disrupted harvest area in km²)
 - Process historical events to determine contemporary impact
 - Classify events by severity thresholds (T1-T4)
 
@@ -135,7 +135,7 @@ class AgriRichterAnalyzer:
 class VisualizationEngine:
     def __init__(self, config: Config)
     def create_production_map(self, production_grid: np.ndarray) -> plt.Figure
-    def create_agririchter_scale(self, events: pd.DataFrame) -> plt.Figure
+    def create_agrichter_scale(self, events: pd.DataFrame) -> plt.Figure
     def create_hp_envelope(self, envelope_data: Tuple, events: pd.DataFrame) -> plt.Figure
     def save_figure(self, fig: plt.Figure, filename: str, formats: List[str])
 ```
@@ -192,7 +192,7 @@ class HistoricalEvent:
     states: List[str]
     harvest_area_loss: float  # hectares
     production_loss: float  # kcal
-    magnitude: float  # AgriRichter magnitude
+    magnitude: float  # AgRichter magnitude
     severity_class: str  # T1, T2, T3, T4
 ```
 

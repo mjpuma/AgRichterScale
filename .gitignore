@@ -99,3 +99,4 @@ demo_*.jpg
 
 # Excel temp files
 ~$*.xls*
+USDAdata/psd_alldata.csv

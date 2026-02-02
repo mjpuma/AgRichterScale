@@ -4,7 +4,7 @@
 
   - [x] 1.1 Update Config class with SPAM 2020 file paths
 
-    - Modify `agririchter/core/config.py` to use spam2020v2r0 file names
+    - Modify `agrichter/core/config.py` to use spam2020v2r0 file names
     - Add configuration parameter for SPAM version (2010 vs 2020)
     - Update default data directory paths for SPAM 2020 location
     - Add validation to check if SPAM 2020 files exist at configured paths
@@ -21,7 +21,7 @@
 
   - [x] 2.1 Create GridDataManager class with SPAM data loading
 
-    - Create `agririchter/data/grid_manager.py` module
+    - Create `agrichter/data/grid_manager.py` module
     - Implement `load_spam_data()` to read production and harvest area CSVs
     - Add efficient pandas dtypes for memory optimization (category for iso3, float32 for values)
     - Preserve x, y coordinates for all grid cells
@@ -66,7 +66,7 @@
 
   - [x] 3.1 Create SpatialMapper class with country code mapping
 
-    - Create `agririchter/data/spatial_mapper.py` module
+    - Create `agrichter/data/spatial_mapper.py` module
     - Implement `load_country_codes_mapping()` to read CountryCode_Convert.xls
     - Create `get_iso3_from_country_code()` for GDAM to ISO3 conversion
     - Handle multiple country code systems (GDAM, FAOSTAT, ISO3)
@@ -112,7 +112,7 @@
 
   - [x] 4.1 Create EventCalculator class structure
 
-    - Create `agririchter/analysis/event_calculator.py` module
+    - Create `agrichter/analysis/event_calculator.py` module
     - Initialize with Config, GridDataManager, and SpatialMapper
     - Set up logging for event processing progress
     - Create data structures for storing event results
@@ -175,16 +175,16 @@
 
   - [x] 5.1 Update H-P Envelope visualization to use real events
 
-    - Modify `agririchter/visualization/hp_envelope.py`
+    - Modify `agrichter/visualization/hp_envelope.py`
     - Replace sample events data with calculated events DataFrame
     - Plot event magnitudes on x-axis (log10 scale)
     - Plot production losses on y-axis (log10 scale)
     - Add event name labels with adjustText for non-overlapping placement
     - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5_
 
-  - [x] 5.2 Update AgriRichter Scale visualization to use real events
+  - [x] 5.2 Update AgRichter Scale visualization to use real events
 
-    - Modify `agririchter/visualization/agririchter_scale.py`
+    - Modify `agrichter/visualization/agrichter_scale.py`
     - Replace sample events data with calculated events DataFrame
     - Plot event magnitudes vs production losses
     - Use red filled circles for event markers
@@ -202,7 +202,7 @@
 
   - [x] 6.1 Create EventsPipeline class
 
-    - Create `agririchter/pipeline/events_pipeline.py` module
+    - Create `agrichter/pipeline/events_pipeline.py` module
     - Initialize with Config and output directory
     - Set up logging for pipeline stages
     - Create methods for each pipeline stage
@@ -231,7 +231,7 @@
     - Create `generate_visualizations()` method
     - Generate global production map
     - Generate H-P envelope with real events
-    - Generate AgriRichter Scale with real events
+    - Generate AgRichter Scale with real events
     - Return dictionary of figure objects
     - _Requirements: 12.1, 12.3_
 
@@ -265,7 +265,7 @@
 
   - [x] 7.1 Create DataValidator class
 
-    - Create `agririchter/validation/data_validator.py` module
+    - Create `agrichter/validation/data_validator.py` module
     - Initialize with Config
     - Set up validation thresholds and expected ranges
     - _Requirements: 11.1, 11.2, 11.3, 11.4_
@@ -309,7 +309,7 @@
 
   - [x] 8.1 Create main pipeline script
 
-    - Create `scripts/run_agririchter_analysis.py` script
+    - Create `scripts/run_agrichter_analysis.py` script
     - Add command-line argument parsing (crop type, output dir, data paths)
     - Initialize Config with user-specified parameters
     - Create EventsPipeline instance

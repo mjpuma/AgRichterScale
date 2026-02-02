@@ -65,45 +65,49 @@ class AgRichterScaleVisualizer:
         # These coordinates define the STARTING position for adjust_text.
         self.label_overrides = {
             'allgrain': {
-                'PotatoFamine': (0.3, 10**6.2),
-                'DustBowl': (0.5, 10**5.8),
-                'NorthKorea1990s': (1.8, 10**4.0),
-                'Bangladesh': (0.5, 10**4.5),
-                'Syria': (5.0, 10**4.3),
-                'SahelDrought2010': (6.5, 10**4.2),
-                'SovietFamine1921': (4.5, 10**6.3),
-                'ChineseFamine1960': (5.5, 10**6.5),
-                'Drought18761878': (6.8, 10**6.8),
-                'ENSO2015_2016': (6.8, 10**6.8)
+                'PotatoFamine': (0.5, 10**6.0),
+                'DustBowl': (1.5, 10**5.0),
+                'NorthKorea1990s': (1.0, 10**3.1),
+                'Bangladesh': (0.4, 10**4.4),
+                'Syria': (4.5, 10**3.2),
+                'SahelDrought2010': (6.3, 10**4.2),
+                'SovietFamine1921': (1.0, 10**6.5),
+                'ChineseFamine1960': (3.0, 10**6.6),
+                'Drought18761878': (5.0, 10**6.6),
+                'ENSO2015_2016': (6.6, 10**5.0),
+                'MillenniumDrought': (5.3, 10**3.9),
+                'Ethiopia': (1.5, 10**4.1)
             },
             'wheat': {
-                'GreatFamine': (0.5, 10**5.8),
-                'DustBowl': (2.8, 10**5.5),
-                'Ethiopia': (1.8, 10**4.8),
-                'SahelDrought2010': (3.2, 10**4.3),
-                'Syria': (4.2, 10**5.2),
-                'MillenniumDrought': (4.5, 10**5.8),
-                'SovietFamine1921': (5.8, 10**5.8),
-                'Drought18761878': (6.5, 10**6.2)
+                'GreatFamine': (1.5, 10**6.6),
+                'DustBowl': (1.0, 10**5.0),
+                'Ethiopia': (2.2, 10**4.5),
+                'SahelDrought2010': (1.0, 10**4.0),
+                'Syria': (4.2, 10**3.5),
+                'MillenniumDrought': (2.0, 10**5.8),
+                'SovietFamine1921': (5.8, 10**4.5),
+                'Drought18761878': (3.8, 10**6.6)
             },
             'maize': {
-                'GreatFamine': (2.0, 10**4.8),
-                'SovietFamine1921': (4.2, 10**4.5),
-                'SahelDrought2010': (5.0, 10**6.0),
-                'DustBowl': (4.5, 10**5.8),
-                'ChineseFamine1960': (5.8, 10**6.5),
-                'ENSO2015_2016': (5.5, 10**6.2)
+                'GreatFamine': (1.2, 10**4.8),
+                'SovietFamine1921': (2.0, 10**6.0),
+                'SahelDrought2010': (5.5, 10**3.3),
+                'DustBowl': (3.8, 10**5.6),
+                'ChineseFamine1960': (4.5, 10**6.5),
+                'ENSO2015_2016': (5.8, 10**4.3),
+                'Haiti': (1.0, 10**4.0),
+                'Ethiopia': (4.0, 10**3.0)
             },
             'rice': {
-                'Solomon': (1.2, 10**3.5),
-                'EastTimor': (2.5, 10**3.2),
-                'Bangladesh': (3.2, 10**5.2),
-                'Liberia': (4.0, 10**4.2),
-                'SierraLeone': (5.2, 10**4.8),
-                'ChineseFamine1960': (5.5, 10**6.0),
-                'ENSO2015_2016': (6.2, 10**6.5),
-                'Drought18761878': (6.5, 10**6.8),
-                'Laos': (6.0, 10**4.5)
+                'Solomon': (0.5, 10**2.5),
+                'EastTimor': (1.8, 10**3.2),
+                'Bangladesh': (2.6, 10**5.1),
+                'Liberia': (2.2, 10**4.2),
+                'SierraLeone': (3.5, 10**2.5),
+                'ChineseFamine1960': (3.2, 10**5.4),
+                'ENSO2015_2016': (5.8, 10**2.8),
+                'Drought18761878': (4.0, 10**6.0),
+                'Laos': (4.8, 10**3.0)
             }
         }
     
@@ -340,9 +344,20 @@ class AgRichterScaleVisualizer:
                 ax.axhline(y=area_km2, color=color, linestyle='--', 
                           linewidth=2, alpha=0.8, label=label)
                 
-                # Add text annotation on the right side
-                ax.text(xlim[1], area_km2, f" {name}", 
-                       color=color, fontsize=8, va='center', ha='left', fontweight='bold')
+                # Add text annotation inside the panel (Nature Consistency)
+                x_pos = xlim[1] - 0.02 * (xlim[1] - xlim[0])
+                y_pos = area_km2
+                va = 'center'
+                if '3 Months' in name:
+                    va = 'bottom'
+                    y_pos *= 1.15
+                elif '1 Month' in name:
+                    va = 'top'
+                    y_pos /= 1.15
+
+                ax.text(x_pos, y_pos, f" {name}", 
+                       color=color, fontsize=8, va=va, ha='right', fontweight='bold',
+                       bbox=dict(boxstyle='round,pad=0.1', facecolor='white', alpha=0.6, edgecolor='none'))
 
     def _plot_agriPhase_thresholds(self, ax: plt.Axes, xlim: Tuple[float, float]) -> None:
         """
@@ -509,17 +524,20 @@ class AgRichterScaleVisualizer:
                     event_id = row['event_name']
                     if event_id in priority_ids:
                         # Determine label text (override for specific user request if needed)
-                        # "Great Chinese Famine" for allgrain, "China 1959" for others
                         if event_id == 'ChineseFamine1960':
-                            display_name = "Great Chinese Famine" if self.crop_type == 'allgrain' else "China 1959"
+                            display_name = "China 1959"
                         elif event_id == 'GreatFamine' and self.crop_type == 'maize':
                             display_name = "Great European\nFamine 1315"
                         else:
                             display_name = self.config.get_event_label(event_id)
                             
-                        # Fix "El Niño 2015*" -> "El Niño 2015" if requested
+                        # Wrap year for El Niño, Great Drought, and Sierra Leone if requested
                         if "El Niño 2015" in display_name:
-                            display_name = "El Niño 2015"
+                            display_name = display_name.replace(" 2015", "\n2015")
+                        elif "Great Drought" in display_name:
+                            display_name = display_name.replace(" 1876", "\n1876")
+                        elif "Sierra Leone" in display_name:
+                            display_name = display_name.replace(" 1991", "\n1991")
                         
                         etype = row.get('consolidated_type', 'Unknown')
                         text_color = self.event_type_styles.get(etype, {'color': 'black'})['color']
@@ -542,8 +560,12 @@ class AgRichterScaleVisualizer:
                             text_x, text_y = mag + x_off, row['harvest_area_km2'] * (10**y_off)
 
                         # Determine alignment based on displacement to point
-                        ha = 'left' if text_x > row['magnitude'] else 'right'
-                        va = 'bottom' if text_y > row['harvest_area_km2'] else 'top'
+                        if event_id in overrides:
+                            ha = 'left'
+                            va = 'center' # Default for overrides
+                        else:
+                            ha = 'left' if text_x > row['magnitude'] else 'right'
+                            va = 'bottom' if text_y > row['harvest_area_km2'] else 'top'
 
                         ann = ax.annotate(display_name,
                                          xy=(row['magnitude'], row['harvest_area_km2']),
@@ -552,7 +574,11 @@ class AgRichterScaleVisualizer:
                                          ha=ha, va=va, fontweight='normal',
                                          arrowprops=dict(arrowstyle='->', color='#2C5F8D', lw=1.0, alpha=0.8,
                                                        shrinkA=0, shrinkB=3))
-                        texts.append(ann)
+                        
+                        # If it's a manual override, don't let adjust_text move it
+                        if event_id not in overrides:
+                            texts.append(ann)
+                        
                         targets_x.append(row['magnitude'])
                         targets_y.append(row['harvest_area_km2'])
                 
@@ -560,10 +586,10 @@ class AgRichterScaleVisualizer:
                     # Use targets_x and targets_y to ensure labels avoid data points.
                     # Annotations automatically update arrows when text is moved.
                     adjust_text(texts, x=targets_x, y=targets_y, ax=ax,
-                              force_points=(0.2, 0.4),
-                              force_text=(0.2, 0.4),
-                              expand_points=(1.1, 1.3),
-                              expand_text=(1.1, 1.3))
+                              force_points=(0.0, 0.0),
+                              force_text=(0.0, 0.0),
+                              expand_points=(1.0, 1.0),
+                              expand_text=(1.0, 1.0))
             except ImportError:
                 # Fallback
                 for idx, row in events.iterrows():

@@ -2,7 +2,7 @@
 
 ## Overview
 
-This design document describes the implementation of the historical events calculation system for AgriRichter, completing the Python migration from MATLAB. The system calculates actual production losses and disrupted harvest areas for 21 historical agricultural disruption events by mapping geographic regions to SPAM 2020 gridded data.
+This design document describes the implementation of the historical events calculation system for AgRichter, completing the Python migration from MATLAB. The system calculates actual production losses and disrupted harvest areas for 21 historical agricultural disruption events by mapping geographic regions to SPAM 2020 gridded data.
 
 The architecture follows a pipeline pattern: load event definitions → map to grid cells → calculate losses → integrate with visualizations. This enables generation of publication-quality figures with real historical data.
 
@@ -22,7 +22,7 @@ graph TD
     
     G --> H[Event Results DataFrame]
     H --> I[H-P Envelope Viz]
-    H --> J[AgriRichter Scale Viz]
+    H --> J[AgRichter Scale Viz]
     H --> K[CSV Export]
     
     D --> L[Production Maps]
@@ -31,13 +31,13 @@ graph TD
 
 ### Component Architecture
 
-The system extends the existing AgriRichter package with new modules:
+The system extends the existing AgRichter package with new modules:
 
-1. **Grid Data Manager** (`agririchter/data/grid_manager.py`): Manages SPAM 2020 gridded data with spatial indexing
-2. **Spatial Mapper** (`agririchter/data/spatial_mapper.py`): Maps geographic regions to grid cells
-3. **Event Calculator** (`agririchter/analysis/event_calculator.py`): Calculates losses for historical events
-4. **Pipeline Orchestrator** (`agririchter/pipeline/events_pipeline.py`): End-to-end workflow coordination
-5. **Validation Module** (`agririchter/validation/data_validator.py`): Data quality checks and validation
+1. **Grid Data Manager** (`agrichter/data/grid_manager.py`): Manages SPAM 2020 gridded data with spatial indexing
+2. **Spatial Mapper** (`agrichter/data/spatial_mapper.py`): Maps geographic regions to grid cells
+3. **Event Calculator** (`agrichter/analysis/event_calculator.py`): Calculates losses for historical events
+4. **Pipeline Orchestrator** (`agrichter/pipeline/events_pipeline.py`): End-to-end workflow coordination
+5. **Validation Module** (`agrichter/validation/data_validator.py`): Data quality checks and validation
 
 ## Components and Interfaces
 
@@ -122,7 +122,7 @@ class EventCalculator:
 - Process all 21 historical events sequentially
 - Calculate harvest area loss (hectares) per event
 - Calculate production loss (kcal) per event
-- Compute AgriRichter magnitude (log10 scale)
+- Compute AgRichter magnitude (log10 scale)
 - Handle both country-level and state-level events
 - Aggregate losses across multiple affected regions
 

@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This project involves recreating the AgriRichter Scale analysis from MATLAB to Python using SPAM 2020 data. The AgriRichter Scale is a quantitative framework for measuring the magnitude of agricultural production disruptions, similar to the Richter scale for earthquakes. The system analyzes historical disruption events (famines, droughts, conflicts) and creates visualizations showing the relationship between disrupted harvest area and production losses in kilocalories.
+This project involves recreating the AgRichter Scale analysis from MATLAB to Python using SPAM 2020 data. The AgRichter Scale is a quantitative framework for measuring the magnitude of agricultural production disruptions, similar to the Richter scale for earthquakes. The system analyzes historical disruption events (famines, droughts, conflicts) and creates visualizations showing the relationship between disrupted harvest area and production losses in kilocalories.
 
 The analysis supports three crop types: 'allgrain' (8 grain crops), 'wheat', and 'rice', and generates three publication-quality figures for scientific publication.
 
@@ -58,7 +58,7 @@ The analysis supports three crop types: 'allgrain' (8 grain crops), 'wheat', and
 
 ### Requirement 5
 
-**User Story:** As a researcher, I want to create the AgriRichter Scale visualization, so that I can display historical events on a magnitude scale similar to earthquake measurements.
+**User Story:** As a researcher, I want to create the AgRichter Scale visualization, so that I can display historical events on a magnitude scale similar to earthquake measurements.
 
 #### Acceptance Criteria
 

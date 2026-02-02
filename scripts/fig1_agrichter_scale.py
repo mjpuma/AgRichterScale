@@ -102,6 +102,18 @@ def main():
                 show_legend=False
             )
 
+            # Also generate individual plots for each crop (PNG and SVG)
+            logger.info(f"  Generating individual plots for {crop}...")
+            ind_fig = visualizer.create_agrichter_scale_plot(
+                events_data,
+                show_labels=True,
+                show_axis_labels=True,
+                show_legend=True
+            )
+            ind_fig.savefig(individual_dir / f'figure1_{crop}_individual.png', dpi=300, bbox_inches='tight')
+            ind_fig.savefig(individual_dir / f'figure1_{crop}_individual.svg', format='svg', bbox_inches='tight')
+            plt.close(ind_fig)
+
         fig.supxlabel('AgRichter Magnitude ($M_D = \log_{10}(A_H/\mathrm{km}^2)$)', 
                        fontsize=14, fontweight='bold', y=0.02)
         fig.supylabel('Harvest Area Disrupted (km$^2$)', 

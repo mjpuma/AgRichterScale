@@ -52,45 +52,49 @@ class HPEnvelopeVisualizer:
         # These coordinates define the STARTING position for adjust_text.
         self.label_overrides = {
             'allgrain': {
-                'PotatoFamine': (0.3, 10**14.7),
-                'DustBowl': (0.5, 10**14.3),
-                'NorthKorea1990s': (1.8, 10**12.5),
-                'Bangladesh': (0.5, 10**13.0),
-                'Syria': (5.0, 10**12.8),
-                'SahelDrought2010': (6.5, 10**12.7),
-                'SovietFamine1921': (4.5, 10**14.8),
-                'ChineseFamine1960': (5.5, 10**15.0),
-                'Drought18761878': (6.8, 10**15.3),
-                'ENSO2015_2016': (6.8, 10**15.3)
+                'PotatoFamine': (3.0, 10**15.0),
+                'DustBowl': (2.0, 10**13.8),
+                'NorthKorea1990s': (4.0, 10**10.0),
+                'Bangladesh': (5.0, 10**12.57),
+                'Syria': (5.0, 10**11.0),
+                'SahelDrought2010': (6.0, 10**13.9),
+                'SovietFamine1921': (2.0, 10**14.5),
+                'ChineseFamine1960': (4.5, 10**15.5),
+                'Drought18761878': (3.5, 10**15.7),
+                'ENSO2015_2016': (6.3, 10**14.4),
+                'MillenniumDrought': (5.85, 10**13.0),
+                'Ethiopia': (2.0, 10**13.2)
             },
             'wheat': {
-                'GreatFamine': (0.5, 10**14.3),
-                'DustBowl': (2.8, 10**14.0),
-                'Ethiopia': (1.8, 10**13.3),
-                'SahelDrought2010': (3.2, 10**12.8),
-                'Syria': (4.2, 10**13.7),
-                'MillenniumDrought': (4.5, 10**14.3),
-                'SovietFamine1921': (5.8, 10**14.3),
-                'Drought18761878': (6.5, 10**14.7)
+                'GreatFamine': (3.5, 10**15.5),
+                'DustBowl': (5.0, 10**12.5),
+                'Ethiopia': (2.5, 10**14.0),
+                'SahelDrought2010': (2.0, 10**13.0),
+                'Syria': (4.8, 10**12.0),
+                'MillenniumDrought': (3.0, 10**15.0),
+                'SovietFamine1921': (5.7, 10**13.2),
+                'Drought18761878': (5.25, 10**15.7)
             },
             'maize': {
-                'GreatFamine': (2.0, 10**13.3),
-                'SovietFamine1921': (4.2, 10**13.0),
-                'SahelDrought2010': (5.0, 10**14.5),
-                'DustBowl': (4.5, 10**14.3),
-                'ChineseFamine1960': (5.8, 10**15.0),
-                'ENSO2015_2016': (5.5, 10**14.7)
+                'GreatFamine': (2.5, 10**15.0),
+                'SovietFamine1921': (3.0, 10**14.0),
+                'SahelDrought2010': (5.5, 10**12.5),
+                'DustBowl': (3.5, 10**15.5),
+                'ChineseFamine1960': (4.1, 10**15.9),
+                'ENSO2015_2016': (6.0, 10**14.0),
+                'Haiti': (1.2, 10**13.0),
+                'Ethiopia': (5.0, 10**11.0)
             },
             'rice': {
-                'Solomon': (1.2, 10**12.0),
-                'EastTimor': (2.5, 10**11.7),
-                'Bangladesh': (3.2, 10**13.7),
-                'Liberia': (4.0, 10**12.7),
-                'SierraLeone': (5.2, 10**13.3),
-                'ChineseFamine1960': (5.5, 10**14.5),
-                'ENSO2015_2016': (6.2, 10**15.0),
-                'Drought18761878': (6.5, 10**15.3),
-                'Laos': (6.0, 10**13.0)
+                'Solomon': (1.12, 10**12.5),
+                'EastTimor': (3.0, 10**9.0),
+                'Bangladesh': (3.0, 10**14.3),
+                'Liberia': (2.0, 10**13.2),
+                'SierraLeone': (3.5, 10**10.0),
+                'ChineseFamine1960': (2.8, 10**15.8),
+                'ENSO2015_2016': (5.8, 10**13.0),
+                'Drought18761878': (4.1, 10**15.8),
+                'Laos': (4.5, 10**11.0)
             }
         }
     
@@ -574,14 +578,27 @@ class HPEnvelopeVisualizer:
                     event_id = row['event_name']
                     if event_id in priority_ids:
                         if event_id == 'ChineseFamine1960':
-                            display_name = "Great Chinese Famine" if self.crop_type == 'allgrain' else "China 1959"
+                            display_name = "China 1959"
                         elif event_id == 'GreatFamine' and self.crop_type == 'maize':
                             display_name = "Great European\nFamine 1315"
                         else:
                             display_name = self.config.get_event_label(event_id)
                         
+                        # Wrap year for El Niño, Great Drought, and Sierra Leone if requested
                         if "El Niño 2015" in display_name:
-                            display_name = "El Niño 2015"
+                            display_name = display_name.replace(" 2015", "\n2015")
+                        elif "Great Drought" in display_name:
+                            display_name = display_name.replace(" 1876", "\n1876")
+                        elif "Sierra Leone" in display_name:
+                            display_name = display_name.replace(" 1991", "\n1991")
+                        elif "Great Drought" in display_name:
+                            display_name = display_name.replace(" 1876", "\n1876")
+                        elif "Sierra Leone" in display_name:
+                            display_name = display_name.replace(" 1991", "\n1991")
+                        elif "Great Drought" in display_name:
+                            display_name = display_name.replace(" 1876", "\n1876")
+                        elif "Sierra Leone" in display_name:
+                            display_name = display_name.replace(" 1991", "\n1991")
 
                         # Apply Directional Bias based on Magnitude
                         mag = row['magnitude']
@@ -601,8 +618,12 @@ class HPEnvelopeVisualizer:
                             text_x, text_y = mag + x_off, row['production_loss_kcal'] * (10**y_off)
 
                         # Determine alignment based on displacement to point
-                        ha = 'left' if text_x > row['magnitude'] else 'right'
-                        va = 'bottom' if text_y > row['production_loss_kcal'] else 'top'
+                        if event_id in overrides:
+                            ha = 'left'
+                            va = 'center' # Default for overrides
+                        else:
+                            ha = 'left' if text_x > row['magnitude'] else 'right'
+                            va = 'bottom' if text_y > row['production_loss_kcal'] else 'top'
 
                         ann = ax.annotate(display_name,
                                          xy=(row['magnitude'], row['production_loss_kcal']),
@@ -611,7 +632,11 @@ class HPEnvelopeVisualizer:
                                          ha=ha, va=va, fontweight='normal',
                                          arrowprops=dict(arrowstyle='->', color='#2C5F8D', lw=1.0, alpha=0.8,
                                                        shrinkA=0, shrinkB=3))
-                        texts.append(ann)
+                        
+                        # If it's a manual override, don't let adjust_text move it
+                        if event_id not in overrides:
+                            texts.append(ann)
+                        
                         targets_x.append(row['magnitude'])
                         targets_y.append(row['production_loss_kcal'])
                 
@@ -619,10 +644,10 @@ class HPEnvelopeVisualizer:
                     # Use targets_x and targets_y to ensure labels avoid data points.
                     # Annotations automatically update arrows when text is moved.
                     adjust_text(texts, x=targets_x, y=targets_y, ax=ax,
-                               expand_points=(1.5, 1.5),
-                               expand_text=(1.2, 1.2),
-                               force_points=(0.2, 0.4),
-                               force_text=(0.2, 0.4))
+                               expand_points=(1.0, 1.0),
+                               expand_text=(1.0, 1.0),
+                               force_points=(0.0, 0.0),
+                               force_text=(0.0, 0.0))
             except ImportError:
                 # Fallback
                 for idx, row in events_data.iterrows():

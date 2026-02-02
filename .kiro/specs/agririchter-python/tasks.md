@@ -2,7 +2,7 @@
 
 - [x] 1. Set up project structure and core interfaces
 
-  - Create directory structure for agririchter package with modules (core, data, processing, analysis, visualization, cli)
+  - Create directory structure for agrichter package with modules (core, data, processing, analysis, visualization, cli)
   - Define base interfaces and abstract classes for main components
   - Set up package configuration files (pyproject.toml, requirements.txt)
   - _Requirements: 8.1, 8.2_
@@ -89,7 +89,7 @@
     - Create light blue shading with correct transparency (alpha=0.6, color=[0.8, 0.9, 1.0])
     - _Requirements: 6.1, 6.3_
 
-  - [x] 5.2 Implement AgriRichter magnitude calculation
+  - [x] 5.2 Implement AgRichter magnitude calculation
 
     - Create magnitude formula: M_D = log10(disrupted harvest area in km²)
     - Add event impact calculation for historical events
@@ -142,7 +142,7 @@
     - Create coastline and ocean rendering with proper colors
     - _Requirements: 2.1, 2.3, 2.5_
 
-  - [x] 6.2 Implement AgriRichter scale visualization
+  - [x] 6.2 Implement AgRichter scale visualization
 
     - Create log10 scale plotting for magnitude vs production loss
     - Add historical event markers with labels and colors
@@ -162,7 +162,7 @@
     - Add consistent styling and font management
     - _Requirements: 2.4, 5.5, 6.5_
 
-- [x] 7. Implement MATLAB-exact AgriRichter system
+- [x] 7. Implement MATLAB-exact AgRichter system
 
   - [x] 7.1 Create USDA PSD data loader and threshold calculator
 
@@ -172,7 +172,7 @@
     - Replace hardcoded thresholds with USDA-based calculations
     - _Requirements: 7.1, 7.2, 7.3_
 
-  - [x] 7.2 Implement AgriRichter Scale visualization
+  - [x] 7.2 Implement AgRichter Scale visualization
 
     - Create magnitude-based x-axis (M_D = log10(A_H))
     - Plot theoretical production loss line using uniform production assumption
