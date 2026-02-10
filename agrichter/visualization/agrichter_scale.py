@@ -192,9 +192,6 @@ class AgRichterScaleVisualizer:
         # Plot magnitude-area relationship line (A_H = 10^M_D)
         self._plot_magnitude_area_relationship(ax, xlim)
         
-        # Plot AgriPhase/Supply threshold lines (1 Month, 3 Months)
-        self._plot_agriPhase_thresholds_richter_style(ax, xlim)
-        
         # Plot historical events as markers with labels
         self._plot_historical_events_richter_style(ax, events_data, show_labels=show_labels)
         
@@ -249,26 +246,10 @@ class AgRichterScaleVisualizer:
     
     def _get_axis_limits(self) -> Tuple[Tuple[float, float], Tuple[float, float]]:
         """Get appropriate axis limits for the crop type (Richter scale style)."""
-        # X-axis: Magnitude limits (M_D = log10 of harvest area in km²)
-        # Extended lower bound to include smaller events (Magnitude 0 = 1 km²)
-        magnitude_limits = {
-            'allgrain': (0, 7.5),
-            'wheat': (0, 7),
-            'rice': (0, 6.5),
-            'maize': (0, 7)
-        }
-        
-        # Y-axis: Harvest area limits (km²) - will be displayed on log scale
-        # Extended lower bound to 1 km² (10^0)
-        harvest_area_limits = {
-            'allgrain': (1e0, 10**7.5), 
-            'wheat': (1e0, 1e7),
-            'rice': (1e0, 10**6.5),
-            'maize': (1e0, 1e7)
-        }
-        
-        xlim = magnitude_limits.get(self.crop_type, (0, 7))
-        ylim = harvest_area_limits.get(self.crop_type, (1e0, 1e7))
+        # Unified limits for all panels to allow direct comparison (Nature Style)
+        # Md = 1 corresponds to 10 km², Md = 7 corresponds to 10,000,000 km²
+        xlim = (1, 7)
+        ylim = (1e1, 1e7)
         
         return xlim, ylim
     
@@ -297,75 +278,6 @@ class AgRichterScaleVisualizer:
         else:
             return f"{value:.0f} km²"
 
-    def _plot_agriPhase_thresholds_richter_style(self, ax: plt.Axes, xlim: Tuple[float, float]) -> None:
-        """Plot AgriPhase/Supply threshold lines with colors."""
-        # Get thresholds from config (values in kcal)
-        thresholds = self.config.get_thresholds()
-        colors = self.config.get_ipc_colors()
-        
-        # Calculate yield (kcal/km²) to convert production thresholds to harvest area
-        # Use the same assumptions as _plot_theoretical_line for consistency
-        if self.crop_type == 'allgrain':
-            base_production = 2.5e15  # kcal
-            area_scaling = 1e6  # km²
-        elif self.crop_type == 'wheat':
-            base_production = 8e14
-            area_scaling = 2.2e5
-        elif self.crop_type == 'rice':
-            base_production = 6e14
-            area_scaling = 1.6e5
-        elif self.crop_type == 'maize':
-            base_production = 1.2e15
-            area_scaling = 1.9e5
-        else:
-            base_production = 8e14
-            area_scaling = 2e5
-        
-        yield_density = base_production / area_scaling  # kcal/km²
-        
-        # Plot horizontal threshold lines
-        for name, value_kcal in thresholds.items():
-            # SKIP "Total Stocks" for publication clarity (User requested removal)
-            if name == 'Total Stocks':
-                continue
-
-            # Convert kcal threshold to km² equivalent
-            area_km2 = value_kcal / yield_density
-            
-            # Determine color and label
-            color = colors.get(name, '#000000')
-            
-            # Format label with area
-            formatted_area = self._format_area(area_km2)
-            label = f"{name} (~{formatted_area})"
-            
-            # Only plot if within reasonable range
-            if area_km2 > 10**xlim[0] and area_km2 < 10**xlim[1]:
-                ax.axhline(y=area_km2, color=color, linestyle='--', 
-                          linewidth=2, alpha=0.8, label=label)
-                
-                # Add text annotation inside the panel (Nature Consistency)
-                x_pos = xlim[1] - 0.02 * (xlim[1] - xlim[0])
-                y_pos = area_km2
-                va = 'center'
-                if '3 Months' in name:
-                    va = 'bottom'
-                    y_pos *= 1.15
-                elif '1 Month' in name:
-                    va = 'top'
-                    y_pos /= 1.15
-
-                ax.text(x_pos, y_pos, f" {name}", 
-                       color=color, fontsize=8, va=va, ha='right', fontweight='bold',
-                       bbox=dict(boxstyle='round,pad=0.1', facecolor='white', alpha=0.6, edgecolor='none'))
-
-    def _plot_agriPhase_thresholds(self, ax: plt.Axes, xlim: Tuple[float, float]) -> None:
-        """
-        Alias for _plot_agriPhase_thresholds_richter_style.
-        Maintained for backward compatibility if needed.
-        """
-        self._plot_agriPhase_thresholds_richter_style(ax, xlim)
-    
     def _prepare_events_data(self, events_data: pd.DataFrame) -> pd.DataFrame:
         """
         Prepare events data for plotting.
@@ -410,51 +322,6 @@ class AgRichterScaleVisualizer:
                 events_data = events_data[valid_mask]
         
         return events_data
-    
-    def _classify_event_severity(self, production_loss: float) -> Tuple[int, str, str, str]:
-        """
-        Classify event severity based on AgriPhase thresholds.
-        
-        Args:
-            production_loss: Production loss in kcal
-        
-        Returns:
-            Tuple of (phase_number, phase_name, color, marker)
-        """
-        thresholds = self.config.get_thresholds()
-        ipc_colors = self.ipc_colors
-        
-        # Define marker shapes for each phase
-        phase_markers = {
-            1: 'o',  # Circle - Phase 1 (Minimal)
-            2: 's',  # Square - Phase 2 (Stressed)
-            3: '^',  # Triangle up - Phase 3 (Crisis)
-            4: 'D',  # Diamond - Phase 4 (Emergency)
-            5: '*',  # Star - Phase 5 (Famine)
-        }
-        
-        # Classify based on thresholds
-        # T1 = Phase 2, T2 = Phase 3, T3 = Phase 4, T4 = Phase 5
-        if production_loss < thresholds.get('T1', float('inf')):
-            phase = 1
-            phase_name = 'Phase 1 (Minimal)'
-        elif production_loss < thresholds.get('T2', float('inf')):
-            phase = 2
-            phase_name = 'Phase 2 (Stressed)'
-        elif production_loss < thresholds.get('T3', float('inf')):
-            phase = 3
-            phase_name = 'Phase 3 (Crisis)'
-        elif production_loss < thresholds.get('T4', float('inf')):
-            phase = 4
-            phase_name = 'Phase 4 (Emergency)'
-        else:
-            phase = 5
-            phase_name = 'Phase 5 (Famine)'
-        
-        color = ipc_colors.get(phase, '#808080')
-        marker = phase_markers.get(phase, 'o')
-        
-        return phase, phase_name, color, marker
     
     def _plot_historical_events_richter_style(self, ax: plt.Axes, events_data: pd.DataFrame, show_labels: bool = True) -> None:
         """
