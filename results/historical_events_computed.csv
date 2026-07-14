@@ -1,0 +1,93 @@
+event_name,display_name,crop_type,magnitude_MD,harvest_area_km2,production_loss_kcal,event_type,year_start,year_end,region
+GreatFamine,Great Famine 1315,allgrain,5.498626230605617,315229.04814453126,669452210657812.5,Climate-induced famine,1315,1317,Europe
+Laki1783,Laki 1783,allgrain,6.357790064713064,2279240.0350195314,4039957134923437.5,Volcanic famine,1783,1784,Iceland/Europe
+NoSummer,No Summer 1816,allgrain,5.703903153778516,505711.87736572267,1040034287071948.2,Volcanic famine,1816,1816,Global
+PotatoFamine,Irish Famine 1845,allgrain,5.399537388587339,250921.21892578126,587630955173437.5,Disease-induced famine,1845,1852,Ireland
+Drought18761878,Great Drought 1876,allgrain,6.494838112730542,3124914.3093945314,4903682510764050.0,Climate-induced famine,1876,1878,Asia/Africa
+SovietFamine1921,Soviet 1921,allgrain,5.642341515375758,438875.68,420447498000000.0,Compound crisis,1921,1922,Soviet Union
+ChineseFamine1960,China 1959,allgrain,5.993573348905854,985311.04,2141316633600000.0,Policy-induced famine,1959,1961,China
+DustBowl,Dust Bowl 1930,allgrain,5.342334470603413,219955.32,463406649600000.0,Climate-induced crisis,1930,1936,USA Great Plains
+SahelDrought2010,Sahel 2010,allgrain,5.5679255834636665,369764.815,176692094029687.5,Climate-induced crisis,2010,2011,Sahel region
+MillenniumDrought,Australia 2000,allgrain,5.244621054691505,175639.04,122888020200000.0,Climate-induced crisis,2000,2009,Australia
+NorthKorea1990s,N. Korea 1990,allgrain,4.120232942009812,13189.64,17073882675000.0,Compound crisis,1994,1998,North Korea
+ENSO2015_2016,El Niño 2015,allgrain,5.843872471651747,698027.4018115235,1299472190544177.5,Climate-induced crisis,2015,2016,Global tropics
+Solomon,Solomon 2015,allgrain,1.1603184746341648,14.465001220703126,9459554663.085938,Climate-induced crisis,2015,2016,Solomon Islands
+Vanuatu,Vanuatu 2015,allgrain,1.1718433910272885,14.8539990234375,3162615042.114258,Natural disaster,2015,2015,Vanuatu
+EastTimor,E. Timor 2015,allgrain,2.7898520614278004,616.385,405505399218.75,Climate-induced crisis,2015,2016,East Timor
+Haiti,Haiti 2010,allgrain,3.4530265938337563,2838.0928125,1302796546875.0,Natural disaster,2010,2016,Haiti
+SierraLeone,Sierra Leone 1991,allgrain,3.9003213409519555,7949.161875,4886475637500.0,Conflict-induced crisis,1991,2002,Sierra Leone
+Liberia,Liberia 1989,allgrain,3.383217154322324,2416.66890625,932651653125.0,Conflict-induced crisis,1989,2003,Liberia
+Yemen,Yemen 2015,allgrain,3.691568307857948,4915.506875,1423195725000.0,Conflict-induced crisis,2015,ongoing,Yemen
+Ethiopia,Ethiopia 1983,allgrain,5.025982836755959,106165.36,103555289700000.0,Climate-induced famine,1983,1985,Ethiopia
+Laos,Laos 2015,allgrain,4.023889129493295,10565.4775,15468897825000.0,Climate-induced crisis,2015,2016,Laos
+Bangladesh,Bangladesh 1974,allgrain,5.091679757665466,123503.64,208492677000000.0,Natural disaster,1974,1974,Bangladesh
+Syria,Syria 2011,allgrain,4.470021671930173,29513.565000000002,16322307075000.0,Compound crisis,2011,ongoing,Syria
+GreatFamine,Great Famine 1315,wheat,5.1565338169122725,143394.93680664062,327727180182812.5,Climate-induced famine,1315,1317,Europe
+Laki1783,Laki 1783,wheat,5.959376249096591,910701.9135253907,1385209359148750.0,Volcanic famine,1783,1784,Iceland/Europe
+NoSummer,No Summer 1816,wheat,5.334631255387326,216088.30126342774,435538588990888.7,Volcanic famine,1816,1816,Global
+PotatoFamine,Irish Famine 1845,wheat,5.111158820124004,129169.15547851563,300232934782812.5,Disease-induced famine,1845,1852,Ireland
+Drought18761878,Great Drought 1876,wheat,5.8633904600709315,730113.6367297363,959697940030100.0,Climate-induced famine,1876,1878,Asia/Africa
+SovietFamine1921,Soviet 1921,wheat,5.448943803225147,281153.7,263236034560000.0,Compound crisis,1921,1922,Soviet Union
+ChineseFamine1960,China 1959,wheat,5.372160280944631,235591.86000000002,450668925440000.0,Policy-induced famine,1959,1961,China
+DustBowl,Dust Bowl 1930,wheat,4.951082599604585,89347.54000000001,87404807360000.0,Climate-induced crisis,1930,1936,USA Great Plains
+SahelDrought2010,Sahel 2010,wheat,3.5657269509572735,3678.975968322754,2653881624579.468,Climate-induced crisis,2010,2011,Sahel region
+MillenniumDrought,Australia 2000,wheat,5.040188416120714,109695.40000000001,71226114560000.0,Climate-induced crisis,2000,2009,Australia
+NorthKorea1990s,N. Korea 1990,wheat,2.8548602297254857,715.91296875,292921000781.25,Compound crisis,1994,1998,North Korea
+ENSO2015_2016,El Niño 2015,wheat,4.64754914452785,44416.99205490112,53510975981206.39,Climate-induced crisis,2015,2016,Global tropics
+Solomon,Solomon 2015,wheat,,0.0,0.0,Climate-induced crisis,2015,2016,Solomon Islands
+Vanuatu,Vanuatu 2015,wheat,,0.0,0.0,Natural disaster,2015,2015,Vanuatu
+EastTimor,E. Timor 2015,wheat,,0.0,0.0,Climate-induced crisis,2015,2016,East Timor
+Haiti,Haiti 2010,wheat,,0.0,0.0,Natural disaster,2010,2016,Haiti
+SierraLeone,Sierra Leone 1991,wheat,,0.0,0.0,Conflict-induced crisis,1991,2002,Sierra Leone
+Liberia,Liberia 1989,wheat,,0.0,0.0,Conflict-induced crisis,1989,2003,Liberia
+Yemen,Yemen 2015,wheat,2.846648163892447,702.50296875,395610292343.75,Conflict-induced crisis,2015,ongoing,Yemen
+Ethiopia,Ethiopia 1983,wheat,4.268606196597065,18561.20625,17818726320000.0,Climate-induced famine,1983,1985,Ethiopia
+Laos,Laos 2015,wheat,,0.0,0.0,Climate-induced crisis,2015,2016,Laos
+Bangladesh,Bangladesh 1974,wheat,3.519189572735571,3305.1378125,3486046092500.0,Natural disaster,1974,1974,Bangladesh
+Syria,Syria 2011,wheat,4.152631706492993,14211.23125,8779041370000.0,Compound crisis,2011,ongoing,Syria
+GreatFamine,Great Famine 1315,maize,4.47546442275497,29885.76813812256,88447464452373.05,Climate-induced famine,1315,1317,Europe
+Laki1783,Laki 1783,maize,5.725215077128708,531147.4210462952,1195082857857204.5,Volcanic famine,1783,1784,Iceland/Europe
+NoSummer,No Summer 1816,maize,4.954668420947735,90088.30606781006,283785157640136.75,Volcanic famine,1816,1816,Global
+PotatoFamine,Irish Famine 1845,maize,4.431859202711456,27030.818890075683,89432798749248.05,Disease-induced famine,1845,1852,Ireland
+Drought18761878,Great Drought 1876,maize,5.937380822961621,865726.7221269226,1642872144644987.8,Climate-induced famine,1876,1878,Asia/Africa
+SovietFamine1921,Soviet 1921,maize,4.433471363878869,27131.3475,51504591920000.0,Compound crisis,1921,1922,Soviet Union
+ChineseFamine1960,China 1959,maize,5.622776769206755,419543.28,942069300480000.0,Policy-induced famine,1959,1961,China
+DustBowl,Dust Bowl 1930,maize,5.018617001269931,104379.93000000001,344089464640000.0,Climate-induced crisis,1930,1936,USA Great Plains
+SahelDrought2010,Sahel 2010,maize,4.97566334734285,94550.3949609375,69936299982460.94,Climate-induced crisis,2010,2011,Sahel region
+MillenniumDrought,Australia 2000,maize,2.6760796634870436,474.328984375,1066983286250.0,Climate-induced crisis,2000,2009,Australia
+NorthKorea1990s,N. Korea 1990,maize,3.758932225831724,5740.26875,8402379640000.0,Compound crisis,1994,1998,North Korea
+ENSO2015_2016,El Niño 2015,maize,5.3338478867454455,215698.87835010528,602001711602812.5,Climate-induced crisis,2015,2016,Global tropics
+Solomon,Solomon 2015,maize,,0.0,0.0,Climate-induced crisis,2015,2016,Solomon Islands
+Vanuatu,Vanuatu 2015,maize,1.1718433910272885,14.8539990234375,3263452043.4570312,Natural disaster,2015,2015,Vanuatu
+EastTimor,E. Timor 2015,maize,2.5906323159188562,389.6119921875,248432430625.0,Climate-induced crisis,2015,2016,East Timor
+Haiti,Haiti 2010,maize,3.328575297699975,2130.96,681853920000.0,Natural disaster,2010,2016,Haiti
+SierraLeone,Sierra Leone 1991,maize,2.07435559514216,118.67400390625001,104162401562.5,Conflict-induced crisis,1991,2002,Sierra Leone
+Liberia,Liberia 1989,maize,,0.0,0.0,Conflict-induced crisis,1989,2003,Liberia
+Yemen,Yemen 2015,maize,2.5380330425453947,345.17,146251558437.5,Conflict-induced crisis,2015,ongoing,Yemen
+Ethiopia,Ethiopia 1983,maize,4.3782585954619195,23892.335,36050760080000.0,Climate-induced famine,1983,1985,Ethiopia
+Laos,Laos 2015,maize,3.1799810353902047,1513.49515625,2999433055000.0,Climate-induced crisis,2015,2016,Laos
+Bangladesh,Bangladesh 1974,maize,3.66796178325222,4655.45125,13885240660000.0,Natural disaster,1974,1974,Bangladesh
+Syria,Syria 2011,maize,2.737477343839294,546.358046875,892540060000.0,Compound crisis,2011,ongoing,Syria
+GreatFamine,Great Famine 1315,rice,2.146456752385562,140.10600585937502,265147537500.0,Climate-induced famine,1315,1317,Europe
+Laki1783,Laki 1783,rice,5.675755462042344,473975.02924804686,1057970253339843.8,Volcanic famine,1783,1784,Iceland/Europe
+NoSummer,No Summer 1816,rice,3.5638658578369697,3663.244091796875,8781507189843.75,Volcanic famine,1816,1816,Global
+PotatoFamine,Irish Famine 1845,rice,3.378038711002608,2388.024130859375,5616417037500.0,Disease-induced famine,1845,1852,Ireland
+Drought18761878,Great Drought 1876,rice,6.098895468996627,1255727.6843005372,2261089716849316.0,Climate-induced famine,1876,1878,Asia/Africa
+SovietFamine1921,Soviet 1921,rice,3.2809931121386904,1909.82296875,3980265750000.0,Compound crisis,1921,1922,Soviet Union
+ChineseFamine1960,China 1959,rice,5.475627524282933,298969.94,761178931200000.0,Policy-induced famine,1959,1961,China
+DustBowl,Dust Bowl 1930,rice,2.7588203506019218,573.8790234375,1845985725000.0,Climate-induced crisis,1930,1936,USA Great Plains
+SahelDrought2010,Sahel 2010,rice,4.784856119699504,60933.499316406254,48933684914062.5,Climate-induced crisis,2010,2011,Sahel region
+MillenniumDrought,Australia 2000,rice,2.282848602834645,191.8,647450662500.0,Climate-induced crisis,2000,2009,Australia
+NorthKorea1990s,N. Korea 1990,rice,3.6690432097580006,4667.0581250000005,8125881300000.0,Compound crisis,1994,1998,North Korea
+ENSO2015_2016,El Niño 2015,rice,5.625192798571935,421883.75087524415,673427841024243.2,Climate-induced crisis,2015,2016,Global tropics
+Solomon,Solomon 2015,rice,1.1603184379840017,14.465,9870839648.4375,Climate-induced crisis,2015,2016,Solomon Islands
+Vanuatu,Vanuatu 2015,rice,,0.0,0.0,Natural disaster,2015,2015,Vanuatu
+EastTimor,E. Timor 2015,rice,2.3555913603808754,226.7730078125,171912234375.0,Climate-induced crisis,2015,2016,East Timor
+Haiti,Haiti 2010,rice,2.7355997105068592,544.001015625,615704400000.0,Natural disaster,2010,2016,Haiti
+SierraLeone,Sierra Leone 1991,rice,3.8554394974222492,7168.685,4771396800000.0,Conflict-induced crisis,1991,2002,Sierra Leone
+Liberia,Liberia 1989,rice,3.383217182401682,2416.6690625,973201725000.0,Conflict-induced crisis,1989,2003,Liberia
+Yemen,Yemen 2015,rice,,0.0,0.0,Conflict-induced crisis,2015,ongoing,Yemen
+Ethiopia,Ethiopia 1983,rice,2.778520921901518,600.5109375000001,675951468750.0,Climate-induced famine,1983,1985,Ethiopia
+Laos,Laos 2015,rice,3.9567434957684102,9051.978125,13108320900000.0,Climate-induced crisis,2015,2016,Laos
+Bangladesh,Bangladesh 1974,rice,5.062384231819818,115447.42,199724126400000.0,Natural disaster,1974,1974,Bangladesh
+Syria,Syria 2011,rice,,0.0,0.0,Compound crisis,2011,ongoing,Syria

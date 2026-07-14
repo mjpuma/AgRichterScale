@@ -415,8 +415,9 @@ class AgriPhaseThresholdCalculator:
             year_range: Year range to average consumption/stocks (inclusive).
             
         Returns:
-            Dictionary mapping threshold names to mass values in Metric Tons (MT).
-            Note: The Config class handles conversion from MT to kcal.
+            Dictionary mapping threshold names to mass values in the native
+            USDA PSD unit (1000 MT / TMT). The Config class handles
+            conversion from TMT to kcal.
         """
         # Get average consumption and stocks
         if crop == 'allgrain':
@@ -430,7 +431,7 @@ class AgriPhaseThresholdCalculator:
             avg_consumption = self.usda_loader.get_mean_consumption(crop, year_range)
             avg_stocks = self.usda_loader.get_mean_stocks(crop, year_range)
             
-        # Return thresholds in Metric Tons
+        # Return thresholds in USDA PSD native units (1000 MT)
         return {
             '1 Month': avg_consumption / 12.0,
             '3 Months': avg_consumption / 4.0,

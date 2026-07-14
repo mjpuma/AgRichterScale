@@ -285,35 +285,10 @@ class SpatialMapper:
         
         iso3_to_fips = self._cache[cache_key]
         
-        # Look up FIPS code
-        fips_code = iso3_to_fips.get(iso3_code)
-        
-        if fips_code:
-            logger.debug(f"Mapped ISO3 {iso3_code} to FIPS {fips_code}")
-            return fips_code
-        
-        # Fallback: try common patterns
-        # Some FIPS codes are just first 2 letters of ISO3
-        fallback_fips = iso3_code[:2]
-        logger.warning(
-            f"No FIPS mapping found for ISO3 {iso3_code}, "
-            f"trying fallback: {fallback_fips}"
-        )
-        
-        # Verify fallback exists in SPAM data
-        if self.grid_manager.is_loaded():
-            try:
-                prod_cells, _ = self.grid_manager.get_grid_cells_by_iso3(fallback_fips)
-                if len(prod_cells) > 0:
-                    logger.info(f"Fallback FIPS {fallback_fips} found in SPAM data")
-                    # Cache this for future use
-                    iso3_to_fips[iso3_code] = fallback_fips
-                    return fallback_fips
-            except:
-                pass
-        
-        # If dynamic mapping didn't find it, use complete ISO3→FIPS mapping
-        # This mapping was generated from SPAM 2020 data
+        # PRIORITY 1: Authoritative static ISO3→FIPS mapping (verified against
+        # SPAM 2020). This must be consulted BEFORE any heuristic: guessing
+        # FIPS from the first two ISO3 letters silently maps e.g.
+        # Ireland (IRL) → Iran (IR) and Switzerland (CHE) → China (CH).
         complete_mapping = {
             'AFG': 'AF', 'AGO': 'AO', 'ALB': 'AL', 'ARE': 'TC', 'ARG': 'AR',
             'ARM': 'AM', 'ATG': 'AC', 'AUS': 'AS', 'AUT': 'AU', 'AZE': 'AJ',
@@ -353,15 +328,20 @@ class SpatialMapper:
             'ZAF': 'SF', 'ZMB': 'ZA', 'ZWE': 'ZI',
         }
         
-        # Try complete mapping as final fallback
         fips_from_complete = complete_mapping.get(iso3_code)
         if fips_from_complete:
-            logger.info(f"Found FIPS {fips_from_complete} for ISO3 {iso3_code} in complete mapping")
-            # Cache this for future use
+            logger.debug(f"Mapped ISO3 {iso3_code} to FIPS {fips_from_complete} (static mapping)")
             iso3_to_fips[iso3_code] = fips_from_complete
             return fips_from_complete
         
-        # No mapping found
+        # PRIORITY 2: Dynamically built name-matching mapping.
+        fips_code = iso3_to_fips.get(iso3_code)
+        if fips_code:
+            logger.debug(f"Mapped ISO3 {iso3_code} to FIPS {fips_code} (dynamic mapping)")
+            return fips_code
+        
+        # No mapping found. Deliberately do NOT guess from the first two
+        # ISO3 letters — that heuristic produces wrong-country matches.
         logger.error(f"No FIPS mapping found for ISO3 {iso3_code}")
         return None
     

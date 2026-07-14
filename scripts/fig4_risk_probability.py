@@ -292,8 +292,17 @@ def generate_all_figures():
         if not events_data.empty:
             main_scale = (stats['sigma'] * current_prod_kcal) / (-np.log(0.32))
             
-            # Map event production loss to exceedance probability using the calibrated model
-            event_probs = np.exp(-events_data['production_loss_kcal'] / main_scale)
+            # Map event production loss to exceedance probability using the calibrated model.
+            # Restrict to the visible axes ranges: labels placed outside the axes
+            # (e.g. M<3 events, or probabilities below the floor) blow up the
+            # tight bounding box and produce multi-gigapixel output files.
+            Y_FLOOR = 1e-4
+            X_MIN, X_MAX = 3.0, 7.5
+            events_data = events_data[
+                (events_data['magnitude'] >= X_MIN) & (events_data['magnitude'] <= X_MAX)
+            ].copy()
+            raw_probs = np.exp(-events_data['production_loss_kcal'] / main_scale)
+            event_probs = np.clip(raw_probs, Y_FLOOR, 1.0)
             
             ax.scatter(events_data['magnitude'], event_probs, 
                        color='black', s=40, alpha=0.6, edgecolors='none', 
@@ -304,19 +313,27 @@ def generate_all_figures():
             try:
                 from adjustText import adjust_text
                 texts = []
-                for _, row in events_data.iterrows():
+                for (_, row), prob in zip(events_data.iterrows(), event_probs):
                     # Only label events with Mag > 4.5 or high probability for Figure 4
-                    if row['magnitude'] > 4.5 or np.exp(-row['production_loss_kcal'] / main_scale) > 0.1:
+                    if row['magnitude'] > 4.5 or prob > 0.1:
                         display_name = config.get_event_label(row['event_name'])
-                        prob = np.exp(-row['production_loss_kcal'] / main_scale)
                         
                         text = ax.text(row['magnitude'], prob, display_name,
                                      fontsize=8, ha='left', va='center', fontweight='bold',
+                                     clip_on=True,
                                      bbox=dict(boxstyle='round,pad=0.2', facecolor='white', alpha=0.6, edgecolor='none'))
                         texts.append(text)
                 
                 if texts:
                     adjust_text(texts, ax=ax, arrowprops=dict(arrowstyle='->', color='gray', lw=0.5, alpha=0.5))
+                    # adjust_text can push labels far outside the axes on a log
+                    # scale, which explodes the tight bounding box. Clamp any
+                    # displaced labels back into the visible data range.
+                    x0, x1 = ax.get_xlim()
+                    y0, y1 = ax.get_ylim()
+                    for t in texts:
+                        tx, ty = t.get_position()
+                        t.set_position((min(max(tx, x0), x1), min(max(ty, y0), y1)))
             except ImportError:
                 pass
 
@@ -359,9 +376,12 @@ def generate_all_figures():
         ax.legend(loc='upper right', fontsize=10, framealpha=0.9)
         plt.tight_layout()
         output_path = Path(f'results/figure4_risk_probability_{mode}.png')
-        plt.savefig(output_path, dpi=300, bbox_inches='tight', facecolor='white')
+        # NOTE: deliberately NOT using bbox_inches='tight' here. Stray artists
+        # (adjustText arrows on the log axis) can extend the tight bbox to
+        # hundreds of thousands of pixels, producing ~10 MB gigapixel PNGs.
+        plt.savefig(output_path, dpi=300, facecolor='white')
         # Also save as SVG
-        plt.savefig(output_path.with_suffix('.svg'), format='svg', bbox_inches='tight', facecolor='white')
+        plt.savefig(output_path.with_suffix('.svg'), format='svg', facecolor='white')
         logger.info(f"Saved {output_path} and {output_path.with_suffix('.svg')}")
         plt.close()
 
