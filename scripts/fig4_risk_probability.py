@@ -272,34 +272,45 @@ def generate_all_figures():
                        color='black', s=40, alpha=0.6, edgecolors='none', 
                        label='Historical Events (Model-Mapped)', zorder=15)
             
-            # Label selected high-impact events for context
-            # (Filtering to avoid label wall)
-            try:
-                from adjustText import adjust_text
-                texts = []
-                for (_, row), prob in zip(events_data.iterrows(), event_probs):
-                    # Only label events with Mag > 4.5 or high probability for Figure 4
-                    if row['magnitude'] > 4.5 or prob > 0.1:
-                        display_name = config.get_event_label(row['event_name'])
-                        
-                        text = ax.text(row['magnitude'], prob, display_name,
-                                     fontsize=8, ha='left', va='center', fontweight='bold',
-                                     clip_on=True,
-                                     bbox=dict(boxstyle='round,pad=0.2', facecolor='white', alpha=0.6, edgecolor='none'))
-                        texts.append(text)
-                
-                if texts:
-                    adjust_text(texts, ax=ax, arrowprops=dict(arrowstyle='->', color='gray', lw=0.5, alpha=0.5))
-                    # adjust_text can push labels far outside the axes on a log
-                    # scale, which explodes the tight bounding box. Clamp any
-                    # displaced labels back into the visible data range.
-                    x0, x1 = ax.get_xlim()
-                    y0, y1 = ax.get_ylim()
-                    for t in texts:
-                        tx, ty = t.get_position()
-                        t.set_position((min(max(tx, x0), x1), min(max(ty, y0), y1)))
-            except ImportError:
-                pass
+            # Label a curated subset of events with deterministic per-event
+            # offsets (points). adjustText on log axes pushed labels away from
+            # their markers; fixed offsets keep label and marker visibly
+            # paired. Offsets tuned so labels sit in clear space.
+            LABELED_EVENTS = {
+                'DustBowl':          (-9, 6, 'right', 'center'),
+                'SovietFamine1921':  (9, 2, 'left', 'center'),
+                'PotatoFamine':      (9, 7, 'left', 'center'),
+                'GreatFamine':       (9, -7, 'left', 'center'),
+                'NoSummer':          (9, 0, 'left', 'center'),
+                'ENSO2015_2016':     (9, 0, 'left', 'center'),
+                'ChineseFamine1960': (9, 0, 'left', 'center'),
+                'Laki1783':          (-4, 16, 'right', 'bottom'),
+                'Drought18761878':   (4, 38, 'left', 'bottom'),
+            }
+            label_bbox = dict(boxstyle='round,pad=0.25', facecolor='white',
+                              alpha=0.85, edgecolor='none')
+            leader = dict(arrowstyle='-', color='gray', lw=0.8, alpha=0.8,
+                          shrinkA=2, shrinkB=3)
+            for (_, row), prob in zip(events_data.iterrows(), event_probs):
+                spec = LABELED_EVENTS.get(row['event_name'])
+                if spec is None:
+                    continue
+                dx, dy, ha, va = spec
+                display_name = config.get_event_label(row['event_name'])
+                ax.annotate(display_name, (row['magnitude'], prob),
+                            xytext=(dx, dy), textcoords='offset points',
+                            fontsize=8.5, fontweight='bold', ha=ha, va=va,
+                            bbox=label_bbox, arrowprops=leader,
+                            clip_on=True, zorder=16)
+            # Summarize the unlabeled high-frequency cluster instead of
+            # stacking a wall of labels along the top axis
+            n_frequent = int(np.sum(event_probs >= 0.6))
+            if n_frequent > 2:
+                ax.text(0.02, 0.965,
+                        f'{n_frequent} regional events with RP $\\leq$ 2 yr '
+                        f'(unlabeled)',
+                        transform=ax.transAxes, fontsize=9, style='italic',
+                        color='dimgray', va='top')
 
         colors = {'1 Month': '#FFD700', '3 Months': '#FF4500', 'Total Stocks': '#800080'}
         main_scale = (stats['sigma'] * current_prod_kcal) / (-np.log(0.32))

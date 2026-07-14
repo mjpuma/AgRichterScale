@@ -46,11 +46,16 @@ FRACTION_STYLE = {
     0.25: dict(color='#c8dcec', size=40, alpha=0.9, label='25% loss'),
 }
 
-# Events labeled on the plot (largest / policy-relevant ones)
-LABEL_EVENTS = [
-    'Great Drought 1876', 'China 1959', 'El Niño 2015', 'Dust Bowl 1930',
-    'Irish Famine 1845', 'Ethiopia 1983', 'Syria 2011',
-]
+# Small curated subset of labeled events with hand-tuned offsets (points).
+# Offsets place labels clear of the marker, its trajectory (which extends
+# down-left), and the neighboring cluster near the upper bound.
+LABEL_EVENTS = {
+    'Great Drought 1876': dict(xytext=(-95, 8), ha='left'),
+    'China 1959': dict(xytext=(12, -4), ha='left'),
+    'Irish Famine 1845': dict(xytext=(14, 10), ha='left'),
+    'Dust Bowl 1930': dict(xytext=(16, -14), ha='left'),
+    'Syria 2011': dict(xytext=(14, -6), ha='left'),
+}
 
 
 def main():
@@ -112,10 +117,16 @@ def main():
                        edgecolors='black', linewidths=0.5, zorder=5)
 
         if row['display_name'] in LABEL_EVENTS:
+            spec = LABEL_EVENTS[row['display_name']]
             ax.annotate(
                 row['display_name'], (M1, L1),
-                xytext=(6, 6), textcoords='offset points',
-                fontsize=9, fontweight='bold', color='#1a5276', zorder=6,
+                xytext=spec['xytext'], textcoords='offset points',
+                ha=spec['ha'], va='center',
+                fontsize=9.5, fontweight='bold', color='#1a5276', zorder=7,
+                bbox=dict(boxstyle='round,pad=0.25', facecolor='white',
+                          alpha=0.85, edgecolor='none'),
+                arrowprops=dict(arrowstyle='-', color='#1a5276', lw=0.8,
+                                alpha=0.7, shrinkA=2, shrinkB=4),
             )
 
     # Legend (envelope + fraction markers)
