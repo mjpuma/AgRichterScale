@@ -35,6 +35,7 @@ from agrichter.core.config import Config
 from agrichter.data.grid_manager import GridDataManager
 from agrichter.data.spatial_mapper import SpatialMapper
 from agrichter.data.events import EventsProcessor
+from agrichter.data.usda_wide import load_usda_wide
 from agrichter.analysis.event_calculator import EventCalculator
 from agrichter.analysis.envelope_v2 import HPEnvelopeCalculatorV2
 
@@ -44,44 +45,6 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
-
-def load_usda_wide(data_type="production"):
-    """
-    Load USDA wide-format data (years as columns) and convert to long format.
-    """
-    # Use the refreshed Jan 2026 data
-    file_map = {
-        "production": "grains_world_usdapsd_production_jan212026.csv",
-        "consumption": "grains_world_usdapsd_consumption_jan212026.csv",
-        "endingstocks": "grains_world_usdapsd_endingstocks_jan212026.csv"
-    }
-    
-    file_path = Path("USDAdata") / file_map[data_type]
-    if not file_path.exists():
-        raise FileNotFoundError(f"Missing required USDA file: {file_path}")
-        
-    logger.info(f"Loading {data_type} data from {file_path}")
-    df = pd.read_csv(file_path)
-    
-    # 1. Melt years into long format
-    # Identify year columns (e.g., "1960/1961")
-    year_cols = [c for c in df.columns if '/' in c and len(c) == 9]
-    
-    df_long = df.melt(
-        id_vars=['Commodity', 'Attribute', 'Country', 'Unit Description'],
-        value_vars=year_cols,
-        var_name='Year_Range',
-        value_name='Value'
-    )
-    
-    # 2. Clean Year (take start year as in user's old code)
-    df_long['Year'] = df_long['Year_Range'].str[:4].astype(int)
-    
-    # 3. Clean Value (remove commas, handle quotes)
-    if df_long['Value'].dtype == object:
-        df_long['Value'] = df_long['Value'].str.replace(',', '').str.replace('"', '').astype(float)
-    
-    return df_long
 
 def durbin_watson(residuals):
     """Calculate Durbin-Watson statistic to check for autocorrelation."""
@@ -231,8 +194,9 @@ def generate_all_figures():
     logger.info(f"Performing {n_boot} bootstrap iterations...")
     shocks = stats['shocks']
     
+    rng = np.random.default_rng(42)  # fixed seed for reproducible CIs
     for i in range(n_boot):
-        sample = np.random.choice(shocks, size=len(shocks), replace=True)
+        sample = rng.choice(shocks, size=len(shocks), replace=True)
         sigma_boot = np.std(sample)
         scale_boot = (sigma_boot * current_prod_kcal) / (-np.log(0.32))
         boot_probs[i, :] = np.exp(-losses_at_mags / scale_boot)

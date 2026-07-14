@@ -47,28 +47,7 @@ mpl.rcParams.update({
     'svg.fonttype': 'path'
 })
 
-def load_usda_wide(data_type="production"):
-    file_map = {
-        "production": "grains_world_usdapsd_production_jan212026.csv",
-        "consumption": "grains_world_usdapsd_consumption_jan212026.csv",
-        "endingstocks": "grains_world_usdapsd_endingstocks_jan212026.csv"
-    }
-    file_path = Path("USDAdata") / file_map[data_type]
-    if not file_path.exists():
-        raise FileNotFoundError(f"Missing required USDA file: {file_path}")
-    logger.info(f"Loading {data_type} data from {file_path}")
-    df = pd.read_csv(file_path)
-    year_cols = [c for c in df.columns if '/' in c and len(c) == 9]
-    df_long = df.melt(
-        id_vars=['Commodity', 'Attribute', 'Country', 'Unit Description'],
-        value_vars=year_cols,
-        var_name='Year_Range',
-        value_name='Value'
-    )
-    df_long['Year'] = df_long['Year_Range'].str[:4].astype(int)
-    if df_long['Value'].dtype == object:
-        df_long['Value'] = df_long['Value'].str.replace(',', '').str.replace('"', '').astype(float)
-    return df_long
+from agrichter.data.usda_wide import load_usda_wide
 
 def calculate_shocks():
     prod_df = load_usda_wide("production")
@@ -116,8 +95,9 @@ def generate_figure_4():
     n_boot = 1000
     boot_probs = np.zeros((n_boot, len(mags_plot)))
     shocks = stats['shocks']
+    rng = np.random.default_rng(42)  # fixed seed for reproducible CIs
     for i in range(n_boot):
-        sample = np.random.choice(shocks, size=len(shocks), replace=True)
+        sample = rng.choice(shocks, size=len(shocks), replace=True)
         sigma_boot = np.std(sample)
         scale_boot = (sigma_boot * current_prod_kcal) / (-np.log(0.32))
         boot_probs[i, :] = np.exp(-losses_at_mags / scale_boot)

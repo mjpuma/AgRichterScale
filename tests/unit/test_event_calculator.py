@@ -131,8 +131,8 @@ class TestCountryLevelLoss:
     
     def test_country_level_loss_china(self, event_calculator):
         """Test country-level loss calculation for China."""
-        # China GDAM code is typically 45
-        harvest_loss, production_loss, grid_cells = event_calculator.calculate_country_level_loss(45)
+        # China GDAM code is 48 (see ancillary/CountryCode_Convert.xls)
+        harvest_loss, production_loss, grid_cells = event_calculator.calculate_country_level_loss(48)
         
         # China should have significant wheat production
         assert harvest_loss > 0, "China should have harvest area data"
@@ -196,7 +196,7 @@ class TestSingleEventCalculation:
     def test_single_event_multiple_countries(self, event_calculator):
         """Test single event with multiple countries."""
         event_data = {
-            'country_codes': [231, 45],  # USA and China
+            'country_codes': [231, 48],  # USA and China
             'state_flags': [0, 0],  # Both country-level
             'state_codes': []
         }

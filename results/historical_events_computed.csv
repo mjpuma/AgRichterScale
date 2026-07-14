@@ -1,27 +1,27 @@
 event_name,display_name,crop_type,magnitude_MD,harvest_area_km2,production_loss_kcal,event_type,year_start,year_end,region
-GreatFamine,Great Famine 1315,allgrain,5.498626230605617,315229.04814453126,669452210657812.5,Climate-induced famine,1315,1317,Europe
-Laki1783,Laki 1783,allgrain,6.357790064713064,2279240.0350195314,4039957134923437.5,Volcanic famine,1783,1784,Iceland/Europe
-NoSummer,No Summer 1816,allgrain,5.703903153778516,505711.87736572267,1040034287071948.2,Volcanic famine,1816,1816,Global
-PotatoFamine,Irish Famine 1845,allgrain,5.399537388587339,250921.21892578126,587630955173437.5,Disease-induced famine,1845,1852,Ireland
-Drought18761878,Great Drought 1876,allgrain,6.494838112730542,3124914.3093945314,4903682510764050.0,Climate-induced famine,1876,1878,Asia/Africa
-SovietFamine1921,Soviet 1921,allgrain,5.642341515375758,438875.68,420447498000000.0,Compound crisis,1921,1922,Soviet Union
-ChineseFamine1960,China 1959,allgrain,5.993573348905854,985311.04,2141316633600000.0,Policy-induced famine,1959,1961,China
-DustBowl,Dust Bowl 1930,allgrain,5.342334470603413,219955.32,463406649600000.0,Climate-induced crisis,1930,1936,USA Great Plains
-SahelDrought2010,Sahel 2010,allgrain,5.5679255834636665,369764.815,176692094029687.5,Climate-induced crisis,2010,2011,Sahel region
-MillenniumDrought,Australia 2000,allgrain,5.244621054691505,175639.04,122888020200000.0,Climate-induced crisis,2000,2009,Australia
-NorthKorea1990s,N. Korea 1990,allgrain,4.120232942009812,13189.64,17073882675000.0,Compound crisis,1994,1998,North Korea
-ENSO2015_2016,El Niño 2015,allgrain,5.843872471651747,698027.4018115235,1299472190544177.5,Climate-induced crisis,2015,2016,Global tropics
-Solomon,Solomon 2015,allgrain,1.1603184746341648,14.465001220703126,9459554663.085938,Climate-induced crisis,2015,2016,Solomon Islands
-Vanuatu,Vanuatu 2015,allgrain,1.1718433910272885,14.8539990234375,3162615042.114258,Natural disaster,2015,2015,Vanuatu
-EastTimor,E. Timor 2015,allgrain,2.7898520614278004,616.385,405505399218.75,Climate-induced crisis,2015,2016,East Timor
-Haiti,Haiti 2010,allgrain,3.4530265938337563,2838.0928125,1302796546875.0,Natural disaster,2010,2016,Haiti
-SierraLeone,Sierra Leone 1991,allgrain,3.9003213409519555,7949.161875,4886475637500.0,Conflict-induced crisis,1991,2002,Sierra Leone
-Liberia,Liberia 1989,allgrain,3.383217154322324,2416.66890625,932651653125.0,Conflict-induced crisis,1989,2003,Liberia
-Yemen,Yemen 2015,allgrain,3.691568307857948,4915.506875,1423195725000.0,Conflict-induced crisis,2015,ongoing,Yemen
-Ethiopia,Ethiopia 1983,allgrain,5.025982836755959,106165.36,103555289700000.0,Climate-induced famine,1983,1985,Ethiopia
-Laos,Laos 2015,allgrain,4.023889129493295,10565.4775,15468897825000.0,Climate-induced crisis,2015,2016,Laos
-Bangladesh,Bangladesh 1974,allgrain,5.091679757665466,123503.64,208492677000000.0,Natural disaster,1974,1974,Bangladesh
-Syria,Syria 2011,allgrain,4.470021671930173,29513.565000000002,16322307075000.0,Compound crisis,2011,ongoing,Syria
+GreatFamine,Great Famine 1315,allgrain,5.498626230605617,315229.04814453126,654346042498818.4,Climate-induced famine,1315,1317,Europe
+Laki1783,Laki 1783,allgrain,6.357790064713064,2279240.0350195314,4062862114637965.0,Volcanic famine,1783,1784,Iceland/Europe
+NoSummer,No Summer 1816,allgrain,5.703903153778516,505711.87736572267,1025882478296426.5,Volcanic famine,1816,1816,Global
+PotatoFamine,Irish Famine 1845,allgrain,5.399537388587339,250921.21892578126,574921777172724.6,Disease-induced famine,1845,1852,Ireland
+Drought18761878,Great Drought 1876,allgrain,6.494838112730542,3124914.3093945314,5013868350512450.0,Climate-induced famine,1876,1878,Asia/Africa
+SovietFamine1921,Soviet 1921,allgrain,5.642341515375758,438875.68,410579328168750.0,Compound crisis,1921,1922,Soviet Union
+ChineseFamine1960,China 1959,allgrain,5.993573348905854,985311.04,2186745597937500.0,Policy-induced famine,1959,1961,China
+DustBowl,Dust Bowl 1930,allgrain,5.342334470603413,219955.32,470915475727500.0,Climate-induced crisis,1930,1936,USA Great Plains
+SahelDrought2010,Sahel 2010,allgrain,5.5679255834636665,369764.815,180440829228099.97,Climate-induced crisis,2010,2011,Sahel region
+MillenniumDrought,Australia 2000,allgrain,5.244621054691505,175639.04,119047503665390.62,Climate-induced crisis,2000,2009,Australia
+NorthKorea1990s,N. Korea 1990,allgrain,4.120232942009812,13189.64,17646939662734.375,Compound crisis,1994,1998,North Korea
+ENSO2015_2016,El Niño 2015,allgrain,5.843872471651747,698027.4018115235,1343947368922361.8,Climate-induced crisis,2015,2016,Global tropics
+Solomon,Solomon 2015,allgrain,1.1603184746341648,14.465001220703126,9870839648.4375,Climate-induced crisis,2015,2016,Solomon Islands
+Vanuatu,Vanuatu 2015,allgrain,1.1718433910272885,14.8539990234375,3263452043.4570312,Natural disaster,2015,2015,Vanuatu
+EastTimor,E. Timor 2015,allgrain,2.7898520614278004,616.385,420344665000.0,Climate-induced crisis,2015,2016,East Timor
+Haiti,Haiti 2010,allgrain,3.4530265938337563,2838.0928125,1349218233320.3125,Natural disaster,2010,2016,Haiti
+SierraLeone,Sierra Leone 1991,allgrain,3.9003213409519555,7949.161875,5086968708593.75,Conflict-induced crisis,1991,2002,Sierra Leone
+Liberia,Liberia 1989,allgrain,3.383217154322324,2416.66890625,973201725000.0,Conflict-induced crisis,1989,2003,Liberia
+Yemen,Yemen 2015,allgrain,3.691568307857948,4915.506875,1405933887734.375,Conflict-induced crisis,2015,ongoing,Yemen
+Ethiopia,Ethiopia 1983,allgrain,5.025982836755959,106165.36,103353397112500.0,Climate-induced famine,1983,1985,Ethiopia
+Laos,Laos 2015,allgrain,4.023889129493295,10565.4775,16107757515000.0,Climate-induced crisis,2015,2016,Laos
+Bangladesh,Bangladesh 1974,allgrain,5.091679757665466,123503.64,217128233962490.44,Natural disaster,1974,1974,Bangladesh
+Syria,Syria 2011,allgrain,4.470021671930173,29513.565000000002,15820165605021.4,Compound crisis,2011,ongoing,Syria
 GreatFamine,Great Famine 1315,wheat,5.1565338169122725,143394.93680664062,327727180182812.5,Climate-induced famine,1315,1317,Europe
 Laki1783,Laki 1783,wheat,5.959376249096591,910701.9135253907,1385209359148750.0,Volcanic famine,1783,1784,Iceland/Europe
 NoSummer,No Summer 1816,wheat,5.334631255387326,216088.30126342774,435538588990888.7,Volcanic famine,1816,1816,Global

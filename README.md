@@ -16,7 +16,7 @@ The repository is structured into two main components:
 1.  **`agrichter/` (Core Library)**: This is the engine room of the project. It is structured as a modular Python package containing the reusable scientific logic, data loaders, and mathematical algorithms (e.g., H-P envelope calculation, magnitude mapping). Core scripts should **not** be modified for one-off figure adjustments; they provide the "source of truth" for the analysis.
     -   `core/`: Unified configuration, caloric constants, and unit conversions.
     -   `data/`: Robust loaders for SPAM 2020 gridded data and USDA FAS PSD time-series.
-    -   `analysis/`: The mathematical core, including the `HPEnvelopeCalculator` and `EventCalculator`.
+    -   `analysis/`: The mathematical core, including `HPEnvelopeCalculatorV2` (backed by `envelope_builder` and the runtime `ConvergenceValidator`) and `EventCalculator`.
     -   `visualization/`: Base plotting modules that ensure consistent styling and dimensional analysis across all outputs.
 
 2.  **`scripts/` (Output Generation)**: These are standalone execution scripts that "call" the `agrichter` library to generate specific publication assets. They handle the "layout" logic (e.g., multi-panel subplots, specific country selections) for the journal.
@@ -83,11 +83,31 @@ Generates comparative plots of normalized envelopes for multiple countries.
 python3 scripts/figS2_comparative.py
 ```
 
-**Figure S3: Resilience Typologies**
-Compares "stiff" vs "wide" envelopes to highlight national agricultural resilience.
+**Figure S3: Resilience Typologies & Risk-Model Validation**
+Compares "stiff" vs "wide" envelopes, and validates the Figure 4 detrending/tail assumptions.
 ```bash
 python3 scripts/figS3_envelope_bounds.py
+python3 scripts/figS3_methodology_validation.py
 ```
+
+**Figure S4: Tail-Model Sensitivity**
+Compares the conservative exponential tail against MLE-exponential, GPD (peaks-over-threshold), and Gaussian tails, with bootstrap CIs on the implied return periods.
+```bash
+python3 scripts/figS4_tail_sensitivity.py
+```
+
+**Figure S5: Fractional-Loss Sensitivity**
+Shows how historical event positions shift under 100%/50%/25% loss-intensity assumptions (run `fig1_agrichter_scale.py` first to produce the events CSV).
+```bash
+python3 scripts/figS5_fractional_loss.py
+```
+
+**Table S1: National Thresholds**
+```bash
+python3 scripts/tableS1_thresholds.py
+```
+
+See `scripts/README.md` for the complete script-to-output mapping.
 
 ## Documentation
 

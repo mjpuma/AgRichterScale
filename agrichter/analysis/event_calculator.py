@@ -208,23 +208,17 @@ class EventCalculator:
             harvest_area_cells, crop_indices
         )
         
-        # Get production in metric tons, then convert to kcal
-        production_mt = self.grid_manager.get_crop_production(
-            production_cells, crop_indices, convert_to_kcal=False
+        # Convert to kcal using per-crop caloric factors (same basis as the
+        # H-P envelopes, which also convert each crop separately before summing)
+        production_kcal = self.grid_manager.get_crop_production(
+            production_cells, crop_indices, convert_to_kcal=True
         )
-        
-        # Convert units: metric tons → grams → kcal
-        unit_conversions = self.config.get_unit_conversions()
-        caloric_content = self.config.get_caloric_content()
-        
-        grams = production_mt * unit_conversions['grams_per_metric_ton']
-        production_kcal = grams * caloric_content
         
         grid_cells_count = len(production_cells)
         
         logger.debug(
             f"Country {fips_code}: {harvest_area_ha:.2f} ha, "
-            f"{production_mt:.2f} MT = {production_kcal:.2e} kcal, "
+            f"{production_kcal:.2e} kcal, "
             f"{grid_cells_count} cells"
         )
         
@@ -298,23 +292,17 @@ class EventCalculator:
             harvest_area_cells, crop_indices
         )
         
-        # Get production in metric tons, then convert to kcal
-        production_mt = self.grid_manager.get_crop_production(
-            production_cells, crop_indices, convert_to_kcal=False
+        # Convert to kcal using per-crop caloric factors (same basis as the
+        # H-P envelopes, which also convert each crop separately before summing)
+        production_kcal = self.grid_manager.get_crop_production(
+            production_cells, crop_indices, convert_to_kcal=True
         )
-        
-        # Convert units: metric tons → grams → kcal
-        unit_conversions = self.config.get_unit_conversions()
-        caloric_content = self.config.get_caloric_content()
-        
-        grams = production_mt * unit_conversions['grams_per_metric_ton']
-        production_kcal = grams * caloric_content
         
         grid_cells_count = len(production_cells)
         
         logger.debug(
             f"States in country {country_code}: {harvest_area_ha:.2f} ha, "
-            f"{production_mt:.2f} MT = {production_kcal:.2e} kcal, "
+            f"{production_kcal:.2e} kcal, "
             f"{grid_cells_count} cells across {len(state_codes)} states"
         )
         

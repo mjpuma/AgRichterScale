@@ -93,7 +93,9 @@ We introduce a logarithmic magnitude scale for agricultural disruptions, bound t
 - **Fig. S1** Global SPAM 2020 production/harvest maps (`figureS1_global_maps.png`).
 - **Fig. S2** National fingerprint gallery + comparative normalized envelopes (log-log & semi-log from M 3).
 - **Fig. S3** Risk-model validation: trend break, shock distribution, normal vs exponential tail, safety-margin justification.
-- **Table S1** National thresholds (regenerate after threshold-methodology decision).
+- **Fig. S4** Tail-model sensitivity (`figureS4_tail_sensitivity.png`): conservative exp vs MLE exp vs GPD (POT) vs Gaussian; bootstrap CIs on return periods at both policy thresholds. GPD shape ξ = −0.38 (bounded tail); KS p-values 0.75/0.79 — all models fit the observed record, they diverge only in extrapolation, which is the argument for the conservative bound.
+- **Fig. S5** Fractional-loss sensitivity (`figureS5_fractional_loss_sensitivity.png`): events re-plotted at 100/50/25% loss intensity; scaled points provably stay inside the envelope (concave upper / convex lower bounds through origin); Great Drought and China 1959 stay ≥ 3-month buffer even at 50%.
+- **Table S1** National thresholds (`tableS1_supplementary.tex`, corrected 1000-MT conversion, 2019–2021 window).
 - **SI text:** envelope algorithm + mathematical properties + convergence validator; event catalog with sources (`ancillary/food_disruptions.csv` has full citations); threshold derivation; unit conventions (SPAM MT → kcal via per-crop caloric content; USDA PSD in 1000 MT).
 - **Data/code availability:** GitHub repo; SPAM 2020 V2r0; USDA PSD (Jan 2026 pull).
 
@@ -108,22 +110,22 @@ We introduce a logarithmic magnitude scale for agricultural disruptions, bound t
 3. ~~`Config` default USDA averaging window was 1990–2020 while docs/fig4/tableS1 use 2019–2021.~~ Default changed to (2019, 2021); Figs 2–3 regenerated.
 4. ~~Hardcoded `/Users/mjp38/...` root_dir in fig1/fig2 scripts; duplicate `test_events_pipeline` module blocked pytest collection.~~ Fixed (portability + 634 tests now collect).
 
-### High value (referee-proofing)
+### High value (referee-proofing) — 4 problems resolved 2026-07-14
 
-3. **Fig. 1 redesign.** Plotting area vs log(area) is a tautology — every point sits on the y=10^x line by construction, so the figure carries only a 1-D ranking. Replace with a timeline (year vs magnitude, marker = driver class, size = duration) or a magnitude "ladder" graphic. This is the most likely figure a referee will call contentless.
-4. **National thresholds from country-level PSD data.** Current scaling (global thresholds × production share) assumes every country holds the global stock-to-use ratio. USDA PSD has per-country consumption and stocks; using them directly is more defensible and creates an interesting result (China's actual stocks are ~half of global stocks; Egypt is import-dependent).
-5. **Tail model robustness.** Add a POT/GPD (extreme-value) fit alongside the exponential tail, or at minimum a sensitivity panel in SI; report both return-period estimates. 64 annual observations extrapolated to 500-yr return periods will draw statistical referees.
-6. **Event catalog transparency.** Publish `historical_events_computed.csv` as a supplementary dataset with per-event footprint definitions and source citations; state the "modern-equivalent footprint" assumption prominently in Methods.
-7. **Event loss basis consistency.** `EventCalculator` converts event losses with a single blended caloric factor (3.45 kcal/g) while the envelopes use per-crop factors — put both on the same per-crop basis so events are strictly comparable to the envelope axis.
-8. **100%-loss / footprint honesty.** Events assume complete loss over entire countries (Dust Bowl uses whole-USA states list; Syria/Yemen full national grids); add a fractional-loss sensitivity (25/50/100%) or clearly frame magnitudes as footprint sizes, not loss reconstructions. Also deduplicate the ENSO 2015–16 parent event vs its Solomon/Vanuatu/E. Timor/Laos children in any frequency analysis.
-9. **Envelope conservation warning.** `envelope_builder` logs a lower-envelope harvest conservation mismatch (~0.04%, 7,027,154 vs 7,029,936 km²); diagnose (grid alignment between production/harvest tables — row counts differ 981,508 vs 961,965) and document the tolerance.
+3. ~~**Tail model robustness.**~~ DONE: Fig. S4 adds MLE-exponential, GPD (POT), and Gaussian alongside the conservative exponential, with bootstrap CIs on return periods; bootstrap RNG now seeded (42) in fig4 scripts for reproducibility.
+4. ~~**Event loss basis consistency.**~~ DONE: `EventCalculator` now converts each crop with its own caloric factor (same basis as envelopes). Allgrain event losses shifted ≤ ±4%; magnitudes unchanged; single-crop values unchanged.
+5. ~~**100%-loss / footprint honesty.**~~ DONE (sensitivity): Fig. S5 shows 100/50/25% loss-intensity trajectories; SI caption states the modern-equivalent-footprint convention and proves bounds hold under scaling. Remaining sub-item: deduplicate ENSO 2015–16 parent vs child events if a frequency analysis is added.
+6. ~~**Envelope conservation warning.**~~ DONE: root cause was float32 SPAM columns — cumsum over ~1M cells at totals ~7×10⁶ km² rounds away increments < 0.5 km² (24-bit mantissa). `build_envelope` now promotes inputs to float64; all conservation checks pass at rtol 1e-10.
+7. **Fig. 1 redesign.** Plotting area vs log(area) is a tautology — every point sits on the y=10^x line by construction, so the figure carries only a 1-D ranking. Replace with a timeline (year vs magnitude, marker = driver class, size = duration) or a magnitude "ladder" graphic. This is the most likely figure a referee will call contentless.
+8. **National thresholds from country-level PSD data.** Current scaling (global thresholds × production share) assumes every country holds the global stock-to-use ratio. USDA PSD has per-country consumption and stocks; using them directly is more defensible and creates an interesting result (China's actual stocks are ~half of global stocks; Egypt is import-dependent).
+9. **Event catalog transparency.** Publish `historical_events_computed.csv` as a supplementary dataset with per-event footprint definitions and source citations; state the "modern-equivalent footprint" assumption prominently in Methods.
 
 ### Nice to have
 
 10. Partial-intensity disruptions (fractional loss rasters) to move from bounds toward estimates.
 11. Multicropping/SPAM technology-share sensitivity (`_TA` vs `_TI/_TR` layers); summing `*_A` columns can double-count physical area in multi-crop cells.
 12. Country typology quantified: envelope width index (e.g., upper/lower ratio at M 4) tabulated for all producer countries.
-13. Repo hygiene for the code-availability statement (full audit available): ~41 of 58 package modules are orphaned from the figure pipeline (envelope.py v1, multi_tier_*, national_*_analyzer, pipeline/, output/, processing/); `agrichter/cli/main.py` is missing but declared in `pyproject.toml`; `fig4_overhaul.py`/`figS2_overhaul.py` duplicate documented scripts; READMEs reference nonexistent script names; `load_usda_wide()` is copy-pasted across three scripts; test images sit inside `agrichter/output/`. Fix bootstrap RNG seed in fig4 for reproducibility.
+13. Repo hygiene (partially done 2026-07-14): removed broken `agrichter/cli` package + `pyproject.toml` entry point; `load_usda_wide()` deduplicated into `agrichter/data/usda_wide.py`; READMEs rewritten to match the real script inventory; test images removed from `agrichter/output/`; fixed China GDAM code (45→48; 45 is Central African Republic) in unit tests. Remaining: ~40 orphaned package modules (envelope.py v1, multi_tier_*, national_*_analyzer, pipeline/, output/, processing/) could be archived in a dedicated commit before the code-availability release.
 
 ---
 
