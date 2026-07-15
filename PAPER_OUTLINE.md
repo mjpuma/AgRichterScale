@@ -110,6 +110,17 @@ We introduce a logarithmic magnitude scale for agricultural disruptions, bound t
 3. ~~`Config` default USDA averaging window was 1990–2020 while docs/fig4/tableS1 use 2019–2021.~~ Default changed to (2019, 2021); Figs 2–3 regenerated.
 4. ~~Hardcoded `/Users/mjp38/...` root_dir in fig1/fig2 scripts; duplicate `test_events_pipeline` module blocked pytest collection.~~ Fixed (portability + 634 tests now collect).
 
+### Pre-submission audit fixes — DONE 2026-07-14 (second pass)
+
+Two systematic audits (unit conversions; country codes) found and we fixed:
+
+1. ~~**First country dropped from every multi-country event.**~~ The sheet parser skipped the first data row (a leftover "skip header" line), silently omitting Australia from ENSO 2015–16, Burkina Faso from Sahel 2010, Austria from Laki/Potato Famine, Belgium from the Great Famine, Algeria from the 1876–78 drought. Fixed in `events.py`; regression tests added; all figures regenerated (multi-country event magnitudes shift up slightly).
+2. ~~**Allgrain threshold basket inconsistency (~10%).**~~ Config/fig1–2/figS5/tableS1 summed wheat+rice+maize PSD only, while fig4/figS2/figS4 used the full USDA `Allgrain` aggregate. Unified: `calculate_consumption_thresholds('allgrain')` now uses the full Allgrain row (wheat, corn, rice, barley, oats, rye, millet, sorghum, mixed grain), matching the SPAM grain envelope basket. 1-month/3-month lines move up ~10%, Total Stocks ~3%.
+3. ~~**Table S1 mixed scaling bases.**~~ Country production share now uses SPAM for both numerator and denominator (single consistent basket); caption rewritten to state the actual formula.
+4. ~~**Static ISO3→FIPS swaps.**~~ Dominica↔Dominican Republic, DR Congo↔Congo, and the Guinea family (GIN→GV, GNQ→EK, GNB→PU added) were wrong in the static map; Timor-Leste failed because the convert table uses the old `TMP` code. All fixed and verified against SPAM `FIPS0`; regression tests added.
+5. ~~**State-name matching.**~~ Per-state exact-then-partial matching with an alias table (`Jammu and Kashmir` → `Jammu & Kashmir`); unmatched states are now logged loudly instead of silently returning 0 cells.
+6. ~~**Dead/legacy code removed.**~~ Legacy blended-kcal loss path in `events.py`, stale T1–T4 severity classifier and diagnostic overlays in `hp_envelope.py`, stale tests (wheat index 57→56, renamed plot methods) fixed or archived.
+
 ### High value (referee-proofing) — 4 problems resolved 2026-07-14
 
 3. ~~**Tail model robustness.**~~ DONE: Fig. S4 adds MLE-exponential, GPD (POT), and Gaussian alongside the conservative exponential, with bootstrap CIs on return periods; bootstrap RNG now seeded (42) in fig4 scripts for reproducibility.

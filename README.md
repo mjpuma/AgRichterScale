@@ -30,7 +30,12 @@ The repository is structured into two main components:
     -   Individual component plots (e.g., single-crop or single-country versions) are saved in the `results/individual_plots/` subfolder.
 -   **`USDAdata/`**: Refreshed USDA PSD data (Jan 2026 update).
 -   **`ancillary/`**: Helper data files (country codes, event definitions, etc.).
+-   **`tests/`**: Unit, integration, and validation tests (includes regression tests for unit conversions, ISO3→FIPS country mappings, event-sheet parsing, and envelope mathematical invariants).
 -   **`archive/`**: Obsolete data, legacy scripts, and old outputs (ignored by Git to keep the repo clean).
+
+### Threshold conventions
+
+All consumption-based thresholds (1-month supply, 3-month supply, total stocks) are derived from the USDA PSD **Allgrain** aggregate (wheat, corn, rice, barley, oats, rye, millet, sorghum, mixed grain), averaged over 2019–2021 to align with SPAM 2020, and converted from 1000 MT to kcal via crop caloric content. The same basket is used consistently in Figures 2–4, S2, S4–S5, and Table S1. National thresholds scale the global values by each country's share of global SPAM 2020 grain production.
 
 ## Figure Generation
 

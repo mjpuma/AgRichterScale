@@ -257,7 +257,7 @@ For country-specific analysis, grid cells are filtered by administrative identif
 
 This enables assessment of country-level vulnerability profiles.
 
-Global food security thresholds are scaled to the national level based on each country's share of global production:
+Global food security thresholds are derived from the USDA Production, Supply and Distribution (PSD) \emph{Allgrain} aggregate (wheat, corn, rice, barley, oats, rye, millet, sorghum, and mixed grain), averaged over the 2019--2021 marketing years to align with the SPAM 2020 reference period: the 1-month supply buffer is mean annual world consumption divided by 12, the 3-month buffer is consumption divided by 4, and the total-stocks limit is mean world ending stocks. The same commodity basket is used consistently across all figures. Thresholds are scaled to the national level based on each country's share of global production (both computed from SPAM 2020):
 
 \begin{equation}
 T_c = T_{\text{global}} \times \frac{P_c^{\text{total}}}{P_{\text{global}}^{\text{total}}}
@@ -405,7 +405,7 @@ Such extensions would utilize the general form (Equation~\ref{eq:loss_discrete})
 \begin{table}[H]
     \centering
     \caption{\textbf{National Food Security Thresholds.} 
-    Verification values for the consumption-based thresholds used in Figure 2. Thresholds are calculated by scaling global USDA (2019--2021 mean) consumption and ending stocks by each country's share of global caloric production (derived from SPAM 2020). "Total Stocks" represents the theoretical systemic failure point if reserves were fully depleted. Values assume proportional consumption relative to production; actual vulnerability depends on trade balances, storage infrastructure, and emergency reserves.}
+    Verification values for the consumption-based thresholds used in Figure 2. Global thresholds are computed from the USDA PSD Allgrain aggregate (2019--2021 mean consumption and ending stocks) and scaled by each country's share of global grain production (both country and global totals from SPAM 2020). "Total Stocks" represents the theoretical systemic failure point if reserves were fully depleted. Values assume proportional consumption relative to production; actual vulnerability depends on trade balances, storage infrastructure, and emergency reserves.}
     \label{tab:S1_country_stocks}
     \vspace{0.2cm}
     \resizebox{\textwidth}{!}{%

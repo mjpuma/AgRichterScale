@@ -826,13 +826,14 @@ class EventCalculator:
                     country_code, state_codes, code_system='GDAM '
                 )
             else:
-                # Country-level
-                iso3_code = self.spatial_mapper.get_iso3_from_country_code(
+                # Country-level: SPAM's FIPS0 column stores FIPS codes
+                # (e.g. 'US'), not ISO3 ('USA'), so convert via FIPS
+                fips_code = self.spatial_mapper.get_fips_from_country_code(
                     country_code, code_system='GDAM '
                 )
-                if iso3_code:
+                if fips_code:
                     production_cells, harvest_cells = self.grid_manager.get_grid_cells_by_iso3(
-                        iso3_code
+                        fips_code
                     )
                 else:
                     production_cells = pd.DataFrame()

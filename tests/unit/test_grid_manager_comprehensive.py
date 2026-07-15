@@ -26,7 +26,7 @@ def mock_config():
     }
     
     # Mock crop indices
-    config.get_crop_indices.return_value = [57]  # Wheat
+    config.get_crop_indices.return_value = [56]  # Wheat
     
     # Mock caloric content
     config.get_caloric_content.return_value = 3.4  # kcal/g for wheat
@@ -303,9 +303,9 @@ class TestCropAggregation:
         manager = GridDataManager(mock_config)
         manager.load_spam_data()
         
-        # Get production for wheat (index 57)
+        # Get production for wheat (index 56)
         prod_cells, _ = manager.get_grid_cells_by_iso3('US')
-        total_production = manager.get_crop_production(prod_cells, [57], convert_to_kcal=False)
+        total_production = manager.get_crop_production(prod_cells, [56], convert_to_kcal=False)
         
         # Verify production sum (100 + 200 = 300 MT for US wheat)
         assert total_production == 300.0
@@ -325,10 +325,11 @@ class TestCropAggregation:
         
         # Get production for wheat with kcal conversion
         prod_cells, _ = manager.get_grid_cells_by_iso3('US')
-        total_production_kcal = manager.get_crop_production(prod_cells, [57], convert_to_kcal=True)
+        total_production_kcal = manager.get_crop_production(prod_cells, [56], convert_to_kcal=True)
         
-        # Verify conversion: 300 MT * 1,000,000 g/MT * 3.4 kcal/g = 1.02e9 kcal
-        expected_kcal = 300.0 * 1_000_000.0 * 3.4
+        # Per-crop conversion: 300 MT * 1,000,000 g/MT * CALORIC_CONTENT['Wheat'] kcal/g
+        from agrichter.core.constants import CALORIC_CONTENT
+        expected_kcal = 300.0 * 1_000_000.0 * CALORIC_CONTENT['Wheat']
         assert abs(total_production_kcal - expected_kcal) < 1e6  # Allow small floating point error
     
     @patch('pandas.read_csv')
@@ -346,7 +347,7 @@ class TestCropAggregation:
         
         # Get harvest area for wheat
         _, harv_cells = manager.get_grid_cells_by_iso3('US')
-        total_harvest = manager.get_crop_harvest_area(harv_cells, [57])
+        total_harvest = manager.get_crop_harvest_area(harv_cells, [56])
         
         # Verify harvest area sum (10 + 20 = 30 ha for US wheat)
         assert total_harvest == 30.0
@@ -366,7 +367,7 @@ class TestCropAggregation:
         
         # Get production for empty DataFrame
         empty_df = pd.DataFrame()
-        total_production = manager.get_crop_production(empty_df, [57])
+        total_production = manager.get_crop_production(empty_df, [56])
         
         # Verify zero production
         assert total_production == 0.0
@@ -390,7 +391,7 @@ class TestHarvestAreaConversions:
         
         # Get harvest area for US wheat
         _, harv_cells = manager.get_grid_cells_by_iso3('US')
-        total_harvest_ha = manager.get_crop_harvest_area(harv_cells, [57])
+        total_harvest_ha = manager.get_crop_harvest_area(harv_cells, [56])
         
         # Verify harvest area is in hectares (10 + 20 = 30 ha)
         assert total_harvest_ha == 30.0
@@ -414,7 +415,7 @@ class TestHarvestAreaConversions:
         
         # Get harvest area for all cells
         _, harv_cells = manager.get_grid_cells_by_iso3('US')
-        total_harvest_ha = manager.get_crop_harvest_area(harv_cells, [57])
+        total_harvest_ha = manager.get_crop_harvest_area(harv_cells, [56])
         
         # Convert to km² using correct conversion
         hectares_to_km2 = mock_config.get_unit_conversions()['hectares_to_km2']

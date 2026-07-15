@@ -175,7 +175,7 @@ class Config:
         if self.use_dynamic_thresholds and self.threshold_calculator:
             try:
                 # Calculate consumption-based thresholds (Months of Supply)
-                # These are returned in Metric Tons
+                # These are returned in the native USDA PSD unit: 1000 MT (TMT)
                 # NOTE: This replaces the old T1-T4 thresholds with physically meaningful values:
                 # 1 Month Supply, 3 Months Supply, and Total Ending Stocks
                 raw_thresholds = self.threshold_calculator.calculate_consumption_thresholds(

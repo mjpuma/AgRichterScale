@@ -16,6 +16,52 @@ from .grid_manager import GridDataManager
 logger = logging.getLogger(__name__)
 
 
+# Authoritative ISO3 → FIPS 10-4 mapping, verified against the FIPS0 column of
+# the SPAM 2020 CSVs. FIPS codes differ from ISO2 in surprising ways (e.g.
+# Nigeria=NI vs Niger=NG, Germany=GM, Australia=AS, Sweden=SW, Ireland=EI),
+# which is why heuristics are forbidden here.
+ISO3_TO_FIPS_STATIC: Dict[str, str] = {
+    'AFG': 'AF', 'AGO': 'AO', 'ALB': 'AL', 'ARE': 'TC', 'ARG': 'AR',
+    'ARM': 'AM', 'ATG': 'AC', 'AUS': 'AS', 'AUT': 'AU', 'AZE': 'AJ',
+    'BDI': 'BY', 'BEL': 'BE', 'BEN': 'BN', 'BFA': 'UV', 'BGD': 'BG',
+    'BGR': 'BU', 'BHR': 'BA', 'BHS': 'BF', 'BIH': 'BK', 'BLR': 'BO',
+    'BLZ': 'BH', 'BOL': 'BL', 'BRA': 'BR', 'BRB': 'BB', 'BRN': 'BX',
+    'BTN': 'BT', 'BWA': 'BC', 'CAF': 'CT', 'CAN': 'CA', 'CHE': 'SZ',
+    'CHL': 'CI', 'CHN': 'CH', 'CMR': 'CM', 'COD': 'CG', 'COG': 'CF',
+    'COL': 'CO', 'CRI': 'CS', 'CSK': 'LO', 'CUB': 'CU', 'CYP': 'CY',
+    'CZE': 'EZ', 'DEU': 'GM', 'DJI': 'DJ', 'DMA': 'DO', 'DNK': 'DA',
+    'DOM': 'DR', 'DZA': 'AG', 'ECU': 'EC', 'EGY': 'EG', 'ERI': 'ER',
+    'ESP': 'SP', 'EST': 'EN', 'ETH': 'ET', 'FIN': 'FI', 'FJI': 'FJ',
+    'FRA': 'FR', 'GAB': 'GB', 'GBR': 'UK', 'GEO': 'GG', 'GHA': 'GH',
+    'GIN': 'GV', 'GMB': 'GA', 'GNB': 'PU', 'GNQ': 'EK', 'GRC': 'GR',
+    'GRD': 'GJ',
+    'GTM': 'GT', 'GUY': 'GY', 'HND': 'HO', 'HRV': 'HR', 'HTI': 'HA',
+    'HUN': 'HU', 'IDN': 'ID', 'IND': 'IN', 'IRL': 'EI', 'IRN': 'IR',
+    'IRQ': 'IZ', 'ISL': 'IC', 'ISR': 'IS', 'ITA': 'IT', 'JAM': 'JM',
+    'JOR': 'JO', 'JPN': 'JA', 'KAZ': 'KZ', 'KEN': 'KE', 'KGZ': 'KG',
+    'KHM': 'CB', 'KNA': 'SC', 'KOR': 'KS', 'KWT': 'KU', 'LAO': 'LA',
+    'LBN': 'LE', 'LBR': 'LI', 'LBY': 'LY', 'LCA': 'ST', 'LKA': 'CE',
+    'LSO': 'LT', 'LTU': 'LH', 'LUX': 'LU', 'LVA': 'LG', 'MAR': 'MO',
+    'MDA': 'MD', 'MDG': 'MA', 'MEX': 'MX', 'MKD': 'MK', 'MLI': 'ML',
+    'MLT': 'MT', 'MMR': 'BM', 'MNE': 'MW', 'MNG': 'MG', 'MOZ': 'MZ',
+    'MRT': 'MR', 'MUS': 'MP', 'MWI': 'MI', 'MYS': 'MY', 'NAM': 'WA',
+    'NCL': 'NC', 'NER': 'NG', 'NGA': 'NI', 'NIC': 'NU', 'NLD': 'NL',
+    'NOR': 'NO', 'NPL': 'NP', 'NZL': 'NZ', 'OMN': 'MU', 'PAK': 'PK',
+    'PAN': 'PM', 'PER': 'PE', 'PHL': 'RP', 'PNG': 'PP', 'POL': 'PL',
+    'PRI': 'PQ', 'PRK': 'KN', 'PRT': 'PO', 'PRY': 'PA', 'PSE': 'WE',
+    'QAT': 'QA', 'ROU': 'RO', 'RUS': 'RS', 'RWA': 'RW', 'SAU': 'SA',
+    'SDN': 'SU', 'SEN': 'SG', 'SLB': 'BP', 'SLE': 'SL', 'SLV': 'ES',
+    'SOM': 'SO', 'SRB': 'RI', 'SSD': 'OD', 'STP': 'TP', 'SUR': 'NS',
+    'SVK': 'LO', 'SVN': 'SI', 'SWE': 'SW', 'SWZ': 'WZ', 'SYR': 'SY',
+    'TCD': 'CD', 'TGO': 'TG', 'THA': 'TH', 'TJK': 'TI', 'TKM': 'TX',
+    'TLS': 'TT', 'TMP': 'TT',  # Timor-Leste (convert table uses old code TMP)
+    'TTO': 'TD', 'TUN': 'TS', 'TUR': 'TU', 'TZA': 'TZ',
+    'UGA': 'UG', 'UKR': 'UP', 'URY': 'UY', 'USA': 'US', 'UZB': 'UZ',
+    'VCT': 'VC', 'VEN': 'VE', 'VNM': 'VM', 'VUT': 'NH', 'YEM': 'YM',
+    'ZAF': 'SF', 'ZMB': 'ZA', 'ZWE': 'ZI',
+}
+
+
 class SpatialMapper:
     """
     Maps geographic regions (countries, states) to SPAM grid cells.
@@ -285,50 +331,12 @@ class SpatialMapper:
         
         iso3_to_fips = self._cache[cache_key]
         
-        # PRIORITY 1: Authoritative static ISO3→FIPS mapping (verified against
-        # SPAM 2020). This must be consulted BEFORE any heuristic: guessing
-        # FIPS from the first two ISO3 letters silently maps e.g.
-        # Ireland (IRL) → Iran (IR) and Switzerland (CHE) → China (CH).
-        complete_mapping = {
-            'AFG': 'AF', 'AGO': 'AO', 'ALB': 'AL', 'ARE': 'TC', 'ARG': 'AR',
-            'ARM': 'AM', 'ATG': 'AC', 'AUS': 'AS', 'AUT': 'AU', 'AZE': 'AJ',
-            'BDI': 'BY', 'BEL': 'BE', 'BEN': 'BN', 'BFA': 'UV', 'BGD': 'BG',
-            'BGR': 'BU', 'BHR': 'BA', 'BHS': 'BF', 'BIH': 'BK', 'BLR': 'BO',
-            'BLZ': 'BH', 'BOL': 'BL', 'BRA': 'BR', 'BRB': 'BB', 'BRN': 'BX',
-            'BTN': 'BT', 'BWA': 'BC', 'CAF': 'CT', 'CAN': 'CA', 'CHE': 'SZ',
-            'CHL': 'CI', 'CHN': 'CH', 'CMR': 'CM', 'COD': 'CF', 'COG': 'CG',
-            'COL': 'CO', 'CRI': 'CS', 'CSK': 'LO', 'CUB': 'CU', 'CYP': 'CY',
-            'CZE': 'EZ', 'DEU': 'GM', 'DJI': 'DJ', 'DMA': 'DR', 'DNK': 'DA',
-            'DOM': 'DO', 'DZA': 'AG', 'ECU': 'EC', 'EGY': 'EG', 'ERI': 'ER',
-            'ESP': 'SP', 'EST': 'EN', 'ETH': 'ET', 'FIN': 'FI', 'FJI': 'FJ',
-            'FRA': 'FR', 'GAB': 'GB', 'GBR': 'UK', 'GEO': 'GG', 'GHA': 'GH',
-            'GIN': 'PU', 'GMB': 'GA', 'GNQ': 'GV', 'GRC': 'GR', 'GRD': 'GJ',
-            'GTM': 'GT', 'GUY': 'GY', 'HND': 'HO', 'HRV': 'HR', 'HTI': 'HA',
-            'HUN': 'HU', 'IDN': 'ID', 'IND': 'IN', 'IRL': 'EI', 'IRN': 'IR',
-            'IRQ': 'IZ', 'ISL': 'IC', 'ISR': 'IS', 'ITA': 'IT', 'JAM': 'JM',
-            'JOR': 'JO', 'JPN': 'JA', 'KAZ': 'KZ', 'KEN': 'KE', 'KGZ': 'KG',
-            'KHM': 'CB', 'KNA': 'SC', 'KOR': 'KS', 'KWT': 'KU', 'LAO': 'LA',
-            'LBN': 'LE', 'LBR': 'LI', 'LBY': 'LY', 'LCA': 'ST', 'LKA': 'CE',
-            'LSO': 'LT', 'LTU': 'LH', 'LUX': 'LU', 'LVA': 'LG', 'MAR': 'MO',
-            'MDA': 'MD', 'MDG': 'MA', 'MEX': 'MX', 'MKD': 'MK', 'MLI': 'ML',
-            'MLT': 'MT', 'MMR': 'BM', 'MNE': 'MW', 'MNG': 'MG', 'MOZ': 'MZ',
-            'MRT': 'MR', 'MUS': 'MP', 'MWI': 'MI', 'MYS': 'MY', 'NAM': 'WA',
-            'NCL': 'NC', 'NER': 'NG', 'NGA': 'NI', 'NIC': 'NU', 'NLD': 'NL',
-            'NOR': 'NO', 'NPL': 'NP', 'NZL': 'NZ', 'OMN': 'MU', 'PAK': 'PK',
-            'PAN': 'PM', 'PER': 'PE', 'PHL': 'RP', 'PNG': 'PP', 'POL': 'PL',
-            'PRI': 'PQ', 'PRK': 'KN', 'PRT': 'PO', 'PRY': 'PA', 'PSE': 'WE',
-            'QAT': 'QA', 'ROU': 'RO', 'RUS': 'RS', 'RWA': 'RW', 'SAU': 'SA',
-            'SDN': 'SU', 'SEN': 'SG', 'SLB': 'BP', 'SLE': 'SL', 'SLV': 'ES',
-            'SOM': 'SO', 'SRB': 'RI', 'SSD': 'OD', 'STP': 'TP', 'SUR': 'NS',
-            'SVK': 'LO', 'SVN': 'SI', 'SWE': 'SW', 'SWZ': 'WZ', 'SYR': 'SY',
-            'TCD': 'CD', 'TGO': 'TG', 'THA': 'TH', 'TJK': 'TI', 'TKM': 'TX',
-            'TLS': 'TT', 'TTO': 'TD', 'TUN': 'TS', 'TUR': 'TU', 'TZA': 'TZ',
-            'UGA': 'UG', 'UKR': 'UP', 'URY': 'UY', 'USA': 'US', 'UZB': 'UZ',
-            'VCT': 'VC', 'VEN': 'VE', 'VNM': 'VM', 'VUT': 'NH', 'YEM': 'YM',
-            'ZAF': 'SF', 'ZMB': 'ZA', 'ZWE': 'ZI',
-        }
-        
-        fips_from_complete = complete_mapping.get(iso3_code)
+        # PRIORITY 1: Authoritative static ISO3→FIPS mapping (module-level
+        # ISO3_TO_FIPS_STATIC, verified against SPAM 2020). This must be
+        # consulted BEFORE any heuristic: guessing FIPS from the first two
+        # ISO3 letters silently maps e.g. Ireland (IRL) → Iran (IR) and
+        # Switzerland (CHE) → China (CH).
+        fips_from_complete = ISO3_TO_FIPS_STATIC.get(iso3_code)
         if fips_from_complete:
             logger.debug(f"Mapped ISO3 {iso3_code} to FIPS {fips_from_complete} (static mapping)")
             iso3_to_fips[iso3_code] = fips_from_complete
@@ -879,30 +887,38 @@ class SpatialMapper:
                     logger.debug(f"Matched {len(fips1_matches)} cells by FIPS1 code")
                     return fips1_matches
         
-        # Try matching by ADM1_NAME (state name)
+        # Try matching by ADM1_NAME (state name). Match per-state so that an
+        # exact hit on some names does not suppress the partial-match fallback
+        # for the others (e.g. bilingual Canadian names like
+        # 'New Brunswick / Nouveau-Brunswick').
         if 'ADM1_NAME' in grid_cells.columns:
-            # Convert state_codes to strings for name matching
             state_names = [str(code) for code in state_codes]
-            
-            # Try exact match first
-            name_matches = grid_cells[grid_cells['ADM1_NAME'].isin(state_names)]
-            if len(name_matches) > 0:
-                logger.debug(f"Matched {len(name_matches)} cells by ADM1_NAME (exact)")
-                return name_matches
-            
-            # Try case-insensitive partial match
-            name_matches_list = []
+            # Known spelling differences between the event sheets and SPAM
+            aliases = {
+                'jammu and kashmir': 'jammu & kashmir',
+            }
+            adm1_lower = grid_cells['ADM1_NAME'].str.lower()
+            matches_list = []
+            unmatched = []
             for state_name in state_names:
-                state_name_lower = state_name.lower()
-                matches = grid_cells[
-                    grid_cells['ADM1_NAME'].str.lower().str.contains(state_name_lower, na=False)
-                ]
-                if len(matches) > 0:
-                    name_matches_list.append(matches)
+                name_l = state_name.strip().lower()
+                name_l = aliases.get(name_l, name_l)
+                exact = grid_cells[adm1_lower == name_l]
+                if len(exact) > 0:
+                    matches_list.append(exact)
+                    continue
+                partial = grid_cells[adm1_lower.str.contains(name_l, na=False, regex=False)]
+                if len(partial) > 0:
+                    matches_list.append(partial)
+                else:
+                    unmatched.append(state_name)
             
-            if name_matches_list:
-                name_matches = pd.concat(name_matches_list).drop_duplicates()
-                logger.debug(f"Matched {len(name_matches)} cells by ADM1_NAME (partial)")
+            if unmatched:
+                logger.warning(f"No ADM1_NAME match for states: {unmatched}")
+            
+            if matches_list:
+                name_matches = pd.concat(matches_list).drop_duplicates()
+                logger.debug(f"Matched {len(name_matches)} cells by ADM1_NAME")
                 return name_matches
         
         logger.warning(
