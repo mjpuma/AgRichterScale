@@ -1,3 +1,5 @@
-Refresh Date: 2026-01-21T21:46:46.021435
-Method: Summed individual countries (excluding regions ['EE', 'E2', 'E4', 'E5', 'EU-15', 'European Union', 'Former Soviet Union', 'Former Czechoslovakia', 'Former Yugoslavia', 'Former Serbia and Montenegro', 'Other Western Europe'])
-Latest Year: 2026
+Refresh Date: 2026-07-14T23:09:59.762589
+Method: Summed all USDA reporting entities per commodity/attribute/year
+        (entities are mutually exclusive in time; validated against
+        official WAP circular world totals to within 1%)
+Latest Year: 2025

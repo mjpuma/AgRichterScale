@@ -30,6 +30,7 @@ Outputs (PNG + SVG) are written to `results/`; single-crop/single-country varian
 | `figS4_tail_sensitivity.py` | `figureS4_tail_sensitivity.*` | Tail-model sensitivity (conservative exp. vs MLE exp. vs GPD vs Gaussian) with bootstrap CIs on return periods |
 | `figS5_fractional_loss.py` | `figureS5_fractional_loss_sensitivity.*` | Event positions under 100% / 50% / 25% loss-intensity assumptions |
 | `tableS1_thresholds.py` | `tableS1_supplementary.tex` | National food-security thresholds table |
+| `tableS2_verification.py` | `tableS2_verification.tex` / `.csv` | Verification & validation summary (envelope invariants, SPAM vs USDA cross-check, event containment); exits non-zero on failure |
 
 ## Utilities
 

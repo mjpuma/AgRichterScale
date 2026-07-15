@@ -45,19 +45,7 @@ mpl.rcParams.update({
     'svg.fonttype': 'path'
 })
 
-def load_usda_wide(data_type="production"):
-    file_map = {
-        "production": "grains_world_usdapsd_production_jan212026.csv",
-        "consumption": "grains_world_usdapsd_consumption_jan212026.csv"
-    }
-    file_path = Path("USDAdata") / file_map[data_type]
-    df = pd.read_csv(file_path)
-    year_cols = [c for c in df.columns if '/' in c and len(c) == 9]
-    df_long = df.melt(id_vars=['Commodity', 'Country'], value_vars=year_cols, var_name='Year_Range', value_name='Value')
-    df_long['Year'] = df_long['Year_Range'].str[:4].astype(int)
-    if df_long['Value'].dtype == object:
-        df_long['Value'] = df_long['Value'].str.replace(',', '').str.replace('"', '').astype(float)
-    return df_long
+from agrichter.data.usda_wide import load_usda_wide
 
 def generate_figure_s2():
     logger.info("Generating Figure S2: Crop Comparison (Ultra-Bold Aligned)...")

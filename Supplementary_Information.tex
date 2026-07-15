@@ -363,6 +363,22 @@ Such extensions would utilize the general form (Equation~\ref{eq:loss_discrete})
 
 \begin{figure}[H]
     \centering
+    \includegraphics[width=\textwidth]{figureS2_comparative_envelopes_semilogx.png}
+    \caption{\textbf{Comparative national vulnerability fingerprints (all grains).}
+    Each curve traces the normalized upper H--P envelope for one country:
+    worst-case production loss as a percentage of that country's total grain
+    production, as a function of disrupted harvest magnitude. The label on each
+    curve marks the magnitude at which 100\% of national production is exposed
+    (the envelope endpoint). Concentrated producers (e.g.\ Egypt) reach total
+    exposure at lower magnitudes than geographically dispersed exporters
+    (e.g.\ Australia). The dashed global curve is shown for reference only and
+    uses the world grid; it is not ranked on the same horizontal scale as
+    national curves.}
+    \label{fig:S2_comparative}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
     \begin{subfigure}[b]{0.48\textwidth}
         \centering
         \includegraphics[width=\textwidth]{figure2_egypt_individual.png}
@@ -374,8 +390,8 @@ Such extensions would utilize the general form (Equation~\ref{eq:loss_discrete})
         \includegraphics[width=\textwidth]{figure2_australia_individual.png}
         \caption{Australia (Export Topology)}
     \end{subfigure}
-    \caption{\textbf{Additional National H-P Envelopes.} 
-    (a) Egypt exhibits a highly "stiff" envelope due to the extreme concentration of agriculture in the Nile Delta, where small spatial extents ($M_D \approx 4$) correspond to massive production proportions. 
+    \caption{\textbf{Illustrative national H--P envelopes (log--log).}
+    (a) Egypt exhibits a highly ``stiff'' envelope due to the extreme concentration of agriculture in the Nile Delta, where small spatial extents ($M_D \approx 4$) correspond to massive production proportions. 
     (b) Australia shows a wider uncertainty band reflecting the geographic spread of its wheat belt. Dashed lines indicate national food security thresholds scaled from global stocks.}
     \label{fig:S2_additional_countries}
 \end{figure}
@@ -393,7 +409,7 @@ Such extensions would utilize the general form (Equation~\ref{eq:loss_discrete})
     \centering
     \includegraphics[width=\textwidth]{figureS5_fractional_loss_sensitivity.png}
     \caption{\textbf{Sensitivity of event positions to the loss-intensity assumption.}
-    The main-text analysis maps each historical event to its modern-equivalent footprint assuming complete (100\%) loss of current production within the affected countries and states. Real events destroy only a fraction of the harvest inside their footprint. Here each event is re-plotted assuming 50\% and 25\% loss intensity: both disrupted area and production loss scale linearly with the loss fraction $f$, so events slide down-left along lines of unit slope in log--log space ($M_D(f) = M_D(1) + \log_{10} f$; $L(f) = f\,L(1)$). Because the upper envelope is concave and the lower envelope convex (both passing through the origin), scaled events remain within the H--P envelope, so the bounds hold for any loss intensity. Threshold crossings are robust for the largest events: the Great Drought (1876--78) and the Chinese famine (1959--61) remain at or above the 3-month global supply buffer even at 50\% intensity, while mid-magnitude events cross thresholds only under the complete-loss convention.}
+    The main-text analysis maps each historical event to its modern-equivalent footprint assuming complete (100\%) loss of current production within the affected countries and states. Real events destroy only a fraction of the harvest inside their footprint. Here each event is re-plotted assuming 50\% and 25\% loss intensity: both disrupted area and production loss scale linearly with the loss fraction $f$, so events slide down-left along lines of unit slope in log--log space ($M_D(f) = M_D(1) + \log_{10} f$; $L(f) = f\,L(1)$). Because the upper envelope is concave and the lower envelope convex (both passing through the origin), scaled events remain within the H--P envelope, so the bounds hold for any loss intensity. Individual events are not labeled; each grey segment links one event's three intensity markers. Threshold crossings are robust for the largest events: the Great Drought (1876--78) and the Chinese famine (1959--61) remain at or above the 3-month global supply buffer even at 50\% intensity, while mid-magnitude events cross thresholds only under the complete-loss convention.}
     \label{fig:S5_fractional_loss}
 \end{figure}
 
@@ -426,6 +442,8 @@ Such extensions would utilize the general form (Equation~\ref{eq:loss_discrete})
     \end{tabular}
     }
 \end{table}
+
+\input{tableS2_verification}
 
 \newpage
 
