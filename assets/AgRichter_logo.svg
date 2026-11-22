@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 360" role="img" aria-labelledby="title desc">
+<title id="title">AgRichter Scale</title><desc id="desc">Agricultural disruption magnitude research logo with harvest-production envelopes and a golden wheat ear</desc>
+<defs><linearGradient id="blue" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#07375F"/><stop offset="1" stop-color="#2074AE"/></linearGradient><linearGradient id="gold" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#D5A234"/><stop offset="1" stop-color="#EDC86B"/></linearGradient></defs>
+<rect width="960" height="360" rx="24" fill="#FFFFFF"/>
+<circle cx="175" cy="180" r="137" fill="none" stroke="#0B416F" stroke-width="10"/>
+<path d="M69 253 L106 218 L136 224 L168 175 L201 190 L235 123 L277 115" fill="none" stroke="#D9A633" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M69 267 Q139 240 180 218 Q234 190 282 135" fill="none" stroke="#66A7D3" stroke-width="6" stroke-linecap="round"/>
+<path d="M69 239 Q135 179 185 151 Q233 116 282 94" fill="none" stroke="#66A7D3" stroke-width="6" stroke-linecap="round"/>
+<path d="M69 239 Q135 179 185 151 Q233 116 282 94 L282 135 Q234 190 180 218 Q139 240 69 267Z" fill="#A0CFEA" fill-opacity=".28"/>
+<circle cx="201" cy="190" r="13" fill="#D6A033" stroke="white" stroke-width="5"/>
+<path d="M151 220 Q153 152 150 97" stroke="#0F5880" stroke-width="5" fill="none" stroke-linecap="round"/>
+<g fill="#D6A033"><path d="M151 118 Q132 111 125 91 Q148 95 151 118Z"/><path d="M151 139 Q172 127 179 108 Q156 113 151 139Z"/><path d="M151 162 Q130 148 126 129 Q148 134 151 162Z"/><path d="M151 183 Q174 170 180 148 Q156 156 151 183Z"/><path d="M151 204 Q131 192 128 172 Q148 178 151 204Z"/></g>
+<text x="351" y="151" font-family="Georgia, 'Times New Roman', serif" font-size="84" fill="#07375F" font-weight="bold" letter-spacing="-1.6">AgRichter</text>
+<path d="M355 178 H872" stroke="#D7A43E" stroke-width="5" stroke-linecap="round"/>
+<text x="356" y="235" font-family="Arial, Helvetica, sans-serif" font-size="28" fill="#315F7E" letter-spacing="5">AGRICULTURAL DISRUPTION SCALE</text>
+<text x="358" y="286" font-family="Arial, Helvetica, sans-serif" font-size="19" fill="#66829A" letter-spacing="1.1">Harvest–production envelopes  ·  Systemic risk</text>
+</svg>
