@@ -1,17 +1,45 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 360" role="img" aria-labelledby="title desc">
-<title id="title">AgRichter Scale</title><desc id="desc">Agricultural disruption magnitude research logo with harvest-production envelopes and a golden wheat ear</desc>
-<defs><linearGradient id="blue" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#07375F"/><stop offset="1" stop-color="#2074AE"/></linearGradient><linearGradient id="gold" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#D5A234"/><stop offset="1" stop-color="#EDC86B"/></linearGradient></defs>
-<rect width="960" height="360" rx="24" fill="#FFFFFF"/>
-<circle cx="175" cy="180" r="137" fill="none" stroke="#0B416F" stroke-width="10"/>
-<path d="M69 253 L106 218 L136 224 L168 175 L201 190 L235 123 L277 115" fill="none" stroke="#D9A633" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="M69 267 Q139 240 180 218 Q234 190 282 135" fill="none" stroke="#66A7D3" stroke-width="6" stroke-linecap="round"/>
-<path d="M69 239 Q135 179 185 151 Q233 116 282 94" fill="none" stroke="#66A7D3" stroke-width="6" stroke-linecap="round"/>
-<path d="M69 239 Q135 179 185 151 Q233 116 282 94 L282 135 Q234 190 180 218 Q139 240 69 267Z" fill="#A0CFEA" fill-opacity=".28"/>
-<circle cx="201" cy="190" r="13" fill="#D6A033" stroke="white" stroke-width="5"/>
-<path d="M151 220 Q153 152 150 97" stroke="#0F5880" stroke-width="5" fill="none" stroke-linecap="round"/>
-<g fill="#D6A033"><path d="M151 118 Q132 111 125 91 Q148 95 151 118Z"/><path d="M151 139 Q172 127 179 108 Q156 113 151 139Z"/><path d="M151 162 Q130 148 126 129 Q148 134 151 162Z"/><path d="M151 183 Q174 170 180 148 Q156 156 151 183Z"/><path d="M151 204 Q131 192 128 172 Q148 178 151 204Z"/></g>
-<text x="351" y="151" font-family="Georgia, 'Times New Roman', serif" font-size="84" fill="#07375F" font-weight="bold" letter-spacing="-1.6">AgRichter</text>
-<path d="M355 178 H872" stroke="#D7A43E" stroke-width="5" stroke-linecap="round"/>
-<text x="356" y="235" font-family="Arial, Helvetica, sans-serif" font-size="28" fill="#315F7E" letter-spacing="5">AGRICULTURAL DISRUPTION SCALE</text>
-<text x="358" y="286" font-family="Arial, Helvetica, sans-serif" font-size="19" fill="#66829A" letter-spacing="1.1">Harvest–production envelopes  ·  Systemic risk</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 440" role="img" aria-labelledby="title desc">
+<title id="title">AgRichter Scale</title>
+<desc id="desc">Agricultural disruption magnitude scale: an earthquake-like seismograph waveform grows in amplitude beneath a graduated magnitude dial, above wheat, maize and rice crops.</desc>
+<defs>
+ <linearGradient id="dial" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#5C9C65"/><stop offset=".33" stop-color="#C2B24F"/><stop offset=".66" stop-color="#EBA52F"/><stop offset="1" stop-color="#C54432"/></linearGradient>
+ <linearGradient id="field" x1="0" y1="1" x2="1" y2="0"><stop stop-color="#3D8657"/><stop offset="1" stop-color="#7FA43C"/></linearGradient>
+</defs>
+<rect width="1120" height="440" fill="#FFFFFF"/>
+<!-- Graduated magnitude arc, deliberately inside the canvas -->
+<path d="M215 266 A345 345 0 0 1 905 266" stroke="url(#dial)" stroke-width="23" fill="none" stroke-linecap="butt"/>
+<g stroke="#FFFFFF" stroke-width="6">
+<path d="M224 211 L252 221"/><path d="M299 98 L321 121"/><path d="M411 38 L421 70"/><path d="M560 15 L560 49"/><path d="M707 38 L697 70"/><path d="M821 98 L798 121"/><path d="M896 211 L868 221"/>
+</g>
+<!-- Seismograph baseline and increasingly intense impulse -->
+<path d="M205 230 H915" stroke="#8EA9B9" stroke-width="3" fill="none"/>
+<path d="M205 230 L284 230 L296 225 L308 235 L321 220 L333 239 L346 213 L358 244 L371 204 L384 255 L397 215 L411 230 L435 230 L447 201 L461 259 L477 184 L493 274 L510 209 L528 243 L544 174 L563 287 L581 160 L600 303 L618 135 L637 318 L654 151 L672 288 L690 173 L707 266 L724 213 L739 243 L756 223 L770 232 L787 225 L805 230 L915 230" stroke="#07385C" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+<!-- Fields and three recognizable crops -->
+<path d="M225 328 Q400 272 566 330 Q738 273 891 328" fill="none" stroke="#558845" stroke-width="12" stroke-linecap="round"/>
+<path d="M236 347 Q393 303 541 342" fill="none" stroke="#84A84F" stroke-width="10" stroke-linecap="round"/>
+<path d="M595 346 Q730 303 888 345" fill="none" stroke="#D1A136" stroke-width="10" stroke-linecap="round"/>
+<g stroke="#C39427" stroke-width="4" stroke-linecap="round" fill="none">
+ <path d="M393 328 L393 272"/><path d="M560 323 L560 270"/><path d="M722 324 L722 276"/>
+</g>
+<!-- wheat -->
+<g fill="#D5A13D">
+ <path d="M392 292 Q371 290 368 273 Q385 273 392 292Z"/><path d="M394 280 Q413 275 417 260 Q400 259 394 280Z"/>
+ <path d="M392 308 Q372 306 365 290 Q383 286 392 308Z"/><path d="M394 301 Q413 297 420 280 Q399 281 394 301Z"/>
+ <path d="M391 277 Q377 269 378 251 Q391 252 391 277Z"/>
+</g>
+<!-- maize -->
+<path d="M544 315 Q522 291 523 273 Q548 289 557 318Z" fill="#3F8651"/>
+<path d="M577 315 Q598 286 595 271 Q572 288 561 320Z" fill="#3F8651"/>
+<path d="M544 270 Q542 243 558 231 Q579 241 575 269 L560 306Z" fill="#D7A431"/>
+<g fill="#FFF1BA"><circle cx="554" cy="249" r="4"/><circle cx="565" cy="249" r="4"/><circle cx="552" cy="260" r="4"/><circle cx="563" cy="260" r="4"/><circle cx="560" cy="272" r="4"/></g>
+<!-- rice -->
+<path d="M723 284 Q753 259 782 286" stroke="#C39427" stroke-width="4" fill="none"/>
+<g fill="#C89B39">
+<ellipse cx="737" cy="270" rx="7" ry="11" transform="rotate(35 737 270)"/>
+<ellipse cx="752" cy="266" rx="7" ry="11" transform="rotate(45 752 266)"/>
+<ellipse cx="767" cy="273" rx="7" ry="11" transform="rotate(55 767 273)"/>
+<ellipse cx="782" cy="287" rx="7" ry="11" transform="rotate(65 782 287)"/>
+</g>
+<!-- Wordmark with ample white margin, no clipping -->
+<text x="560" y="405" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="61" letter-spacing="-1.2" fill="#07385C">AgRichter <tspan font-weight="400">Scale</tspan></text>
 </svg>
