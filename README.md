@@ -1,4 +1,4 @@
-<p align="center"><img src="assets/AgRichter_logo.svg" width="760" alt="AgRichter Scale logo: seismograph waveform, graduated magnitude dial, and agricultural crops"></p>
+<p align="center"><img src="assets/AgRichter_scale_banner.webp" width="720" alt="AgRichter Scale logo with magnitude arc, seismograph waveform and agricultural symbols"></p>
 
 # AgRichter Project (2025)
 
