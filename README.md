@@ -1,3 +1,5 @@
+<p align="center"><img src="assets/AgRichter_logo.svg" width="680" alt="AgRichter Scale logo: harvest-production envelopes, wheat, and agricultural disruption magnitude"></p>
+
 # AgRichter Project (2025)
 
 ## Overview
