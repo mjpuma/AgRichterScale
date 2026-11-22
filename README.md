@@ -1,4 +1,4 @@
-<p align="center"><img src="assets/AgRichter_logo.svg" width="680" alt="AgRichter Scale logo: harvest-production envelopes, wheat, and agricultural disruption magnitude"></p>
+<p align="center"><img src="assets/AgRichter_logo.svg" width="760" alt="AgRichter Scale logo: seismograph waveform, graduated magnitude dial, and agricultural crops"></p>
 
 # AgRichter Project (2025)
 
