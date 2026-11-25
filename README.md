@@ -23,6 +23,10 @@ The event registry now preserves **all 23 legacy cases** and separately identifi
 
 To avoid cherry-picking, selection does not depend on whether the reported crop change is large, negative, or even quantifiable; the protocol requires documenting positive changes, missing data, causal ambiguity, and overlapping events. The current additions are illustrative candidates, **not a completed global conflict census**. See the [selection protocol](docs/HISTORICAL_EVENT_SELECTION_PROTOCOL.md), [27-case registry](ancillary/historical_event_registry.csv), [historical evidence inventory](ancillary/historical_loss_evidence_seed.csv), and [registry validation script](scripts/validate_historical_registry.py).
 
+### Systematic production screening (in development)
+
+The [v1.0 selection protocol](docs/HISTORICAL_EVENT_SELECTION_PROTOCOL.md) separates the complete 1961-onward production observation frame, documentary event screening and archival reconstructions. The [FAOSTAT screening pipeline](docs/FAOSTAT_SCREENING.md) implements prospective trend-based anomaly flags and preserves missing, zero and positive outcomes; its live data ingestion and coverage/boundary audits remain pending. The 27-event registry is not a representative sample, and the production panel must not be treated as a catalog of independent events.
+
 ## Repository Architecture
 
 The repository is structured into two main components:
