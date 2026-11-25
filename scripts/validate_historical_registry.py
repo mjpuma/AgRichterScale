@@ -45,7 +45,14 @@ def main():
         if row.get("catalog_origin") == "event_attributes.csv" and row["event_id"] not in legacy_ids:
             errors.append("Non-legacy event incorrectly claims legacy origin: " + row["event_id"])
         if row.get("quantitative_comparison_ready") == "yes":
-            errors.append("Registry claims comparison-ready event without independent verification: " + row["event_id"])
+            eligible = [
+                e for e in evidence
+                if e["event_id"] == row["event_id"]
+                and e.get("compatible_with_agrichter_grain_loss") == "yes"
+                and e.get("verification_status") == "harmonized_verified"
+            ]
+            if not eligible:
+                errors.append("Comparison-ready event lacks harmonized verified evidence: " + row["event_id"])
 
     for row in evidence:
         if row["event_id"] not in registry_ids:
