@@ -1,83 +1,48 @@
-# Systematic historical agricultural disruption evidence protocol
+# Historical agricultural disruption selection protocol
 
-**Version 0.1 — 2026-11-25.** This is a prospective screening and extraction protocol, not a claim that the full universe of historical disruptions has been ascertained. It preserves the pre-existing AgRichter catalog and records additions transparently.
+**Version 1.0 — 2026-11-25.** Prospective rules for expansion; not a preregistration of the legacy sample. This supersedes v0.1 (retained in Git history). No new event outcomes have been inspected for setting thresholds.
 
-## Research questions
+## 1. Research scope and estimands
 
-1. For a specified crop and region, what is the **potential** production exposed to a complete-disruption end member at a given area magnitude?
-2. What is the **observed or historically reconstructed** production or harvested-area anomaly during particular agricultural crises?
-3. Under which documented circumstances can observed crop losses be compared quantitatively with a SPAM-2020-based potential exposure estimate?
-4. How do nonproduction mechanisms (procurement, displacement, markets and food access) distinguish famine and conflict outcomes from their production effects?
+Preserve the AgRichter H–P envelopes as 100% complete-disruption end members under SPAM 2020 geography. Upper and lower envelopes are spatial allocation extremes, not statistical intervals or observed historical losses. Study crop production disruptions irrespective of driver: environmental extremes, pests/pathogens, political and economic policy, armed conflict, input/access disruption, and compound mechanisms. Keep food access, procurement, prices, displacement and mortality separate.
 
-We assess disruptions **regardless of initiating driver**: drought, flood, temperature extremes, crop disease, war, coercive procurement, agricultural policy, displacement and combinations thereof.
+The empirical unit is an area–crop–harvest year observation; a documented episode is a separate entity linked to zero or more observations. Annual baseline-relative shortfalls are not necessarily causal losses. The population of production observations, the outcome-screened subset, and the documentary event catalog are distinct.
 
-## Define the event universe *before* testing against observed losses
+## 2. Three complementary sampling frames
 
-**Stage A — fixed legacy catalog.** Retain **all 23** event IDs in `ancillary/event_attributes.csv`, including famines and modern environmental or conflict crises. Every entry remains in `ancillary/historical_event_registry.csv` whether or not a quantitative crop loss is available. Preserve the original event IDs; do not delete observations that complicate the end-member interpretation.
+**A. Systematic production panel (principal quantitative analysis).** Include every available FAOSTAT QCL reporting area and year from 1961 through the most recent complete release year, retaining historical entities and territories under their original codes. Initial commodities are wheat, maize, rice (paddy), and FAOSTAT primary cereals; confirm item codes and units. Other crops may enter documented-event studies; never treat potato, cassava or livestock losses as grain losses. Preserve raw values and flags (official, estimated, imputed, etc.). Exclude aggregate geographies (including combined China) from country/territory screening, retain them separately, and never sum overlapping entities. Audit membership, boundary changes, missingness, and release completeness before calling the panel exhaustive. No imposed calendar-year 1961 event cutoff: earlier observations may be appended from independently sourced historical data, not silently merged into FAOSTAT.
 
-**Stage B — declared additions.** The registry currently adds four candidates: Soviet famine 1932–33 (distinct from 1921–22), Ukraine war from 2022, Sudan conflict from 2023, and South Sudan conflict (starting with 2013, but to be segmented by locality and episode). The addition provenance and date are explicit. They are **not** purported to be an exhaustive conflict census.
+**B. Documentary episode inventory (all hazards, independent of outcome).** Retain all 23 legacy IDs and four previous pilot candidates, regardless of evidence or magnitude. These 27 are not a representative sample. Screen documentary sources across the full modern period, not only 2022 onward. Candidate inclusion requires dated, geographically identifiable, credible evidence of crop production interruption, yield/area change, crop damage, agricultural access/input disruption or credible exposure to such a mechanism. Do not require negative national production or a quantified outcome. Screen famine chronologies as candidate sources, but famine or conflict alone is not evidence of agricultural disruption; register contextual-only cases as such. Search sources by hazard and coverage strata: FAO GIEWS/CFSAM and archived national crop reports; disaster inventories (e.g., EM-DAT and national archives), conflict episode chronologies (e.g., UCDP/PRIO) linked to agricultural evidence; FAO/IPPC or national plant-health records; agricultural policy histories; peer-reviewed regional and historical compilations. Sources have unequal temporal/spatial coverage and detection rules; record edition, accessible coverage, search strings, eligibility rules, counts screened and decisions including duplicates, exclusions and unscreened strata. Modern 2022–26 FAO conflict screening is a pilot within this wider frame, not a census. No fixed quota by hazard or region. Do not infer absence of an event from missing reports.
 
-**Stage C — systematic expansion (not yet executed).** Establish a reproducible candidate universe by screening:
-- FAO GIEWS Country Briefs and annual Crop Prospects / CFSAM reports for every country, **2022–2026**, for conflict-linked crop production, harvested area, or agricultural access disruptions;
-- peer-reviewed famine and historical agricultural harvest compilations for *all events in the historical period being studied*, with explicit spatial and temporal scope;
-- country-year cereals (FAOSTAT, national statistical services, USDA PSD where consistent) to identify major production anomalies irrespective of known famines, then compare the resulting list with the named events.
+**C. Archival reconstruction (complementary, pre-1961 and boundary-spanning).** Retain earlier legacy cases and systematically screen explicitly bounded historical source collections where available; report the geographic, temporal and crop coverage of each collection. Source-specific denominators only; no implied complete global census of early events. Preserve the full 1959–61 Chinese famine and its pre-event years (target 1954–66); do not treat 1961 as onset. Separate Soviet 1921–22 and 1932–33, disaggregate late Victorian famine regions and Dust Bowl geography, and keep Irish potato evidence outside current cereal envelopes. Zimbabwe and Sri Lanka policy episodes, Ukraine, Sudan and South Sudan are declared candidate leads, not newly admitted measured events. Register their selection provenance and subject them to the same screening rules. Do not extend the database until the applicable source frame and extraction rules are logged.
 
-**Important:** selecting only Ukraine, Sudan and South Sudan is a *pilot*, not an unbiased sample of contemporary conflicts. Before claiming systematic coverage, record *all candidate countries/events returned by the screening rule*, including those with no usable agriculture data or positive production anomalies. Prefer documenting screened sources and dates, counts included/excluded and reasons, and overlap between named crises.
+## 3. Production anomaly screening (outcome-based, not an event census)
 
-## Inclusion and exclusion
+Freeze source snapshot/hash, crop definitions, entity crosswalk, release cutoff and baseline settings before inspecting ranked outcomes. For each area–crop–year, fit a log-linear trend to positive production in the preceding ten calendar years only; require at least seven usable years, including at least one in the previous two years. Predict one year ahead, with no target-year or future data. Flag inadequate history, recorded zero production, missing values, and implausible/boundary-discontinuous series explicitly; zero in the target year can be screened if baseline is positive. Early years without sufficient history remain unassessed, not non-events. Do not use a trend across known incompatible territorial or statistical breaks; maintain a break audit and withhold affected fits pending review. Consecutive shocks may contaminate rolling baselines; for documented episodes use a fixed pre-onset baseline and report sensitivity to trend extrapolation and recovery assumptions.
 
-**Eligible event candidates:** a dated and geographically identified episode with credible documentary indication of changed crop production, harvested area, abandonment, or severe access constraints to agricultural land, **or** a member of the fixed legacy catalog (retained even if impact measurement cannot be identified).
+Signed anomaly = (observed - expected)/expected. Absolute shortfall = max(0, expected - observed); keep signed tonnage and fractional anomalies even when positive. Candidate production anomaly: at least 10% below baseline (inclusive); sensitivity at 5% and 20%, plus preceding five-year median and preceding ten-year median as alternative reference levels (minimum 4 and 7 usable years respectively, recent observation required). These thresholds are operational choices, not established severity classes; do not optimize them to recover famous events. No absolute-tonnage gate at discovery; report absolute as well as relative loss and rank separately, preventing both small-country erasure and overemphasis on tiny denominators. Retain the full panel; compare flag prevalence using assessable area–crop–years as denominator, not event counts. Flag anomalous observations with no documented driver as unknown, not climate by default. Link runs of adjacent flagged years within area/crop only as descriptive clusters; they are not automatically independent or causally unified events.
 
-**Observation admissibility:** crop and region identified; event year or crop season identified; unit, observed value and data type clear; authoritative primary or peer-reviewed secondary source cited; baseline specified for anomalies. Production **levels** are admissible data, but are **not** themselves losses. Crop price, famine mortality, food-aid need, procurement and economic damage are separate outcomes, not substitutes for crop tonnage losses.
+## 4. Evidence and comparability gates
 
-**Exclusion from quantitative comparison** (not from the registry): no quantified crop measure; missing geographic unit; conflicting crop aggregation that cannot be reconciled; forecast misrepresented as harvest; historical area that cannot be mapped; unresolvable overlapping multiyear series; missing comparable baseline.
+Record separately (i) candidate provenance and screening disposition, (ii) agriculture relevance (confirmed, uncertain, contextual only, rejected), (iii) evidence availability (not screened, qualitative only, isolated numeric, compatible time series, unavailable), (iv) measurement type (reported observation, reconstructed, modeled causal estimate, forecast), (v) comparison readiness. A reported production level alone is not a loss. Missing is not zero. Positive outcomes remain admissible. Record exact original source, table/page, edition, season, units, crop, historical geography, baseline, methods and uncertainty. Historical estimates may be used with explicit provenance, competing estimates and uncertainty, not silently upgraded to official observations. Record source disagreements and shared upstream sources; do not count repeated citations as independent verification.
 
-Do not require a negative production anomaly for inclusion. Positive national harvests during serious local conflict are critical evidence about scale mismatch, heterogeneity and food access.
+Quantitative comparisons require crop/commodity equivalence (including paddy vs milled rice), mapped footprint, annual period, comparable units, baseline and uncertainty. Historical observed area, area abandoned, planted area, harvested area and whole modern administrative crop footprint are not interchangeable. AgRichter area magnitude = log10(affected harvested area in km²) only when area definition is explicit. Do not use famine area or full administrative area as observed crop loss. Distinguish historical counterfactual capacity from contemporary SPAM exposure; a ratio of historical shortfall to SPAM 2020 exposure is a cross-era benchmark, not a historical destruction fraction or physically bounded fraction. A historical shortfall outside the modern envelope is not automatically an error. For true realized fraction use a matched historical baseline and footprint. Do not pool direct causal estimates and descriptive anomalies without labels.
 
-## Definitions and measurements
+## 5. Event boundaries, overlap, and robustness
 
-- `P_obs(c,r,t)`: observed production level (metric tons), by crop c, region r and crop year t.
-- `P_baseline(c,r,t)`: explicitly estimated non-event/reference production, with method and uncertainty.
-- Signed anomaly: `(P_obs - P_baseline) / P_baseline`. **Do not clip positive anomalies.**
-- Potential shortfall: `max(0, P_baseline - P_obs)` in tons. Interpret as a **baseline-relative shortfall**, not necessarily a *causally attributable* loss from the named shock.
-- Attribution: requires separate identification design or documented estimate, not automatic inference from temporal coincidence.
-- End-member exposure: SPAM-2020 production in a declared potential-disruption geographic mask under 100% loss, *not* 2020 production that literally existed during a historical event.
-- Area magnitude: `log10(disrupted harvested area / km²)`. Flag whether this uses *measured affected cultivated area*, *affected harvested area*, or *full contemporary crop area within selected administrative units*. Do not mix without separate labels.
+Record hazard onset/end, crop-season affected years and recovery separately; open-ended episodes right-censored at snapshot. Keep legacy identifiers but allow child episodes and explicit parent/overlap links (ENSO and regional manifestations; composite Haiti and multiyear conflicts). Disaggregate agricultural effects by location and season; do not sum parent and child losses or different crops within overlapping cereal aggregates. Distinguish annual signed/net anomaly, peak annual shortfall and cumulative annual shortfalls; do not compare cumulative multiyear loss to single-year capacity. Preserve alternative event boundary definitions. For multiple mechanisms record primary/secondary or uncertain attribution only where supported. No forced single-cause classification.
 
-For each observation store the original reported level, source URL and page/table, measured population/crop/region, reference window, confidence interval/range if supplied, and whether the value is observational, reconstructed, survey, remotely sensed, statistical model, or illustrative. Convert to kilocalories only with a crop-specific, explicit nutritional conversion; **potato losses are outside the current all-grain model and must be marked separately**.
+## 6. Inference limits and reporting
 
-## Avoid double counting
+Report flow from source universe to screened, eligible, evidence available and matched observations; stratify missingness by decade, region, crop and hazard. Explicitly distinguish no report, no usable measure, no shortfall and no screening. Document exclusion reasons and source-specific denominators; independently review ambiguous cases and record adjudication. Historical source availability is missing-not-at-random; do not weight or extrapolate historical case frequencies without a defensible ascertainment model. Compare evidence grades and baseline sensitivities. Do not estimate hazard occurrence/return periods from legacy, documentary or outcome-screened catalogs. Figure 4 independently uses USDA global production variability and a modeled tail; its event points are model-mapped SPAM exposure, not empirical recurrence observations. Audit its tail assumptions, crop scope, and stationarity separately before revising figures.
 
-- Parent events (e.g. ENSO 2015–16) and children (Solomon Islands, East Timor, Laos) share an overlap group, not independent annual observations.
-- A multiyear famine is one event with many crop-region-year observations; avoid treating each row as an independent crisis.
-- Sudan and South Sudan are distinct post-2011 sovereign countries and should have independently defined spatial series.
-- Prefer a single authoritative observation per crop-region-year for primary plots; preserve other estimates for sensitivity and disagreement checks.
-- When a modern conflict spans several years, separate annual crop outputs from ongoing damage and localized access restrictions.
+## 7. Implementation gates
 
-## Bias controls and reporting
+1. Freeze this protocol; subsequent rule changes are dated amendments, with rationale and reruns.
+2. Acquire normalized FAOSTAT QCL bulk data, preserve immutable archive hash and release metadata, build the full panel and anomaly flags. Audit area/crop scope, missingness, quality flags, historical boundaries and latest-year coverage before scientific use.
+3. Log documentary screening frames and record every disposition, link event/observation IDs, adjudicate overlaps. Reconstruct archival cases under the separate evidence standard.
+4. Only then harmonize production and area against the theoretical end members, resolve the legacy mapping issues in the historical audit, and revisit figures.
 
-1. Freeze this protocol and version the inventory before filling in historical outcomes. Log additions and revisions with reasons.
-2. Retain all 23 legacy events and every systematically discovered new candidate, including zero/positive anomalies and missing quantitative data.
-3. Report an evidence availability matrix: full compatible crop-year series, partial numeric evidence, qualitative only, or not yet screened.
-4. Do not interpret the selected illustrative case studies as a representative sample without showing the entire screened denominator.
-5. Quantitative overlays must show measurement type, historical baseline, region/crop matching, uncertainty and potential-versus-realized semantics.
-6. Run `python scripts/validate_historical_registry.py` to verify foreign keys, required fields and legacy catalog completeness; it cannot validate the truth of historical source content.
+Related: [historical audit](HISTORICAL_EVENT_AUDIT.md), [loss methodology](HISTORICAL_LOSSES_METHOD.md), [famine source inventory](MAJOR_FAMINE_LOSS_SOURCES.md), [legacy and pilot registry](../ancillary/historical_event_registry.csv), [seed evidence](../ancillary/historical_loss_evidence_seed.csv).
 
-## Current files and status
-
-- `ancillary/event_attributes.csv`: fixed legacy metadata (23).
-- `ancillary/historical_event_registry.csv`: 27 screened-for-inclusion candidates (23 legacy + four declared additions); **none has been certified as quantitatively matched**.
-- `ancillary/historical_loss_evidence_seed.csv`: preliminary extracted source claims, now including Ukraine, Sudan and South Sudan; rows are evidence staging records with direct-source caveats, **not yet harmonized data for the main model**.
-- `docs/HISTORICAL_EVENT_AUDIT.md`: concerns about geography, mappings, and historical actual-loss interpretation.
-- `docs/MAJOR_FAMINE_LOSS_SOURCES.md`: historical Soviet, Chinese, Indian and Irish source inventory.
-
-## Modern source starting points
-
-- Ukraine, FAO GIEWS country brief: https://www.fao.org/giews/countrybrief/country.jsp?code=UA
-- Ukraine FAO survey of agricultural enterprises (2024): https://www.fao.org/countryprofiles/news-archive/detail-news/en/c/1742727/
-- Ukraine remote-sensing cropland damage working paper: https://documents.worldbank.org/en/publication/documents-reports/documentdetail/099726309252542219/
-- Sudan, FAO GIEWS: https://www.fao.org/giews/countrybrief/country.jsp?code=SDN
-- South Sudan, FAO GIEWS: https://www.fao.org/giews/countrybrief/country.jsp?code=SSD&lang=en
-- South Sudan 2025 FAO/WFP CFSAM release: https://mafs.gov.ss/mafs-and-un-partners-release-cfsam-report-showing-improved-agricultural-production-amid-persistent-food-insecurity-in-south-sudan/
-
-**Immediate next step:** Screen the complete 2022–26 FAO GIEWS/CFSAM country universe and extract primary crop-year series for the already cataloged famines, with country-region-crop-year as the observational unit. The current four additions are candidates, not a claim of exhaustive modern coverage.
+Source entry points: [FAOSTAT](https://www.fao.org/faostat/en/#data/QCL), [FAO GIEWS](https://www.fao.org/giews/), [UCDP](https://ucdp.uu.se/downloads/), [EM-DAT](https://www.emdat.be/), [IPPC](https://www.ippc.int/). These are proposed screening frames, not claims of completed or exhaustive searches.
