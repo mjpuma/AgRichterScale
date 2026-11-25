@@ -1,0 +1,61 @@
+area_code,area,first_year,last_year,decision,break_years,binds_on_this_snapshot,reason
+1,Armenia,1992,2024,break_applied,1992,no,USSR code 228 ends in 1991 and the 15 successor codes start in 1992. This snapshot has no overlapping years.
+15,Belgium-Luxembourg,1961,1999,break_applied,2000,"yes, clears baseline in 2000-2009",Belgium-Luxembourg is a joint series through 1999. Belgium and Luxembourg are separate codes from 2000. This snapshot has no overlapping years.
+16,Bangladesh,1961,2024,no_break,,no,"Bangladesh is reported from 1961, including the years before independence. The 1971 decline stays on that code and is not a change of area code."
+41,"China, mainland",1961,2024,no_break,,no,"China, mainland runs 1961-2024. Cereals are 451, 443, 456 and 453 Mt in 1996-1999. Hong Kong and Macao are not folded in after 1997 or 1999."
+51,Czechoslovakia,1961,1992,break_applied,1993,"yes, clears baseline in 1993-2002",Czechoslovakia ends in 1992. Czechia and Slovakia start in 1993. This snapshot has no overlapping years.
+52,Azerbaijan,1992,2024,break_applied,1992,no,USSR code 228 ends in 1991 and the 15 successor codes start in 1992. This snapshot has no overlapping years.
+57,Belarus,1992,2024,break_applied,1992,no,USSR code 228 ends in 1991 and the 15 successor codes start in 1992. This snapshot has no overlapping years.
+62,Ethiopia PDR,1961,1992,break_applied,1993,"yes, clears baseline in 1993-2002","Ethiopia PDR, including Eritrea, ends in 1992. Ethiopia and Eritrea start in 1993. This snapshot has no overlapping years."
+63,Estonia,1992,2024,break_applied,1992,no,USSR code 228 ends in 1991 and the 15 successor codes start in 1992. This snapshot has no overlapping years.
+68,France,1961,2024,no_break,,no,France cereals fall from 61.8 Mt in 2006 to 59.6 Mt in 2007. French Guiana and Réunion are about 0.02 Mt and stop in 2006. France does not absorb them.
+69,French Guiana,1961,2006,no_break,,no,French Guiana cereal reporting stops after 2006. There is no successor code and no addition to France.
+73,Georgia,1992,2024,break_applied,1992,no,USSR code 228 ends in 1991 and the 15 successor codes start in 1992. This snapshot has no overlapping years.
+79,Germany,1961,2024,no_break,,no,"Pre-1990 cereals stay near 37 Mt and wheat near 15 Mt, the combined FRG plus GDR scale. Code 79 does not step up at unification. No separate FRG or GDR code exists in this bulk."
+80,Bosnia and Herzegovina,1992,2024,break_applied,1992,no,"Yugoslav SFR ends in 1991. Bosnia and Herzegovina, Croatia, North Macedonia, Slovenia, and Serbia and Montenegro start in 1992. This snapshot has no overlapping years."
+87,Guadeloupe,1961,2006,no_break,,no,Guadeloupe has QCL reporting through 2006 and no selected cereal total in 2005-2007. The series ends. France is unchanged.
+96,"China, Hong Kong SAR",1961,2024,no_break,,no,"China, Hong Kong SAR remains a separate code. Its cereal total is already about zero by 1996 and is not transferred to mainland China."
+98,Croatia,1992,2024,break_applied,1992,no,"Yugoslav SFR ends in 1991. Bosnia and Herzegovina, Croatia, North Macedonia, Slovenia, and Serbia and Montenegro start in 1992. This snapshot has no overlapping years."
+101,Indonesia,1961,2024,no_break,,no,"Indonesia cereals do not step when Timor-Leste is occupied or when it becomes independent. Timor-Leste is a separate code in both periods, at about 0.04-0.15 Mt."
+108,Kazakhstan,1992,2024,break_applied,1992,no,USSR code 228 ends in 1991 and the 15 successor codes start in 1992. This snapshot has no overlapping years.
+113,Kyrgyzstan,1992,2024,break_applied,1992,no,USSR code 228 ends in 1991 and the 15 successor codes start in 1992. This snapshot has no overlapping years.
+119,Latvia,1992,2024,break_applied,1992,no,USSR code 228 ends in 1991 and the 15 successor codes start in 1992. This snapshot has no overlapping years.
+126,Lithuania,1992,2024,break_applied,1992,no,USSR code 228 ends in 1991 and the 15 successor codes start in 1992. This snapshot has no overlapping years.
+127,Marshall Islands,1991,2024,no_break,,no,Marshall Islands reporting starts in 1991. No predecessor Pacific-islands code is present in this cereal extract.
+128,"China, Macao SAR",1961,2024,no_break,,no,"China, Macao SAR remains a separate code through 2024 and is not part of the mainland cereal series."
+131,Malaysia,1961,2024,no_break,,no,Malaysia cereals stay near 1.1-1.3 Mt across 1963. No territorial step is visible at the formation of Malaysia.
+135,Martinique,1961,2006,no_break,,no,Martinique has QCL reporting through 2006 and no selected cereal total in 2005-2007. The series ends. France is unchanged.
+145,Micronesia (Federated States of),1991,2024,no_break,,no,Micronesia (Federated States of) reporting starts in 1991. No predecessor code is present in this cereal extract.
+146,Republic of Moldova,1992,2024,break_applied,1992,no,USSR code 228 ends in 1991 and the 15 successor codes start in 1992. This snapshot has no overlapping years.
+147,Namibia,1961,2024,no_break,,no,"Namibia stays below 0.12 Mt across 1990. Independence does not change the area code, and the series does not step."
+150,Netherlands (Kingdom of the),1961,2024,no_break,,no,Netherlands cereals stay near 1-2 Mt across 1986 and 2010. Aruba and the Netherlands Antilles are not separate codes in this cereal extract. No level shift is visible.
+154,North Macedonia,1992,2024,break_applied,1992,no,"Yugoslav SFR ends in 1991. Bosnia and Herzegovina, Croatia, North Macedonia, Slovenia, and Serbia and Montenegro start in 1992. This snapshot has no overlapping years."
+157,Nicaragua,1961,2023,no_break,,no,"Nicaragua runs from 1961 through 2023. The missing 2024 row is a terminal reporting gap, not a territorial break."
+165,Pakistan,1961,2024,no_break,,no,Pakistan cereals stay near 11-13 Mt across 1971. Bangladesh is already a separate code from 1961.
+167,Czechia,1993,2024,break_applied,1993,no,Czechoslovakia ends in 1992. Czechia and Slovakia start in 1993. This snapshot has no overlapping years.
+176,Timor-Leste,1961,2024,no_break,,no,"Timor-Leste is reported as its own code from 1961 through 2024, including 1975-1999. Its cereal total is too small to move the Indonesia total."
+178,Eritrea,1993,2024,break_applied,1993,no,"Ethiopia PDR, including Eritrea, ends in 1992. Ethiopia and Eritrea start in 1993. This snapshot has no overlapping years."
+182,Réunion,1961,2006,no_break,,no,Réunion cereal reporting stops after 2006 at about 0.02 Mt. France is unchanged.
+185,Russian Federation,1992,2024,break_applied,1992,no,USSR code 228 ends in 1991 and the 15 successor codes start in 1992. This snapshot has no overlapping years.
+186,Serbia and Montenegro,1992,2005,break_applied,1992;2006,"yes, 2006 break clears baseline in 2006-2015; 1992 break does not","Yugoslav SFR ends in 1991. Bosnia and Herzegovina, Croatia, North Macedonia, Slovenia, and Serbia and Montenegro start in 1992. This snapshot has no overlapping years. The joint Serbia and Montenegro code ends in 2005. Separate Serbia and Montenegro codes start in 2006. This snapshot has no overlapping years."
+198,Slovenia,1992,2024,break_applied,1992,no,"Yugoslav SFR ends in 1991. Bosnia and Herzegovina, Croatia, North Macedonia, Slovenia, and Serbia and Montenegro start in 1992. This snapshot has no overlapping years."
+199,Slovakia,1993,2024,break_applied,1993,no,Czechoslovakia ends in 1992. Czechia and Slovakia start in 1993. This snapshot has no overlapping years.
+202,South Africa,1961,2024,no_break,,no,"South Africa cereals fall in 1992 with the regional drought, not by Namibia's harvest. Namibia remains a separate code from 1961."
+206,Sudan (former),1961,2011,break_applied,2012,"yes, clears baseline in 2012-2021","Sudan (former) runs through 2011. Sudan and South Sudan start in 2012. Independence was 9 July 2011, and this file does not split the 2011 year. No overlapping years."
+208,Tajikistan,1992,2024,break_applied,1992,no,USSR code 228 ends in 1991 and the 15 successor codes start in 1992. This snapshot has no overlapping years.
+213,Turkmenistan,1992,2024,break_applied,1992,no,USSR code 228 ends in 1991 and the 15 successor codes start in 1992. This snapshot has no overlapping years.
+215,United Republic of Tanzania,1961,2024,no_break,,no,Tanzania cereals stay near 1.0-1.4 Mt across the 1964 union. No territorial step is visible.
+228,USSR,1961,1991,break_applied,1992,"yes, clears baseline in 1992-2001",USSR code 228 ends in 1991 and the 15 successor codes start in 1992. This snapshot has no overlapping years.
+230,Ukraine,1992,2024,break_applied,1992,no,USSR code 228 ends in 1991 and the 15 successor codes start in 1992. This snapshot has no overlapping years.
+235,Uzbekistan,1992,2024,break_applied,1992,no,USSR code 228 ends in 1991 and the 15 successor codes start in 1992. This snapshot has no overlapping years.
+237,Viet Nam,1961,2024,no_break,,no,"Viet Nam is one code from 1961 through 2024. Cereals move from 10.6 Mt in 1975 to 12.2 Mt in 1976, with no sustained step at unification. North and South are not separate codes."
+238,Ethiopia,1993,2024,break_applied,1993,no,"Ethiopia PDR, including Eritrea, ends in 1992. Ethiopia and Eritrea start in 1993. This snapshot has no overlapping years."
+248,Yugoslav SFR,1961,1991,break_applied,1992,"yes, clears baseline in 1992-2001","Yugoslav SFR ends in 1991. Bosnia and Herzegovina, Croatia, North Macedonia, Slovenia, and Serbia and Montenegro start in 1992. This snapshot has no overlapping years."
+249,Yemen,1961,2024,no_break,,no,Yemen stays near 0.8 Mt of cereals through 1990 and returns to that level in 1992 after a one-year drop in 1991. No separate Yemen Arab Republic or Democratic Yemen code exists. The 1991 drop is not treated as a new territorial regime.
+255,Belgium,2000,2024,break_applied,2000,no,Belgium-Luxembourg is a joint series through 1999. Belgium and Luxembourg are separate codes from 2000. This snapshot has no overlapping years.
+256,Luxembourg,2000,2024,break_applied,2000,no,Belgium-Luxembourg is a joint series through 1999. Belgium and Luxembourg are separate codes from 2000. This snapshot has no overlapping years.
+272,Serbia,2006,2024,break_applied,2006,no,The joint Serbia and Montenegro code ends in 2005. Separate Serbia and Montenegro codes start in 2006. This snapshot has no overlapping years.
+273,Montenegro,2006,2024,break_applied,2006,no,The joint Serbia and Montenegro code ends in 2005. Separate Serbia and Montenegro codes start in 2006. This snapshot has no overlapping years.
+276,Sudan,2012,2024,break_applied,2012,no,"Sudan (former) runs through 2011. Sudan and South Sudan start in 2012. Independence was 9 July 2011, and this file does not split the 2011 year. No overlapping years."
+277,South Sudan,2012,2024,break_applied,2012,no,"Sudan (former) runs through 2011. Sudan and South Sudan start in 2012. Independence was 9 July 2011, and this file does not split the 2011 year. No overlapping years."
+299,Palestine,1991,2022,no_break,,no,"Palestine runs continuously from 1991 through 2022 and then stops. There is no predecessor handoff in this extract. The terminal gap is missing reporting, not a new regime."
