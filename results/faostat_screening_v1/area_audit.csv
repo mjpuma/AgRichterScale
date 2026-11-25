@@ -1,0 +1,245 @@
+area_code,area,provisional_class,first_qcl_year,last_qcl_year,qcl_reporting_years
+1,Armenia,reporting_entity,1992,2024,33
+2,Afghanistan,reporting_entity,1961,2024,64
+3,Albania,reporting_entity,1961,2024,64
+4,Algeria,reporting_entity,1961,2024,64
+7,Angola,reporting_entity,1961,2024,64
+8,Antigua and Barbuda,reporting_entity,1961,2024,64
+9,Argentina,reporting_entity,1961,2024,64
+10,Australia,reporting_entity,1961,2024,64
+11,Austria,reporting_entity,1961,2024,64
+12,Bahamas,reporting_entity,1961,2024,64
+13,Bahrain,reporting_entity,1961,2024,64
+14,Barbados,reporting_entity,1961,2024,64
+15,Belgium-Luxembourg,reporting_entity,1961,1999,39
+16,Bangladesh,reporting_entity,1961,2024,64
+18,Bhutan,reporting_entity,1961,2024,64
+19,Bolivia (Plurinational State of),reporting_entity,1961,2024,64
+20,Botswana,reporting_entity,1961,2024,64
+21,Brazil,reporting_entity,1961,2024,64
+23,Belize,reporting_entity,1961,2024,64
+25,Solomon Islands,reporting_entity,1961,2024,64
+26,Brunei Darussalam,reporting_entity,1961,2024,64
+27,Bulgaria,reporting_entity,1961,2024,64
+28,Myanmar,reporting_entity,1961,2024,64
+29,Burundi,reporting_entity,1961,2024,64
+32,Cameroon,reporting_entity,1961,2024,64
+33,Canada,reporting_entity,1961,2024,64
+35,Cabo Verde,reporting_entity,1961,2024,64
+37,Central African Republic,reporting_entity,1961,2024,64
+38,Sri Lanka,reporting_entity,1961,2024,64
+39,Chad,reporting_entity,1961,2024,64
+40,Chile,reporting_entity,1961,2024,64
+41,"China, mainland",reporting_entity,1961,2024,64
+44,Colombia,reporting_entity,1961,2024,64
+45,Comoros,reporting_entity,1961,2024,64
+46,Congo,reporting_entity,1961,2024,64
+47,Cook Islands,reporting_entity,1961,2024,64
+48,Costa Rica,reporting_entity,1961,2024,64
+49,Cuba,reporting_entity,1961,2024,64
+50,Cyprus,reporting_entity,1961,2024,64
+51,Czechoslovakia,reporting_entity,1961,1992,32
+52,Azerbaijan,reporting_entity,1992,2024,33
+53,Benin,reporting_entity,1961,2024,64
+54,Denmark,reporting_entity,1961,2024,64
+55,Dominica,reporting_entity,1961,2024,64
+56,Dominican Republic,reporting_entity,1961,2024,64
+57,Belarus,reporting_entity,1992,2024,33
+58,Ecuador,reporting_entity,1961,2024,64
+59,Egypt,reporting_entity,1961,2024,64
+60,El Salvador,reporting_entity,1961,2024,64
+61,Equatorial Guinea,reporting_entity,1961,2024,64
+62,Ethiopia PDR,reporting_entity,1961,1992,32
+63,Estonia,reporting_entity,1992,2024,33
+64,Faroe Islands,reporting_entity,1961,2024,64
+66,Fiji,reporting_entity,1961,2024,64
+67,Finland,reporting_entity,1961,2024,64
+68,France,reporting_entity,1961,2024,64
+69,French Guiana,reporting_entity,1961,2006,46
+70,French Polynesia,reporting_entity,1961,2024,64
+72,Djibouti,reporting_entity,1961,2024,64
+73,Georgia,reporting_entity,1992,2024,33
+74,Gabon,reporting_entity,1961,2024,64
+75,Gambia,reporting_entity,1961,2024,64
+79,Germany,reporting_entity,1961,2024,64
+80,Bosnia and Herzegovina,reporting_entity,1992,2024,33
+81,Ghana,reporting_entity,1961,2024,64
+83,Kiribati,reporting_entity,1961,2024,64
+84,Greece,reporting_entity,1961,2024,64
+86,Grenada,reporting_entity,1961,2024,64
+87,Guadeloupe,reporting_entity,1961,2006,46
+89,Guatemala,reporting_entity,1961,2024,64
+90,Guinea,reporting_entity,1961,2024,64
+91,Guyana,reporting_entity,1961,2024,64
+93,Haiti,reporting_entity,1961,2024,64
+95,Honduras,reporting_entity,1961,2024,64
+96,"China, Hong Kong SAR",reporting_entity,1961,2024,64
+97,Hungary,reporting_entity,1961,2024,64
+98,Croatia,reporting_entity,1992,2024,33
+99,Iceland,reporting_entity,1961,2024,64
+100,India,reporting_entity,1961,2024,64
+101,Indonesia,reporting_entity,1961,2024,64
+102,Iran (Islamic Republic of),reporting_entity,1961,2024,64
+103,Iraq,reporting_entity,1961,2024,64
+104,Ireland,reporting_entity,1961,2024,64
+105,Israel,reporting_entity,1961,2024,64
+106,Italy,reporting_entity,1961,2024,64
+107,Côte d'Ivoire,reporting_entity,1961,2024,64
+108,Kazakhstan,reporting_entity,1992,2024,33
+109,Jamaica,reporting_entity,1961,2024,64
+110,Japan,reporting_entity,1961,2024,64
+112,Jordan,reporting_entity,1961,2024,64
+113,Kyrgyzstan,reporting_entity,1992,2024,33
+114,Kenya,reporting_entity,1961,2024,64
+115,Cambodia,reporting_entity,1961,2024,64
+116,Democratic People's Republic of Korea,reporting_entity,1961,2024,64
+117,Republic of Korea,reporting_entity,1961,2024,64
+118,Kuwait,reporting_entity,1961,2024,64
+119,Latvia,reporting_entity,1992,2024,33
+120,Lao People's Democratic Republic,reporting_entity,1961,2024,64
+121,Lebanon,reporting_entity,1961,2024,64
+122,Lesotho,reporting_entity,1961,2024,64
+123,Liberia,reporting_entity,1961,2024,64
+124,Libya,reporting_entity,1961,2024,64
+126,Lithuania,reporting_entity,1992,2024,33
+127,Marshall Islands,reporting_entity,1991,2024,34
+128,"China, Macao SAR",reporting_entity,1961,2024,64
+129,Madagascar,reporting_entity,1961,2024,64
+130,Malawi,reporting_entity,1961,2024,64
+131,Malaysia,reporting_entity,1961,2024,64
+132,Maldives,reporting_entity,1961,2024,64
+133,Mali,reporting_entity,1961,2024,64
+134,Malta,reporting_entity,1961,2024,64
+135,Martinique,reporting_entity,1961,2006,46
+136,Mauritania,reporting_entity,1961,2024,64
+137,Mauritius,reporting_entity,1961,2024,64
+138,Mexico,reporting_entity,1961,2024,64
+141,Mongolia,reporting_entity,1961,2024,64
+143,Morocco,reporting_entity,1961,2024,64
+144,Mozambique,reporting_entity,1961,2024,64
+145,Micronesia (Federated States of),reporting_entity,1991,2024,34
+146,Republic of Moldova,reporting_entity,1992,2024,33
+147,Namibia,reporting_entity,1961,2024,64
+148,Nauru,reporting_entity,1961,2024,64
+149,Nepal,reporting_entity,1961,2024,64
+150,Netherlands (Kingdom of the),reporting_entity,1961,2024,64
+153,New Caledonia,reporting_entity,1961,2024,64
+154,North Macedonia,reporting_entity,1992,2024,33
+155,Vanuatu,reporting_entity,1961,2024,64
+156,New Zealand,reporting_entity,1961,2024,64
+157,Nicaragua,reporting_entity,1961,2023,63
+158,Niger,reporting_entity,1961,2024,64
+159,Nigeria,reporting_entity,1961,2024,64
+160,Niue,reporting_entity,1961,2024,64
+162,Norway,reporting_entity,1961,2024,64
+165,Pakistan,reporting_entity,1961,2024,64
+166,Panama,reporting_entity,1961,2024,64
+167,Czechia,reporting_entity,1993,2024,32
+168,Papua New Guinea,reporting_entity,1961,2024,64
+169,Paraguay,reporting_entity,1961,2024,64
+170,Peru,reporting_entity,1961,2024,64
+171,Philippines,reporting_entity,1961,2024,64
+173,Poland,reporting_entity,1961,2024,64
+174,Portugal,reporting_entity,1961,2024,64
+175,Guinea-Bissau,reporting_entity,1961,2024,64
+176,Timor-Leste,reporting_entity,1961,2024,64
+177,Puerto Rico,reporting_entity,1961,2024,64
+178,Eritrea,reporting_entity,1993,2024,32
+179,Qatar,reporting_entity,1961,2024,64
+181,Zimbabwe,reporting_entity,1961,2024,64
+182,Réunion,reporting_entity,1961,2006,46
+183,Romania,reporting_entity,1961,2024,64
+184,Rwanda,reporting_entity,1961,2024,64
+185,Russian Federation,reporting_entity,1992,2024,33
+186,Serbia and Montenegro,reporting_entity,1992,2005,14
+188,Saint Kitts and Nevis,reporting_entity,1961,2024,64
+189,Saint Lucia,reporting_entity,1961,2024,64
+191,Saint Vincent and the Grenadines,reporting_entity,1961,2024,64
+193,Sao Tome and Principe,reporting_entity,1961,2024,64
+194,Saudi Arabia,reporting_entity,1961,2024,64
+195,Senegal,reporting_entity,1961,2024,64
+196,Seychelles,reporting_entity,1961,2024,64
+197,Sierra Leone,reporting_entity,1961,2024,64
+198,Slovenia,reporting_entity,1992,2024,33
+199,Slovakia,reporting_entity,1993,2024,32
+200,Singapore,reporting_entity,1961,2024,64
+201,Somalia,reporting_entity,1961,2024,64
+202,South Africa,reporting_entity,1961,2024,64
+203,Spain,reporting_entity,1961,2024,64
+206,Sudan (former),reporting_entity,1961,2011,51
+207,Suriname,reporting_entity,1961,2024,64
+208,Tajikistan,reporting_entity,1992,2024,33
+209,Eswatini,reporting_entity,1961,2024,64
+210,Sweden,reporting_entity,1961,2024,64
+211,Switzerland,reporting_entity,1961,2024,64
+212,Syrian Arab Republic,reporting_entity,1961,2024,64
+213,Turkmenistan,reporting_entity,1992,2024,33
+214,"China, Taiwan Province of",reporting_entity,1961,2024,64
+215,United Republic of Tanzania,reporting_entity,1961,2024,64
+216,Thailand,reporting_entity,1961,2024,64
+217,Togo,reporting_entity,1961,2024,64
+219,Tonga,reporting_entity,1961,2024,64
+220,Trinidad and Tobago,reporting_entity,1961,2024,64
+221,Oman,reporting_entity,1961,2024,64
+222,Tunisia,reporting_entity,1961,2024,64
+223,Türkiye,reporting_entity,1961,2024,64
+225,United Arab Emirates,reporting_entity,1961,2024,64
+226,Uganda,reporting_entity,1961,2024,64
+227,Tuvalu,reporting_entity,1961,2024,64
+228,USSR,reporting_entity,1961,1991,31
+229,United Kingdom of Great Britain and Northern Ireland,reporting_entity,1961,2024,64
+230,Ukraine,reporting_entity,1992,2024,33
+231,United States of America,reporting_entity,1961,2024,64
+233,Burkina Faso,reporting_entity,1961,2024,64
+234,Uruguay,reporting_entity,1961,2024,64
+235,Uzbekistan,reporting_entity,1992,2024,33
+236,Venezuela (Bolivarian Republic of),reporting_entity,1961,2024,64
+237,Viet Nam,reporting_entity,1961,2024,64
+238,Ethiopia,reporting_entity,1993,2024,32
+244,Samoa,reporting_entity,1961,2024,64
+248,Yugoslav SFR,reporting_entity,1961,1991,31
+249,Yemen,reporting_entity,1961,2024,64
+250,Democratic Republic of the Congo,reporting_entity,1961,2024,64
+251,Zambia,reporting_entity,1961,2024,64
+255,Belgium,reporting_entity,2000,2024,25
+256,Luxembourg,reporting_entity,2000,2024,25
+272,Serbia,reporting_entity,2006,2024,19
+273,Montenegro,reporting_entity,2006,2024,19
+276,Sudan,reporting_entity,2012,2024,13
+277,South Sudan,reporting_entity,2012,2024,13
+299,Palestine,reporting_entity,1991,2022,32
+351,China,aggregate,1961,2024,64
+5000,World,aggregate,1961,2024,64
+5100,Africa,aggregate,1961,2024,64
+5101,Eastern Africa,aggregate,1961,2024,64
+5102,Middle Africa,aggregate,1961,2024,64
+5103,Northern Africa,aggregate,1961,2024,64
+5104,Southern Africa,aggregate,1961,2024,64
+5105,Western Africa,aggregate,1961,2024,64
+5200,Americas,aggregate,1961,2024,64
+5203,Northern America,aggregate,1961,2024,64
+5204,Central America,aggregate,1961,2024,64
+5206,Caribbean,aggregate,1961,2024,64
+5207,South America,aggregate,1961,2024,64
+5300,Asia,aggregate,1961,2024,64
+5301,Central Asia,aggregate,1992,2024,33
+5302,Eastern Asia,aggregate,1961,2024,64
+5303,Southern Asia,aggregate,1961,2024,64
+5304,South-eastern Asia,aggregate,1961,2024,64
+5305,Western Asia,aggregate,1961,2024,64
+5400,Europe,aggregate,1961,2024,64
+5401,Eastern Europe,aggregate,1961,2024,64
+5402,Northern Europe,aggregate,1961,2024,64
+5403,Southern Europe,aggregate,1961,2024,64
+5404,Western Europe,aggregate,1961,2024,64
+5500,Oceania,aggregate,1961,2024,64
+5501,Australia and New Zealand,aggregate,1961,2024,64
+5502,Melanesia,aggregate,1961,2024,64
+5503,Micronesia,aggregate,1961,2024,64
+5504,Polynesia,aggregate,1961,2024,64
+5707,European Union (27),aggregate,1961,2024,64
+5801,Least Developed Countries (LDCs),aggregate,1961,2024,64
+5802,Land Locked Developing Countries (LLDCs),aggregate,1961,2024,64
+5803,Small Island Developing States (SIDS),aggregate,1961,2024,64
+5815,Low Income Food Deficit Countries (LIFDCs),aggregate,1961,2024,64
+5817,Net Food Importing Developing Countries (NFIDCs),aggregate,1961,2024,64

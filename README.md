@@ -25,7 +25,7 @@ To avoid cherry-picking, selection does not depend on whether the reported crop 
 
 ### Systematic production screening (in development)
 
-The [v1.0 selection protocol](docs/HISTORICAL_EVENT_SELECTION_PROTOCOL.md) separates the complete 1961-onward production observation frame, documentary event screening and archival reconstructions. The [FAOSTAT screening pipeline](docs/FAOSTAT_SCREENING.md) implements prospective trend-based anomaly flags and preserves missing, zero and positive outcomes; its live data ingestion and coverage/boundary audits remain pending. The 27-event registry is not a representative sample, and the production panel must not be treated as a catalog of independent events.
+The [v1.0 selection protocol](docs/HISTORICAL_EVENT_SELECTION_PROTOCOL.md) separates the complete 1961-onward production observation frame, documentary event screening and archival reconstructions. The [FAOSTAT screening pipeline](docs/FAOSTAT_SCREENING.md) implements prospective trend-based anomaly flags and preserves missing, zero and positive outcomes. A local QCL snapshot has been audited and screened through 2024 ([findings](docs/FAOSTAT_SNAPSHOT_FINDINGS.md)); territorial boundary review and event linkage remain pending. The 27-event registry is not a representative sample, and the production panel must not be treated as a catalog of independent events.
 
 ## Repository Architecture
 

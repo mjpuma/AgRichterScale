@@ -1,0 +1,10 @@
+test_early_missing_and_recent (test_screen_faostat_disruptions.TestScreening) ... ok
+test_panel_missing_flag_and_aggregate (test_screen_faostat_disruptions.TestScreening) ... ok
+test_parse_synthetic_archive (test_screen_faostat_disruptions.TestScreening) ... ok
+test_signed_and_zero (test_screen_faostat_disruptions.TestScreening) ... ok
+test_trend_and_no_leakage (test_screen_faostat_disruptions.TestScreening) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.003s
+
+OK

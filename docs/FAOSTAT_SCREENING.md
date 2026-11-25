@@ -23,7 +23,7 @@ python3 scripts/screen_faostat_disruptions.py \
   --out results/historical_screen_v1
 ```
 
-If using the extracted CSV instead, supply its path in quotes and the verified encoding. Do not treat maximum year as proof of completeness. The source archive's actual local presence, vintage, and contents have not been verified remotely.
+If using the extracted CSV instead, supply its path in quotes and the verified encoding. Do not treat maximum year as proof of completeness. The 2026-11-25 verification of the local FoodShockCascadeModel cache, including the 2024 cutoff decision, is recorded in [FAOSTAT_SNAPSHOT_FINDINGS.md](FAOSTAT_SNAPSHOT_FINDINGS.md). A later bulk still needs its own audit before a new cutoff is used.
 
 ## Reproduce
 
@@ -60,4 +60,4 @@ The primary estimator uses the preceding ten years of positive production (minim
 4. Build documentary search log and event-to-observation links, preserving all legacy cases. Reconstruct archival cases under their separate evidence standard.
 5. Audit legacy spatial mappings and match historical production and affected crop area before revising figures. No inferred event attribution, loss fraction or return periods from the anomaly flags alone.
 
-**Status:** implementation and synthetic tests committed; live FAOSTAT download/run and independent execution of the tests not verified at commit time. No additions to the 27-event registry and no figure changes.
+**Status:** synthetic tests passed and the local FoodShockCascadeModel QCL snapshot was screened through 2024 on 2026-11-25. Schema, item and element codes, units, flags, and the complete-year cutoff are recorded in [FAOSTAT_SNAPSHOT_FINDINGS.md](FAOSTAT_SNAPSHOT_FINDINGS.md). Compact audit files are under `results/`. Full panel, source-row, and candidate tables stay in gitignored `outputs/faostat_historical_screen_v1/`. Boundary review, an official-only rerun, and event linkage remain open. No additions to the 27-event registry and no figure or envelope changes.

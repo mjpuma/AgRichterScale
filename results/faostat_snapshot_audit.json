@@ -1,0 +1,2461 @@
+{
+  "filename": "production.zip",
+  "sha256": "c5835418c18f9322e7decbd6800f93a216eaae3cdfa31acb08f0518c0c6d6853",
+  "member": "Production_Crops_Livestock_E_All_Data_(Normalized).csv",
+  "encoding": "utf-8-sig",
+  "year_min": 1961,
+  "year_max": 2024,
+  "item_labels": {
+    "56": [
+      "Maize (corn)"
+    ],
+    "27": [
+      "Rice"
+    ],
+    "15": [
+      "Wheat"
+    ],
+    "1717": [
+      "Cereals, primary"
+    ]
+  },
+  "units": [
+    {
+      "item": 15,
+      "metric": "harvested_area",
+      "units": [
+        "ha"
+      ]
+    },
+    {
+      "item": 15,
+      "metric": "production",
+      "units": [
+        "t"
+      ]
+    },
+    {
+      "item": 15,
+      "metric": "yield",
+      "units": [
+        "kg/ha"
+      ]
+    },
+    {
+      "item": 27,
+      "metric": "harvested_area",
+      "units": [
+        "ha"
+      ]
+    },
+    {
+      "item": 27,
+      "metric": "production",
+      "units": [
+        "t"
+      ]
+    },
+    {
+      "item": 27,
+      "metric": "yield",
+      "units": [
+        "kg/ha"
+      ]
+    },
+    {
+      "item": 56,
+      "metric": "harvested_area",
+      "units": [
+        "ha"
+      ]
+    },
+    {
+      "item": 56,
+      "metric": "production",
+      "units": [
+        "t"
+      ]
+    },
+    {
+      "item": 56,
+      "metric": "yield",
+      "units": [
+        "kg/ha"
+      ]
+    },
+    {
+      "item": 1717,
+      "metric": "harvested_area",
+      "units": [
+        "ha"
+      ]
+    },
+    {
+      "item": 1717,
+      "metric": "production",
+      "units": [
+        "t"
+      ]
+    },
+    {
+      "item": 1717,
+      "metric": "yield",
+      "units": [
+        "kg/ha"
+      ]
+    }
+  ],
+  "flags": [
+    {
+      "item": 15,
+      "metric": "harvested_area",
+      "flag": "A",
+      "rows": 7638
+    },
+    {
+      "item": 15,
+      "metric": "harvested_area",
+      "flag": "E",
+      "rows": 1037
+    },
+    {
+      "item": 15,
+      "metric": "harvested_area",
+      "flag": "I",
+      "rows": 377
+    },
+    {
+      "item": 15,
+      "metric": "harvested_area",
+      "flag": "M",
+      "rows": 19
+    },
+    {
+      "item": 15,
+      "metric": "harvested_area",
+      "flag": "X",
+      "rows": 208
+    },
+    {
+      "item": 15,
+      "metric": "production",
+      "flag": "A",
+      "rows": 8144
+    },
+    {
+      "item": 15,
+      "metric": "production",
+      "flag": "E",
+      "rows": 603
+    },
+    {
+      "item": 15,
+      "metric": "production",
+      "flag": "I",
+      "rows": 199
+    },
+    {
+      "item": 15,
+      "metric": "production",
+      "flag": "M",
+      "rows": 19
+    },
+    {
+      "item": 15,
+      "metric": "production",
+      "flag": "X",
+      "rows": 314
+    },
+    {
+      "item": 15,
+      "metric": "yield",
+      "flag": "A",
+      "rows": 7468
+    },
+    {
+      "item": 15,
+      "metric": "yield",
+      "flag": "E",
+      "rows": 1470
+    },
+    {
+      "item": 15,
+      "metric": "yield",
+      "flag": "X",
+      "rows": 149
+    },
+    {
+      "item": 27,
+      "metric": "harvested_area",
+      "flag": "A",
+      "rows": 7754
+    },
+    {
+      "item": 27,
+      "metric": "harvested_area",
+      "flag": "E",
+      "rows": 1251
+    },
+    {
+      "item": 27,
+      "metric": "harvested_area",
+      "flag": "I",
+      "rows": 420
+    },
+    {
+      "item": 27,
+      "metric": "harvested_area",
+      "flag": "M",
+      "rows": 118
+    },
+    {
+      "item": 27,
+      "metric": "harvested_area",
+      "flag": "X",
+      "rows": 164
+    },
+    {
+      "item": 27,
+      "metric": "production",
+      "flag": "A",
+      "rows": 8444
+    },
+    {
+      "item": 27,
+      "metric": "production",
+      "flag": "E",
+      "rows": 667
+    },
+    {
+      "item": 27,
+      "metric": "production",
+      "flag": "I",
+      "rows": 253
+    },
+    {
+      "item": 27,
+      "metric": "production",
+      "flag": "M",
+      "rows": 119
+    },
+    {
+      "item": 27,
+      "metric": "production",
+      "flag": "X",
+      "rows": 225
+    },
+    {
+      "item": 27,
+      "metric": "yield",
+      "flag": "A",
+      "rows": 7435
+    },
+    {
+      "item": 27,
+      "metric": "yield",
+      "flag": "E",
+      "rows": 1765
+    },
+    {
+      "item": 27,
+      "metric": "yield",
+      "flag": "X",
+      "rows": 94
+    },
+    {
+      "item": 56,
+      "metric": "harvested_area",
+      "flag": "A",
+      "rows": 8936
+    },
+    {
+      "item": 56,
+      "metric": "harvested_area",
+      "flag": "E",
+      "rows": 1973
+    },
+    {
+      "item": 56,
+      "metric": "harvested_area",
+      "flag": "I",
+      "rows": 553
+    },
+    {
+      "item": 56,
+      "metric": "harvested_area",
+      "flag": "M",
+      "rows": 123
+    },
+    {
+      "item": 56,
+      "metric": "harvested_area",
+      "flag": "X",
+      "rows": 366
+    },
+    {
+      "item": 56,
+      "metric": "production",
+      "flag": "A",
+      "rows": 9708
+    },
+    {
+      "item": 56,
+      "metric": "production",
+      "flag": "E",
+      "rows": 1273
+    },
+    {
+      "item": 56,
+      "metric": "production",
+      "flag": "I",
+      "rows": 352
+    },
+    {
+      "item": 56,
+      "metric": "production",
+      "flag": "M",
+      "rows": 123
+    },
+    {
+      "item": 56,
+      "metric": "production",
+      "flag": "X",
+      "rows": 499
+    },
+    {
+      "item": 56,
+      "metric": "yield",
+      "flag": "A",
+      "rows": 8745
+    },
+    {
+      "item": 56,
+      "metric": "yield",
+      "flag": "E",
+      "rows": 2738
+    },
+    {
+      "item": 56,
+      "metric": "yield",
+      "flag": "X",
+      "rows": 259
+    },
+    {
+      "item": 1717,
+      "metric": "harvested_area",
+      "flag": "A",
+      "rows": 9368
+    },
+    {
+      "item": 1717,
+      "metric": "harvested_area",
+      "flag": "E",
+      "rows": 3475
+    },
+    {
+      "item": 1717,
+      "metric": "harvested_area",
+      "flag": "M",
+      "rows": 43
+    },
+    {
+      "item": 1717,
+      "metric": "harvested_area",
+      "flag": "X",
+      "rows": 55
+    },
+    {
+      "item": 1717,
+      "metric": "production",
+      "flag": "A",
+      "rows": 10205
+    },
+    {
+      "item": 1717,
+      "metric": "production",
+      "flag": "E",
+      "rows": 2581
+    },
+    {
+      "item": 1717,
+      "metric": "production",
+      "flag": "M",
+      "rows": 43
+    },
+    {
+      "item": 1717,
+      "metric": "production",
+      "flag": "X",
+      "rows": 112
+    },
+    {
+      "item": 1717,
+      "metric": "yield",
+      "flag": "A",
+      "rows": 9156
+    },
+    {
+      "item": 1717,
+      "metric": "yield",
+      "flag": "E",
+      "rows": 3659
+    },
+    {
+      "item": 1717,
+      "metric": "yield",
+      "flag": "X",
+      "rows": 33
+    }
+  ],
+  "annual_coverage": [
+    {
+      "year": 1961,
+      "crop": "wheat",
+      "production_rows": 133,
+      "nonmissing_production_area_codes_including_aggregates": 133,
+      "harvested_area_rows": 133,
+      "yield_rows": 124
+    },
+    {
+      "year": 1961,
+      "crop": "rice_paddy",
+      "production_rows": 145,
+      "nonmissing_production_area_codes_including_aggregates": 145,
+      "harvested_area_rows": 145,
+      "yield_rows": 139
+    },
+    {
+      "year": 1961,
+      "crop": "maize",
+      "production_rows": 171,
+      "nonmissing_production_area_codes_including_aggregates": 170,
+      "harvested_area_rows": 171,
+      "yield_rows": 170
+    },
+    {
+      "year": 1961,
+      "crop": "cereals_primary",
+      "production_rows": 189,
+      "nonmissing_production_area_codes_including_aggregates": 189,
+      "harvested_area_rows": 189,
+      "yield_rows": 186
+    },
+    {
+      "year": 1962,
+      "crop": "wheat",
+      "production_rows": 133,
+      "nonmissing_production_area_codes_including_aggregates": 133,
+      "harvested_area_rows": 133,
+      "yield_rows": 124
+    },
+    {
+      "year": 1962,
+      "crop": "rice_paddy",
+      "production_rows": 145,
+      "nonmissing_production_area_codes_including_aggregates": 145,
+      "harvested_area_rows": 145,
+      "yield_rows": 139
+    },
+    {
+      "year": 1962,
+      "crop": "maize",
+      "production_rows": 171,
+      "nonmissing_production_area_codes_including_aggregates": 170,
+      "harvested_area_rows": 171,
+      "yield_rows": 170
+    },
+    {
+      "year": 1962,
+      "crop": "cereals_primary",
+      "production_rows": 189,
+      "nonmissing_production_area_codes_including_aggregates": 189,
+      "harvested_area_rows": 189,
+      "yield_rows": 186
+    },
+    {
+      "year": 1963,
+      "crop": "wheat",
+      "production_rows": 133,
+      "nonmissing_production_area_codes_including_aggregates": 133,
+      "harvested_area_rows": 133,
+      "yield_rows": 124
+    },
+    {
+      "year": 1963,
+      "crop": "rice_paddy",
+      "production_rows": 145,
+      "nonmissing_production_area_codes_including_aggregates": 145,
+      "harvested_area_rows": 145,
+      "yield_rows": 139
+    },
+    {
+      "year": 1963,
+      "crop": "maize",
+      "production_rows": 171,
+      "nonmissing_production_area_codes_including_aggregates": 170,
+      "harvested_area_rows": 171,
+      "yield_rows": 170
+    },
+    {
+      "year": 1963,
+      "crop": "cereals_primary",
+      "production_rows": 189,
+      "nonmissing_production_area_codes_including_aggregates": 189,
+      "harvested_area_rows": 189,
+      "yield_rows": 186
+    },
+    {
+      "year": 1964,
+      "crop": "wheat",
+      "production_rows": 133,
+      "nonmissing_production_area_codes_including_aggregates": 133,
+      "harvested_area_rows": 133,
+      "yield_rows": 124
+    },
+    {
+      "year": 1964,
+      "crop": "rice_paddy",
+      "production_rows": 145,
+      "nonmissing_production_area_codes_including_aggregates": 145,
+      "harvested_area_rows": 145,
+      "yield_rows": 139
+    },
+    {
+      "year": 1964,
+      "crop": "maize",
+      "production_rows": 171,
+      "nonmissing_production_area_codes_including_aggregates": 170,
+      "harvested_area_rows": 171,
+      "yield_rows": 170
+    },
+    {
+      "year": 1964,
+      "crop": "cereals_primary",
+      "production_rows": 189,
+      "nonmissing_production_area_codes_including_aggregates": 189,
+      "harvested_area_rows": 189,
+      "yield_rows": 186
+    },
+    {
+      "year": 1965,
+      "crop": "wheat",
+      "production_rows": 133,
+      "nonmissing_production_area_codes_including_aggregates": 133,
+      "harvested_area_rows": 133,
+      "yield_rows": 124
+    },
+    {
+      "year": 1965,
+      "crop": "rice_paddy",
+      "production_rows": 145,
+      "nonmissing_production_area_codes_including_aggregates": 145,
+      "harvested_area_rows": 145,
+      "yield_rows": 139
+    },
+    {
+      "year": 1965,
+      "crop": "maize",
+      "production_rows": 171,
+      "nonmissing_production_area_codes_including_aggregates": 170,
+      "harvested_area_rows": 171,
+      "yield_rows": 170
+    },
+    {
+      "year": 1965,
+      "crop": "cereals_primary",
+      "production_rows": 189,
+      "nonmissing_production_area_codes_including_aggregates": 189,
+      "harvested_area_rows": 189,
+      "yield_rows": 186
+    },
+    {
+      "year": 1966,
+      "crop": "wheat",
+      "production_rows": 133,
+      "nonmissing_production_area_codes_including_aggregates": 133,
+      "harvested_area_rows": 133,
+      "yield_rows": 125
+    },
+    {
+      "year": 1966,
+      "crop": "rice_paddy",
+      "production_rows": 145,
+      "nonmissing_production_area_codes_including_aggregates": 145,
+      "harvested_area_rows": 145,
+      "yield_rows": 139
+    },
+    {
+      "year": 1966,
+      "crop": "maize",
+      "production_rows": 172,
+      "nonmissing_production_area_codes_including_aggregates": 171,
+      "harvested_area_rows": 172,
+      "yield_rows": 171
+    },
+    {
+      "year": 1966,
+      "crop": "cereals_primary",
+      "production_rows": 190,
+      "nonmissing_production_area_codes_including_aggregates": 190,
+      "harvested_area_rows": 190,
+      "yield_rows": 187
+    },
+    {
+      "year": 1967,
+      "crop": "wheat",
+      "production_rows": 133,
+      "nonmissing_production_area_codes_including_aggregates": 133,
+      "harvested_area_rows": 133,
+      "yield_rows": 125
+    },
+    {
+      "year": 1967,
+      "crop": "rice_paddy",
+      "production_rows": 145,
+      "nonmissing_production_area_codes_including_aggregates": 145,
+      "harvested_area_rows": 145,
+      "yield_rows": 140
+    },
+    {
+      "year": 1967,
+      "crop": "maize",
+      "production_rows": 172,
+      "nonmissing_production_area_codes_including_aggregates": 171,
+      "harvested_area_rows": 172,
+      "yield_rows": 171
+    },
+    {
+      "year": 1967,
+      "crop": "cereals_primary",
+      "production_rows": 190,
+      "nonmissing_production_area_codes_including_aggregates": 190,
+      "harvested_area_rows": 190,
+      "yield_rows": 187
+    },
+    {
+      "year": 1968,
+      "crop": "wheat",
+      "production_rows": 133,
+      "nonmissing_production_area_codes_including_aggregates": 133,
+      "harvested_area_rows": 133,
+      "yield_rows": 125
+    },
+    {
+      "year": 1968,
+      "crop": "rice_paddy",
+      "production_rows": 145,
+      "nonmissing_production_area_codes_including_aggregates": 145,
+      "harvested_area_rows": 145,
+      "yield_rows": 142
+    },
+    {
+      "year": 1968,
+      "crop": "maize",
+      "production_rows": 172,
+      "nonmissing_production_area_codes_including_aggregates": 171,
+      "harvested_area_rows": 172,
+      "yield_rows": 171
+    },
+    {
+      "year": 1968,
+      "crop": "cereals_primary",
+      "production_rows": 190,
+      "nonmissing_production_area_codes_including_aggregates": 190,
+      "harvested_area_rows": 190,
+      "yield_rows": 188
+    },
+    {
+      "year": 1969,
+      "crop": "wheat",
+      "production_rows": 133,
+      "nonmissing_production_area_codes_including_aggregates": 133,
+      "harvested_area_rows": 133,
+      "yield_rows": 125
+    },
+    {
+      "year": 1969,
+      "crop": "rice_paddy",
+      "production_rows": 145,
+      "nonmissing_production_area_codes_including_aggregates": 145,
+      "harvested_area_rows": 145,
+      "yield_rows": 142
+    },
+    {
+      "year": 1969,
+      "crop": "maize",
+      "production_rows": 172,
+      "nonmissing_production_area_codes_including_aggregates": 171,
+      "harvested_area_rows": 172,
+      "yield_rows": 171
+    },
+    {
+      "year": 1969,
+      "crop": "cereals_primary",
+      "production_rows": 190,
+      "nonmissing_production_area_codes_including_aggregates": 190,
+      "harvested_area_rows": 190,
+      "yield_rows": 188
+    },
+    {
+      "year": 1970,
+      "crop": "wheat",
+      "production_rows": 133,
+      "nonmissing_production_area_codes_including_aggregates": 133,
+      "harvested_area_rows": 133,
+      "yield_rows": 127
+    },
+    {
+      "year": 1970,
+      "crop": "rice_paddy",
+      "production_rows": 145,
+      "nonmissing_production_area_codes_including_aggregates": 145,
+      "harvested_area_rows": 145,
+      "yield_rows": 143
+    },
+    {
+      "year": 1970,
+      "crop": "maize",
+      "production_rows": 174,
+      "nonmissing_production_area_codes_including_aggregates": 173,
+      "harvested_area_rows": 174,
+      "yield_rows": 173
+    },
+    {
+      "year": 1970,
+      "crop": "cereals_primary",
+      "production_rows": 190,
+      "nonmissing_production_area_codes_including_aggregates": 190,
+      "harvested_area_rows": 190,
+      "yield_rows": 188
+    },
+    {
+      "year": 1971,
+      "crop": "wheat",
+      "production_rows": 133,
+      "nonmissing_production_area_codes_including_aggregates": 133,
+      "harvested_area_rows": 133,
+      "yield_rows": 128
+    },
+    {
+      "year": 1971,
+      "crop": "rice_paddy",
+      "production_rows": 145,
+      "nonmissing_production_area_codes_including_aggregates": 145,
+      "harvested_area_rows": 145,
+      "yield_rows": 143
+    },
+    {
+      "year": 1971,
+      "crop": "maize",
+      "production_rows": 174,
+      "nonmissing_production_area_codes_including_aggregates": 173,
+      "harvested_area_rows": 174,
+      "yield_rows": 173
+    },
+    {
+      "year": 1971,
+      "crop": "cereals_primary",
+      "production_rows": 190,
+      "nonmissing_production_area_codes_including_aggregates": 190,
+      "harvested_area_rows": 190,
+      "yield_rows": 189
+    },
+    {
+      "year": 1972,
+      "crop": "wheat",
+      "production_rows": 133,
+      "nonmissing_production_area_codes_including_aggregates": 133,
+      "harvested_area_rows": 133,
+      "yield_rows": 128
+    },
+    {
+      "year": 1972,
+      "crop": "rice_paddy",
+      "production_rows": 145,
+      "nonmissing_production_area_codes_including_aggregates": 145,
+      "harvested_area_rows": 145,
+      "yield_rows": 143
+    },
+    {
+      "year": 1972,
+      "crop": "maize",
+      "production_rows": 175,
+      "nonmissing_production_area_codes_including_aggregates": 174,
+      "harvested_area_rows": 175,
+      "yield_rows": 174
+    },
+    {
+      "year": 1972,
+      "crop": "cereals_primary",
+      "production_rows": 190,
+      "nonmissing_production_area_codes_including_aggregates": 190,
+      "harvested_area_rows": 190,
+      "yield_rows": 189
+    },
+    {
+      "year": 1973,
+      "crop": "wheat",
+      "production_rows": 133,
+      "nonmissing_production_area_codes_including_aggregates": 133,
+      "harvested_area_rows": 133,
+      "yield_rows": 128
+    },
+    {
+      "year": 1973,
+      "crop": "rice_paddy",
+      "production_rows": 145,
+      "nonmissing_production_area_codes_including_aggregates": 145,
+      "harvested_area_rows": 145,
+      "yield_rows": 143
+    },
+    {
+      "year": 1973,
+      "crop": "maize",
+      "production_rows": 175,
+      "nonmissing_production_area_codes_including_aggregates": 174,
+      "harvested_area_rows": 175,
+      "yield_rows": 174
+    },
+    {
+      "year": 1973,
+      "crop": "cereals_primary",
+      "production_rows": 190,
+      "nonmissing_production_area_codes_including_aggregates": 190,
+      "harvested_area_rows": 190,
+      "yield_rows": 189
+    },
+    {
+      "year": 1974,
+      "crop": "wheat",
+      "production_rows": 133,
+      "nonmissing_production_area_codes_including_aggregates": 133,
+      "harvested_area_rows": 133,
+      "yield_rows": 128
+    },
+    {
+      "year": 1974,
+      "crop": "rice_paddy",
+      "production_rows": 145,
+      "nonmissing_production_area_codes_including_aggregates": 145,
+      "harvested_area_rows": 145,
+      "yield_rows": 143
+    },
+    {
+      "year": 1974,
+      "crop": "maize",
+      "production_rows": 175,
+      "nonmissing_production_area_codes_including_aggregates": 174,
+      "harvested_area_rows": 175,
+      "yield_rows": 174
+    },
+    {
+      "year": 1974,
+      "crop": "cereals_primary",
+      "production_rows": 190,
+      "nonmissing_production_area_codes_including_aggregates": 190,
+      "harvested_area_rows": 190,
+      "yield_rows": 189
+    },
+    {
+      "year": 1975,
+      "crop": "wheat",
+      "production_rows": 133,
+      "nonmissing_production_area_codes_including_aggregates": 133,
+      "harvested_area_rows": 133,
+      "yield_rows": 128
+    },
+    {
+      "year": 1975,
+      "crop": "rice_paddy",
+      "production_rows": 145,
+      "nonmissing_production_area_codes_including_aggregates": 145,
+      "harvested_area_rows": 145,
+      "yield_rows": 143
+    },
+    {
+      "year": 1975,
+      "crop": "maize",
+      "production_rows": 175,
+      "nonmissing_production_area_codes_including_aggregates": 174,
+      "harvested_area_rows": 175,
+      "yield_rows": 174
+    },
+    {
+      "year": 1975,
+      "crop": "cereals_primary",
+      "production_rows": 190,
+      "nonmissing_production_area_codes_including_aggregates": 190,
+      "harvested_area_rows": 190,
+      "yield_rows": 189
+    },
+    {
+      "year": 1976,
+      "crop": "wheat",
+      "production_rows": 133,
+      "nonmissing_production_area_codes_including_aggregates": 133,
+      "harvested_area_rows": 133,
+      "yield_rows": 130
+    },
+    {
+      "year": 1976,
+      "crop": "rice_paddy",
+      "production_rows": 145,
+      "nonmissing_production_area_codes_including_aggregates": 145,
+      "harvested_area_rows": 145,
+      "yield_rows": 143
+    },
+    {
+      "year": 1976,
+      "crop": "maize",
+      "production_rows": 175,
+      "nonmissing_production_area_codes_including_aggregates": 174,
+      "harvested_area_rows": 175,
+      "yield_rows": 174
+    },
+    {
+      "year": 1976,
+      "crop": "cereals_primary",
+      "production_rows": 190,
+      "nonmissing_production_area_codes_including_aggregates": 190,
+      "harvested_area_rows": 190,
+      "yield_rows": 189
+    },
+    {
+      "year": 1977,
+      "crop": "wheat",
+      "production_rows": 133,
+      "nonmissing_production_area_codes_including_aggregates": 133,
+      "harvested_area_rows": 133,
+      "yield_rows": 131
+    },
+    {
+      "year": 1977,
+      "crop": "rice_paddy",
+      "production_rows": 145,
+      "nonmissing_production_area_codes_including_aggregates": 145,
+      "harvested_area_rows": 145,
+      "yield_rows": 143
+    },
+    {
+      "year": 1977,
+      "crop": "maize",
+      "production_rows": 175,
+      "nonmissing_production_area_codes_including_aggregates": 174,
+      "harvested_area_rows": 175,
+      "yield_rows": 174
+    },
+    {
+      "year": 1977,
+      "crop": "cereals_primary",
+      "production_rows": 190,
+      "nonmissing_production_area_codes_including_aggregates": 190,
+      "harvested_area_rows": 190,
+      "yield_rows": 190
+    },
+    {
+      "year": 1978,
+      "crop": "wheat",
+      "production_rows": 133,
+      "nonmissing_production_area_codes_including_aggregates": 133,
+      "harvested_area_rows": 133,
+      "yield_rows": 131
+    },
+    {
+      "year": 1978,
+      "crop": "rice_paddy",
+      "production_rows": 145,
+      "nonmissing_production_area_codes_including_aggregates": 145,
+      "harvested_area_rows": 145,
+      "yield_rows": 143
+    },
+    {
+      "year": 1978,
+      "crop": "maize",
+      "production_rows": 174,
+      "nonmissing_production_area_codes_including_aggregates": 173,
+      "harvested_area_rows": 174,
+      "yield_rows": 173
+    },
+    {
+      "year": 1978,
+      "crop": "cereals_primary",
+      "production_rows": 189,
+      "nonmissing_production_area_codes_including_aggregates": 189,
+      "harvested_area_rows": 189,
+      "yield_rows": 189
+    },
+    {
+      "year": 1979,
+      "crop": "wheat",
+      "production_rows": 133,
+      "nonmissing_production_area_codes_including_aggregates": 133,
+      "harvested_area_rows": 133,
+      "yield_rows": 131
+    },
+    {
+      "year": 1979,
+      "crop": "rice_paddy",
+      "production_rows": 145,
+      "nonmissing_production_area_codes_including_aggregates": 145,
+      "harvested_area_rows": 145,
+      "yield_rows": 143
+    },
+    {
+      "year": 1979,
+      "crop": "maize",
+      "production_rows": 174,
+      "nonmissing_production_area_codes_including_aggregates": 173,
+      "harvested_area_rows": 174,
+      "yield_rows": 173
+    },
+    {
+      "year": 1979,
+      "crop": "cereals_primary",
+      "production_rows": 189,
+      "nonmissing_production_area_codes_including_aggregates": 189,
+      "harvested_area_rows": 189,
+      "yield_rows": 189
+    },
+    {
+      "year": 1980,
+      "crop": "wheat",
+      "production_rows": 133,
+      "nonmissing_production_area_codes_including_aggregates": 133,
+      "harvested_area_rows": 133,
+      "yield_rows": 131
+    },
+    {
+      "year": 1980,
+      "crop": "rice_paddy",
+      "production_rows": 145,
+      "nonmissing_production_area_codes_including_aggregates": 145,
+      "harvested_area_rows": 145,
+      "yield_rows": 143
+    },
+    {
+      "year": 1980,
+      "crop": "maize",
+      "production_rows": 173,
+      "nonmissing_production_area_codes_including_aggregates": 172,
+      "harvested_area_rows": 173,
+      "yield_rows": 171
+    },
+    {
+      "year": 1980,
+      "crop": "cereals_primary",
+      "production_rows": 189,
+      "nonmissing_production_area_codes_including_aggregates": 189,
+      "harvested_area_rows": 189,
+      "yield_rows": 188
+    },
+    {
+      "year": 1981,
+      "crop": "wheat",
+      "production_rows": 133,
+      "nonmissing_production_area_codes_including_aggregates": 133,
+      "harvested_area_rows": 133,
+      "yield_rows": 131
+    },
+    {
+      "year": 1981,
+      "crop": "rice_paddy",
+      "production_rows": 145,
+      "nonmissing_production_area_codes_including_aggregates": 145,
+      "harvested_area_rows": 145,
+      "yield_rows": 142
+    },
+    {
+      "year": 1981,
+      "crop": "maize",
+      "production_rows": 172,
+      "nonmissing_production_area_codes_including_aggregates": 170,
+      "harvested_area_rows": 172,
+      "yield_rows": 170
+    },
+    {
+      "year": 1981,
+      "crop": "cereals_primary",
+      "production_rows": 189,
+      "nonmissing_production_area_codes_including_aggregates": 189,
+      "harvested_area_rows": 189,
+      "yield_rows": 189
+    },
+    {
+      "year": 1982,
+      "crop": "wheat",
+      "production_rows": 133,
+      "nonmissing_production_area_codes_including_aggregates": 133,
+      "harvested_area_rows": 133,
+      "yield_rows": 131
+    },
+    {
+      "year": 1982,
+      "crop": "rice_paddy",
+      "production_rows": 145,
+      "nonmissing_production_area_codes_including_aggregates": 145,
+      "harvested_area_rows": 145,
+      "yield_rows": 142
+    },
+    {
+      "year": 1982,
+      "crop": "maize",
+      "production_rows": 172,
+      "nonmissing_production_area_codes_including_aggregates": 170,
+      "harvested_area_rows": 172,
+      "yield_rows": 170
+    },
+    {
+      "year": 1982,
+      "crop": "cereals_primary",
+      "production_rows": 189,
+      "nonmissing_production_area_codes_including_aggregates": 189,
+      "harvested_area_rows": 189,
+      "yield_rows": 189
+    },
+    {
+      "year": 1983,
+      "crop": "wheat",
+      "production_rows": 133,
+      "nonmissing_production_area_codes_including_aggregates": 133,
+      "harvested_area_rows": 133,
+      "yield_rows": 131
+    },
+    {
+      "year": 1983,
+      "crop": "rice_paddy",
+      "production_rows": 145,
+      "nonmissing_production_area_codes_including_aggregates": 145,
+      "harvested_area_rows": 145,
+      "yield_rows": 142
+    },
+    {
+      "year": 1983,
+      "crop": "maize",
+      "production_rows": 172,
+      "nonmissing_production_area_codes_including_aggregates": 170,
+      "harvested_area_rows": 172,
+      "yield_rows": 170
+    },
+    {
+      "year": 1983,
+      "crop": "cereals_primary",
+      "production_rows": 189,
+      "nonmissing_production_area_codes_including_aggregates": 189,
+      "harvested_area_rows": 189,
+      "yield_rows": 189
+    },
+    {
+      "year": 1984,
+      "crop": "wheat",
+      "production_rows": 133,
+      "nonmissing_production_area_codes_including_aggregates": 133,
+      "harvested_area_rows": 133,
+      "yield_rows": 131
+    },
+    {
+      "year": 1984,
+      "crop": "rice_paddy",
+      "production_rows": 145,
+      "nonmissing_production_area_codes_including_aggregates": 145,
+      "harvested_area_rows": 145,
+      "yield_rows": 142
+    },
+    {
+      "year": 1984,
+      "crop": "maize",
+      "production_rows": 172,
+      "nonmissing_production_area_codes_including_aggregates": 170,
+      "harvested_area_rows": 172,
+      "yield_rows": 170
+    },
+    {
+      "year": 1984,
+      "crop": "cereals_primary",
+      "production_rows": 189,
+      "nonmissing_production_area_codes_including_aggregates": 189,
+      "harvested_area_rows": 189,
+      "yield_rows": 189
+    },
+    {
+      "year": 1985,
+      "crop": "wheat",
+      "production_rows": 133,
+      "nonmissing_production_area_codes_including_aggregates": 133,
+      "harvested_area_rows": 133,
+      "yield_rows": 132
+    },
+    {
+      "year": 1985,
+      "crop": "rice_paddy",
+      "production_rows": 145,
+      "nonmissing_production_area_codes_including_aggregates": 145,
+      "harvested_area_rows": 145,
+      "yield_rows": 142
+    },
+    {
+      "year": 1985,
+      "crop": "maize",
+      "production_rows": 172,
+      "nonmissing_production_area_codes_including_aggregates": 170,
+      "harvested_area_rows": 172,
+      "yield_rows": 170
+    },
+    {
+      "year": 1985,
+      "crop": "cereals_primary",
+      "production_rows": 189,
+      "nonmissing_production_area_codes_including_aggregates": 189,
+      "harvested_area_rows": 189,
+      "yield_rows": 189
+    },
+    {
+      "year": 1986,
+      "crop": "wheat",
+      "production_rows": 133,
+      "nonmissing_production_area_codes_including_aggregates": 133,
+      "harvested_area_rows": 133,
+      "yield_rows": 133
+    },
+    {
+      "year": 1986,
+      "crop": "rice_paddy",
+      "production_rows": 145,
+      "nonmissing_production_area_codes_including_aggregates": 145,
+      "harvested_area_rows": 145,
+      "yield_rows": 143
+    },
+    {
+      "year": 1986,
+      "crop": "maize",
+      "production_rows": 172,
+      "nonmissing_production_area_codes_including_aggregates": 170,
+      "harvested_area_rows": 172,
+      "yield_rows": 170
+    },
+    {
+      "year": 1986,
+      "crop": "cereals_primary",
+      "production_rows": 189,
+      "nonmissing_production_area_codes_including_aggregates": 189,
+      "harvested_area_rows": 189,
+      "yield_rows": 189
+    },
+    {
+      "year": 1987,
+      "crop": "wheat",
+      "production_rows": 133,
+      "nonmissing_production_area_codes_including_aggregates": 133,
+      "harvested_area_rows": 133,
+      "yield_rows": 133
+    },
+    {
+      "year": 1987,
+      "crop": "rice_paddy",
+      "production_rows": 145,
+      "nonmissing_production_area_codes_including_aggregates": 145,
+      "harvested_area_rows": 145,
+      "yield_rows": 142
+    },
+    {
+      "year": 1987,
+      "crop": "maize",
+      "production_rows": 172,
+      "nonmissing_production_area_codes_including_aggregates": 170,
+      "harvested_area_rows": 172,
+      "yield_rows": 170
+    },
+    {
+      "year": 1987,
+      "crop": "cereals_primary",
+      "production_rows": 189,
+      "nonmissing_production_area_codes_including_aggregates": 189,
+      "harvested_area_rows": 189,
+      "yield_rows": 188
+    },
+    {
+      "year": 1988,
+      "crop": "wheat",
+      "production_rows": 133,
+      "nonmissing_production_area_codes_including_aggregates": 133,
+      "harvested_area_rows": 133,
+      "yield_rows": 133
+    },
+    {
+      "year": 1988,
+      "crop": "rice_paddy",
+      "production_rows": 145,
+      "nonmissing_production_area_codes_including_aggregates": 145,
+      "harvested_area_rows": 145,
+      "yield_rows": 143
+    },
+    {
+      "year": 1988,
+      "crop": "maize",
+      "production_rows": 172,
+      "nonmissing_production_area_codes_including_aggregates": 170,
+      "harvested_area_rows": 172,
+      "yield_rows": 170
+    },
+    {
+      "year": 1988,
+      "crop": "cereals_primary",
+      "production_rows": 189,
+      "nonmissing_production_area_codes_including_aggregates": 189,
+      "harvested_area_rows": 189,
+      "yield_rows": 188
+    },
+    {
+      "year": 1989,
+      "crop": "wheat",
+      "production_rows": 133,
+      "nonmissing_production_area_codes_including_aggregates": 133,
+      "harvested_area_rows": 133,
+      "yield_rows": 133
+    },
+    {
+      "year": 1989,
+      "crop": "rice_paddy",
+      "production_rows": 145,
+      "nonmissing_production_area_codes_including_aggregates": 145,
+      "harvested_area_rows": 145,
+      "yield_rows": 143
+    },
+    {
+      "year": 1989,
+      "crop": "maize",
+      "production_rows": 173,
+      "nonmissing_production_area_codes_including_aggregates": 171,
+      "harvested_area_rows": 173,
+      "yield_rows": 171
+    },
+    {
+      "year": 1989,
+      "crop": "cereals_primary",
+      "production_rows": 189,
+      "nonmissing_production_area_codes_including_aggregates": 189,
+      "harvested_area_rows": 189,
+      "yield_rows": 188
+    },
+    {
+      "year": 1990,
+      "crop": "wheat",
+      "production_rows": 133,
+      "nonmissing_production_area_codes_including_aggregates": 133,
+      "harvested_area_rows": 133,
+      "yield_rows": 133
+    },
+    {
+      "year": 1990,
+      "crop": "rice_paddy",
+      "production_rows": 145,
+      "nonmissing_production_area_codes_including_aggregates": 145,
+      "harvested_area_rows": 145,
+      "yield_rows": 143
+    },
+    {
+      "year": 1990,
+      "crop": "maize",
+      "production_rows": 173,
+      "nonmissing_production_area_codes_including_aggregates": 172,
+      "harvested_area_rows": 173,
+      "yield_rows": 172
+    },
+    {
+      "year": 1990,
+      "crop": "cereals_primary",
+      "production_rows": 189,
+      "nonmissing_production_area_codes_including_aggregates": 189,
+      "harvested_area_rows": 189,
+      "yield_rows": 189
+    },
+    {
+      "year": 1991,
+      "crop": "wheat",
+      "production_rows": 134,
+      "nonmissing_production_area_codes_including_aggregates": 133,
+      "harvested_area_rows": 134,
+      "yield_rows": 133
+    },
+    {
+      "year": 1991,
+      "crop": "rice_paddy",
+      "production_rows": 147,
+      "nonmissing_production_area_codes_including_aggregates": 145,
+      "harvested_area_rows": 147,
+      "yield_rows": 141
+    },
+    {
+      "year": 1991,
+      "crop": "maize",
+      "production_rows": 179,
+      "nonmissing_production_area_codes_including_aggregates": 175,
+      "harvested_area_rows": 179,
+      "yield_rows": 174
+    },
+    {
+      "year": 1991,
+      "crop": "cereals_primary",
+      "production_rows": 193,
+      "nonmissing_production_area_codes_including_aggregates": 191,
+      "harvested_area_rows": 193,
+      "yield_rows": 190
+    },
+    {
+      "year": 1992,
+      "crop": "wheat",
+      "production_rows": 153,
+      "nonmissing_production_area_codes_including_aggregates": 152,
+      "harvested_area_rows": 153,
+      "yield_rows": 152
+    },
+    {
+      "year": 1992,
+      "crop": "rice_paddy",
+      "production_rows": 155,
+      "nonmissing_production_area_codes_including_aggregates": 152,
+      "harvested_area_rows": 155,
+      "yield_rows": 149
+    },
+    {
+      "year": 1992,
+      "crop": "maize",
+      "production_rows": 196,
+      "nonmissing_production_area_codes_including_aggregates": 193,
+      "harvested_area_rows": 196,
+      "yield_rows": 192
+    },
+    {
+      "year": 1992,
+      "crop": "cereals_primary",
+      "production_rows": 212,
+      "nonmissing_production_area_codes_including_aggregates": 210,
+      "harvested_area_rows": 212,
+      "yield_rows": 209
+    },
+    {
+      "year": 1993,
+      "crop": "wheat",
+      "production_rows": 155,
+      "nonmissing_production_area_codes_including_aggregates": 154,
+      "harvested_area_rows": 155,
+      "yield_rows": 154
+    },
+    {
+      "year": 1993,
+      "crop": "rice_paddy",
+      "production_rows": 156,
+      "nonmissing_production_area_codes_including_aggregates": 152,
+      "harvested_area_rows": 156,
+      "yield_rows": 148
+    },
+    {
+      "year": 1993,
+      "crop": "maize",
+      "production_rows": 198,
+      "nonmissing_production_area_codes_including_aggregates": 195,
+      "harvested_area_rows": 198,
+      "yield_rows": 194
+    },
+    {
+      "year": 1993,
+      "crop": "cereals_primary",
+      "production_rows": 214,
+      "nonmissing_production_area_codes_including_aggregates": 212,
+      "harvested_area_rows": 214,
+      "yield_rows": 211
+    },
+    {
+      "year": 1994,
+      "crop": "wheat",
+      "production_rows": 155,
+      "nonmissing_production_area_codes_including_aggregates": 155,
+      "harvested_area_rows": 155,
+      "yield_rows": 155
+    },
+    {
+      "year": 1994,
+      "crop": "rice_paddy",
+      "production_rows": 156,
+      "nonmissing_production_area_codes_including_aggregates": 152,
+      "harvested_area_rows": 156,
+      "yield_rows": 147
+    },
+    {
+      "year": 1994,
+      "crop": "maize",
+      "production_rows": 198,
+      "nonmissing_production_area_codes_including_aggregates": 195,
+      "harvested_area_rows": 198,
+      "yield_rows": 194
+    },
+    {
+      "year": 1994,
+      "crop": "cereals_primary",
+      "production_rows": 214,
+      "nonmissing_production_area_codes_including_aggregates": 213,
+      "harvested_area_rows": 214,
+      "yield_rows": 212
+    },
+    {
+      "year": 1995,
+      "crop": "wheat",
+      "production_rows": 155,
+      "nonmissing_production_area_codes_including_aggregates": 155,
+      "harvested_area_rows": 155,
+      "yield_rows": 155
+    },
+    {
+      "year": 1995,
+      "crop": "rice_paddy",
+      "production_rows": 156,
+      "nonmissing_production_area_codes_including_aggregates": 154,
+      "harvested_area_rows": 156,
+      "yield_rows": 149
+    },
+    {
+      "year": 1995,
+      "crop": "maize",
+      "production_rows": 198,
+      "nonmissing_production_area_codes_including_aggregates": 195,
+      "harvested_area_rows": 198,
+      "yield_rows": 194
+    },
+    {
+      "year": 1995,
+      "crop": "cereals_primary",
+      "production_rows": 214,
+      "nonmissing_production_area_codes_including_aggregates": 213,
+      "harvested_area_rows": 214,
+      "yield_rows": 212
+    },
+    {
+      "year": 1996,
+      "crop": "wheat",
+      "production_rows": 155,
+      "nonmissing_production_area_codes_including_aggregates": 155,
+      "harvested_area_rows": 155,
+      "yield_rows": 155
+    },
+    {
+      "year": 1996,
+      "crop": "rice_paddy",
+      "production_rows": 156,
+      "nonmissing_production_area_codes_including_aggregates": 153,
+      "harvested_area_rows": 156,
+      "yield_rows": 149
+    },
+    {
+      "year": 1996,
+      "crop": "maize",
+      "production_rows": 198,
+      "nonmissing_production_area_codes_including_aggregates": 195,
+      "harvested_area_rows": 198,
+      "yield_rows": 193
+    },
+    {
+      "year": 1996,
+      "crop": "cereals_primary",
+      "production_rows": 214,
+      "nonmissing_production_area_codes_including_aggregates": 213,
+      "harvested_area_rows": 214,
+      "yield_rows": 212
+    },
+    {
+      "year": 1997,
+      "crop": "wheat",
+      "production_rows": 155,
+      "nonmissing_production_area_codes_including_aggregates": 155,
+      "harvested_area_rows": 155,
+      "yield_rows": 155
+    },
+    {
+      "year": 1997,
+      "crop": "rice_paddy",
+      "production_rows": 155,
+      "nonmissing_production_area_codes_including_aggregates": 150,
+      "harvested_area_rows": 155,
+      "yield_rows": 148
+    },
+    {
+      "year": 1997,
+      "crop": "maize",
+      "production_rows": 198,
+      "nonmissing_production_area_codes_including_aggregates": 195,
+      "harvested_area_rows": 198,
+      "yield_rows": 194
+    },
+    {
+      "year": 1997,
+      "crop": "cereals_primary",
+      "production_rows": 214,
+      "nonmissing_production_area_codes_including_aggregates": 212,
+      "harvested_area_rows": 214,
+      "yield_rows": 212
+    },
+    {
+      "year": 1998,
+      "crop": "wheat",
+      "production_rows": 155,
+      "nonmissing_production_area_codes_including_aggregates": 155,
+      "harvested_area_rows": 155,
+      "yield_rows": 155
+    },
+    {
+      "year": 1998,
+      "crop": "rice_paddy",
+      "production_rows": 154,
+      "nonmissing_production_area_codes_including_aggregates": 150,
+      "harvested_area_rows": 154,
+      "yield_rows": 148
+    },
+    {
+      "year": 1998,
+      "crop": "maize",
+      "production_rows": 198,
+      "nonmissing_production_area_codes_including_aggregates": 195,
+      "harvested_area_rows": 198,
+      "yield_rows": 194
+    },
+    {
+      "year": 1998,
+      "crop": "cereals_primary",
+      "production_rows": 213,
+      "nonmissing_production_area_codes_including_aggregates": 212,
+      "harvested_area_rows": 213,
+      "yield_rows": 212
+    },
+    {
+      "year": 1999,
+      "crop": "wheat",
+      "production_rows": 155,
+      "nonmissing_production_area_codes_including_aggregates": 155,
+      "harvested_area_rows": 155,
+      "yield_rows": 155
+    },
+    {
+      "year": 1999,
+      "crop": "rice_paddy",
+      "production_rows": 154,
+      "nonmissing_production_area_codes_including_aggregates": 150,
+      "harvested_area_rows": 154,
+      "yield_rows": 148
+    },
+    {
+      "year": 1999,
+      "crop": "maize",
+      "production_rows": 198,
+      "nonmissing_production_area_codes_including_aggregates": 195,
+      "harvested_area_rows": 198,
+      "yield_rows": 194
+    },
+    {
+      "year": 1999,
+      "crop": "cereals_primary",
+      "production_rows": 213,
+      "nonmissing_production_area_codes_including_aggregates": 212,
+      "harvested_area_rows": 213,
+      "yield_rows": 212
+    },
+    {
+      "year": 2000,
+      "crop": "wheat",
+      "production_rows": 156,
+      "nonmissing_production_area_codes_including_aggregates": 156,
+      "harvested_area_rows": 156,
+      "yield_rows": 153
+    },
+    {
+      "year": 2000,
+      "crop": "rice_paddy",
+      "production_rows": 154,
+      "nonmissing_production_area_codes_including_aggregates": 150,
+      "harvested_area_rows": 154,
+      "yield_rows": 148
+    },
+    {
+      "year": 2000,
+      "crop": "maize",
+      "production_rows": 199,
+      "nonmissing_production_area_codes_including_aggregates": 196,
+      "harvested_area_rows": 199,
+      "yield_rows": 195
+    },
+    {
+      "year": 2000,
+      "crop": "cereals_primary",
+      "production_rows": 214,
+      "nonmissing_production_area_codes_including_aggregates": 213,
+      "harvested_area_rows": 214,
+      "yield_rows": 213
+    },
+    {
+      "year": 2001,
+      "crop": "wheat",
+      "production_rows": 156,
+      "nonmissing_production_area_codes_including_aggregates": 156,
+      "harvested_area_rows": 156,
+      "yield_rows": 156
+    },
+    {
+      "year": 2001,
+      "crop": "rice_paddy",
+      "production_rows": 154,
+      "nonmissing_production_area_codes_including_aggregates": 150,
+      "harvested_area_rows": 154,
+      "yield_rows": 148
+    },
+    {
+      "year": 2001,
+      "crop": "maize",
+      "production_rows": 199,
+      "nonmissing_production_area_codes_including_aggregates": 196,
+      "harvested_area_rows": 199,
+      "yield_rows": 195
+    },
+    {
+      "year": 2001,
+      "crop": "cereals_primary",
+      "production_rows": 214,
+      "nonmissing_production_area_codes_including_aggregates": 213,
+      "harvested_area_rows": 214,
+      "yield_rows": 213
+    },
+    {
+      "year": 2002,
+      "crop": "wheat",
+      "production_rows": 156,
+      "nonmissing_production_area_codes_including_aggregates": 156,
+      "harvested_area_rows": 156,
+      "yield_rows": 153
+    },
+    {
+      "year": 2002,
+      "crop": "rice_paddy",
+      "production_rows": 154,
+      "nonmissing_production_area_codes_including_aggregates": 150,
+      "harvested_area_rows": 154,
+      "yield_rows": 148
+    },
+    {
+      "year": 2002,
+      "crop": "maize",
+      "production_rows": 199,
+      "nonmissing_production_area_codes_including_aggregates": 196,
+      "harvested_area_rows": 199,
+      "yield_rows": 195
+    },
+    {
+      "year": 2002,
+      "crop": "cereals_primary",
+      "production_rows": 214,
+      "nonmissing_production_area_codes_including_aggregates": 213,
+      "harvested_area_rows": 214,
+      "yield_rows": 213
+    },
+    {
+      "year": 2003,
+      "crop": "wheat",
+      "production_rows": 156,
+      "nonmissing_production_area_codes_including_aggregates": 156,
+      "harvested_area_rows": 156,
+      "yield_rows": 156
+    },
+    {
+      "year": 2003,
+      "crop": "rice_paddy",
+      "production_rows": 154,
+      "nonmissing_production_area_codes_including_aggregates": 150,
+      "harvested_area_rows": 154,
+      "yield_rows": 148
+    },
+    {
+      "year": 2003,
+      "crop": "maize",
+      "production_rows": 199,
+      "nonmissing_production_area_codes_including_aggregates": 196,
+      "harvested_area_rows": 199,
+      "yield_rows": 195
+    },
+    {
+      "year": 2003,
+      "crop": "cereals_primary",
+      "production_rows": 214,
+      "nonmissing_production_area_codes_including_aggregates": 213,
+      "harvested_area_rows": 214,
+      "yield_rows": 213
+    },
+    {
+      "year": 2004,
+      "crop": "wheat",
+      "production_rows": 156,
+      "nonmissing_production_area_codes_including_aggregates": 156,
+      "harvested_area_rows": 156,
+      "yield_rows": 155
+    },
+    {
+      "year": 2004,
+      "crop": "rice_paddy",
+      "production_rows": 154,
+      "nonmissing_production_area_codes_including_aggregates": 150,
+      "harvested_area_rows": 154,
+      "yield_rows": 148
+    },
+    {
+      "year": 2004,
+      "crop": "maize",
+      "production_rows": 199,
+      "nonmissing_production_area_codes_including_aggregates": 196,
+      "harvested_area_rows": 199,
+      "yield_rows": 194
+    },
+    {
+      "year": 2004,
+      "crop": "cereals_primary",
+      "production_rows": 214,
+      "nonmissing_production_area_codes_including_aggregates": 213,
+      "harvested_area_rows": 214,
+      "yield_rows": 213
+    },
+    {
+      "year": 2005,
+      "crop": "wheat",
+      "production_rows": 156,
+      "nonmissing_production_area_codes_including_aggregates": 156,
+      "harvested_area_rows": 156,
+      "yield_rows": 156
+    },
+    {
+      "year": 2005,
+      "crop": "rice_paddy",
+      "production_rows": 154,
+      "nonmissing_production_area_codes_including_aggregates": 150,
+      "harvested_area_rows": 154,
+      "yield_rows": 148
+    },
+    {
+      "year": 2005,
+      "crop": "maize",
+      "production_rows": 199,
+      "nonmissing_production_area_codes_including_aggregates": 196,
+      "harvested_area_rows": 199,
+      "yield_rows": 194
+    },
+    {
+      "year": 2005,
+      "crop": "cereals_primary",
+      "production_rows": 214,
+      "nonmissing_production_area_codes_including_aggregates": 213,
+      "harvested_area_rows": 214,
+      "yield_rows": 213
+    },
+    {
+      "year": 2006,
+      "crop": "wheat",
+      "production_rows": 157,
+      "nonmissing_production_area_codes_including_aggregates": 157,
+      "harvested_area_rows": 157,
+      "yield_rows": 154
+    },
+    {
+      "year": 2006,
+      "crop": "rice_paddy",
+      "production_rows": 154,
+      "nonmissing_production_area_codes_including_aggregates": 150,
+      "harvested_area_rows": 154,
+      "yield_rows": 148
+    },
+    {
+      "year": 2006,
+      "crop": "maize",
+      "production_rows": 200,
+      "nonmissing_production_area_codes_including_aggregates": 197,
+      "harvested_area_rows": 200,
+      "yield_rows": 195
+    },
+    {
+      "year": 2006,
+      "crop": "cereals_primary",
+      "production_rows": 215,
+      "nonmissing_production_area_codes_including_aggregates": 214,
+      "harvested_area_rows": 215,
+      "yield_rows": 214
+    },
+    {
+      "year": 2007,
+      "crop": "wheat",
+      "production_rows": 157,
+      "nonmissing_production_area_codes_including_aggregates": 157,
+      "harvested_area_rows": 157,
+      "yield_rows": 154
+    },
+    {
+      "year": 2007,
+      "crop": "rice_paddy",
+      "production_rows": 152,
+      "nonmissing_production_area_codes_including_aggregates": 149,
+      "harvested_area_rows": 152,
+      "yield_rows": 147
+    },
+    {
+      "year": 2007,
+      "crop": "maize",
+      "production_rows": 198,
+      "nonmissing_production_area_codes_including_aggregates": 195,
+      "harvested_area_rows": 198,
+      "yield_rows": 193
+    },
+    {
+      "year": 2007,
+      "crop": "cereals_primary",
+      "production_rows": 213,
+      "nonmissing_production_area_codes_including_aggregates": 212,
+      "harvested_area_rows": 213,
+      "yield_rows": 212
+    },
+    {
+      "year": 2008,
+      "crop": "wheat",
+      "production_rows": 157,
+      "nonmissing_production_area_codes_including_aggregates": 157,
+      "harvested_area_rows": 157,
+      "yield_rows": 154
+    },
+    {
+      "year": 2008,
+      "crop": "rice_paddy",
+      "production_rows": 152,
+      "nonmissing_production_area_codes_including_aggregates": 149,
+      "harvested_area_rows": 152,
+      "yield_rows": 147
+    },
+    {
+      "year": 2008,
+      "crop": "maize",
+      "production_rows": 198,
+      "nonmissing_production_area_codes_including_aggregates": 195,
+      "harvested_area_rows": 198,
+      "yield_rows": 193
+    },
+    {
+      "year": 2008,
+      "crop": "cereals_primary",
+      "production_rows": 213,
+      "nonmissing_production_area_codes_including_aggregates": 212,
+      "harvested_area_rows": 213,
+      "yield_rows": 212
+    },
+    {
+      "year": 2009,
+      "crop": "wheat",
+      "production_rows": 157,
+      "nonmissing_production_area_codes_including_aggregates": 156,
+      "harvested_area_rows": 157,
+      "yield_rows": 152
+    },
+    {
+      "year": 2009,
+      "crop": "rice_paddy",
+      "production_rows": 152,
+      "nonmissing_production_area_codes_including_aggregates": 149,
+      "harvested_area_rows": 152,
+      "yield_rows": 147
+    },
+    {
+      "year": 2009,
+      "crop": "maize",
+      "production_rows": 198,
+      "nonmissing_production_area_codes_including_aggregates": 195,
+      "harvested_area_rows": 198,
+      "yield_rows": 193
+    },
+    {
+      "year": 2009,
+      "crop": "cereals_primary",
+      "production_rows": 213,
+      "nonmissing_production_area_codes_including_aggregates": 212,
+      "harvested_area_rows": 213,
+      "yield_rows": 212
+    },
+    {
+      "year": 2010,
+      "crop": "wheat",
+      "production_rows": 157,
+      "nonmissing_production_area_codes_including_aggregates": 156,
+      "harvested_area_rows": 157,
+      "yield_rows": 152
+    },
+    {
+      "year": 2010,
+      "crop": "rice_paddy",
+      "production_rows": 152,
+      "nonmissing_production_area_codes_including_aggregates": 149,
+      "harvested_area_rows": 151,
+      "yield_rows": 147
+    },
+    {
+      "year": 2010,
+      "crop": "maize",
+      "production_rows": 198,
+      "nonmissing_production_area_codes_including_aggregates": 196,
+      "harvested_area_rows": 198,
+      "yield_rows": 194
+    },
+    {
+      "year": 2010,
+      "crop": "cereals_primary",
+      "production_rows": 213,
+      "nonmissing_production_area_codes_including_aggregates": 212,
+      "harvested_area_rows": 213,
+      "yield_rows": 212
+    },
+    {
+      "year": 2011,
+      "crop": "wheat",
+      "production_rows": 157,
+      "nonmissing_production_area_codes_including_aggregates": 156,
+      "harvested_area_rows": 157,
+      "yield_rows": 152
+    },
+    {
+      "year": 2011,
+      "crop": "rice_paddy",
+      "production_rows": 152,
+      "nonmissing_production_area_codes_including_aggregates": 149,
+      "harvested_area_rows": 152,
+      "yield_rows": 148
+    },
+    {
+      "year": 2011,
+      "crop": "maize",
+      "production_rows": 198,
+      "nonmissing_production_area_codes_including_aggregates": 196,
+      "harvested_area_rows": 198,
+      "yield_rows": 194
+    },
+    {
+      "year": 2011,
+      "crop": "cereals_primary",
+      "production_rows": 213,
+      "nonmissing_production_area_codes_including_aggregates": 212,
+      "harvested_area_rows": 213,
+      "yield_rows": 212
+    },
+    {
+      "year": 2012,
+      "crop": "wheat",
+      "production_rows": 157,
+      "nonmissing_production_area_codes_including_aggregates": 156,
+      "harvested_area_rows": 157,
+      "yield_rows": 155
+    },
+    {
+      "year": 2012,
+      "crop": "rice_paddy",
+      "production_rows": 153,
+      "nonmissing_production_area_codes_including_aggregates": 149,
+      "harvested_area_rows": 153,
+      "yield_rows": 148
+    },
+    {
+      "year": 2012,
+      "crop": "maize",
+      "production_rows": 199,
+      "nonmissing_production_area_codes_including_aggregates": 197,
+      "harvested_area_rows": 199,
+      "yield_rows": 195
+    },
+    {
+      "year": 2012,
+      "crop": "cereals_primary",
+      "production_rows": 214,
+      "nonmissing_production_area_codes_including_aggregates": 213,
+      "harvested_area_rows": 214,
+      "yield_rows": 213
+    },
+    {
+      "year": 2013,
+      "crop": "wheat",
+      "production_rows": 157,
+      "nonmissing_production_area_codes_including_aggregates": 156,
+      "harvested_area_rows": 157,
+      "yield_rows": 155
+    },
+    {
+      "year": 2013,
+      "crop": "rice_paddy",
+      "production_rows": 153,
+      "nonmissing_production_area_codes_including_aggregates": 149,
+      "harvested_area_rows": 153,
+      "yield_rows": 148
+    },
+    {
+      "year": 2013,
+      "crop": "maize",
+      "production_rows": 199,
+      "nonmissing_production_area_codes_including_aggregates": 197,
+      "harvested_area_rows": 199,
+      "yield_rows": 195
+    },
+    {
+      "year": 2013,
+      "crop": "cereals_primary",
+      "production_rows": 214,
+      "nonmissing_production_area_codes_including_aggregates": 213,
+      "harvested_area_rows": 214,
+      "yield_rows": 213
+    },
+    {
+      "year": 2014,
+      "crop": "wheat",
+      "production_rows": 157,
+      "nonmissing_production_area_codes_including_aggregates": 156,
+      "harvested_area_rows": 157,
+      "yield_rows": 152
+    },
+    {
+      "year": 2014,
+      "crop": "rice_paddy",
+      "production_rows": 153,
+      "nonmissing_production_area_codes_including_aggregates": 149,
+      "harvested_area_rows": 153,
+      "yield_rows": 149
+    },
+    {
+      "year": 2014,
+      "crop": "maize",
+      "production_rows": 199,
+      "nonmissing_production_area_codes_including_aggregates": 197,
+      "harvested_area_rows": 199,
+      "yield_rows": 195
+    },
+    {
+      "year": 2014,
+      "crop": "cereals_primary",
+      "production_rows": 214,
+      "nonmissing_production_area_codes_including_aggregates": 213,
+      "harvested_area_rows": 214,
+      "yield_rows": 213
+    },
+    {
+      "year": 2015,
+      "crop": "wheat",
+      "production_rows": 157,
+      "nonmissing_production_area_codes_including_aggregates": 156,
+      "harvested_area_rows": 157,
+      "yield_rows": 154
+    },
+    {
+      "year": 2015,
+      "crop": "rice_paddy",
+      "production_rows": 153,
+      "nonmissing_production_area_codes_including_aggregates": 150,
+      "harvested_area_rows": 153,
+      "yield_rows": 150
+    },
+    {
+      "year": 2015,
+      "crop": "maize",
+      "production_rows": 199,
+      "nonmissing_production_area_codes_including_aggregates": 197,
+      "harvested_area_rows": 199,
+      "yield_rows": 195
+    },
+    {
+      "year": 2015,
+      "crop": "cereals_primary",
+      "production_rows": 215,
+      "nonmissing_production_area_codes_including_aggregates": 214,
+      "harvested_area_rows": 215,
+      "yield_rows": 214
+    },
+    {
+      "year": 2016,
+      "crop": "wheat",
+      "production_rows": 157,
+      "nonmissing_production_area_codes_including_aggregates": 156,
+      "harvested_area_rows": 157,
+      "yield_rows": 155
+    },
+    {
+      "year": 2016,
+      "crop": "rice_paddy",
+      "production_rows": 153,
+      "nonmissing_production_area_codes_including_aggregates": 150,
+      "harvested_area_rows": 153,
+      "yield_rows": 150
+    },
+    {
+      "year": 2016,
+      "crop": "maize",
+      "production_rows": 199,
+      "nonmissing_production_area_codes_including_aggregates": 197,
+      "harvested_area_rows": 199,
+      "yield_rows": 195
+    },
+    {
+      "year": 2016,
+      "crop": "cereals_primary",
+      "production_rows": 215,
+      "nonmissing_production_area_codes_including_aggregates": 214,
+      "harvested_area_rows": 215,
+      "yield_rows": 214
+    },
+    {
+      "year": 2017,
+      "crop": "wheat",
+      "production_rows": 157,
+      "nonmissing_production_area_codes_including_aggregates": 156,
+      "harvested_area_rows": 157,
+      "yield_rows": 155
+    },
+    {
+      "year": 2017,
+      "crop": "rice_paddy",
+      "production_rows": 153,
+      "nonmissing_production_area_codes_including_aggregates": 150,
+      "harvested_area_rows": 153,
+      "yield_rows": 150
+    },
+    {
+      "year": 2017,
+      "crop": "maize",
+      "production_rows": 199,
+      "nonmissing_production_area_codes_including_aggregates": 197,
+      "harvested_area_rows": 199,
+      "yield_rows": 195
+    },
+    {
+      "year": 2017,
+      "crop": "cereals_primary",
+      "production_rows": 215,
+      "nonmissing_production_area_codes_including_aggregates": 214,
+      "harvested_area_rows": 215,
+      "yield_rows": 214
+    },
+    {
+      "year": 2018,
+      "crop": "wheat",
+      "production_rows": 157,
+      "nonmissing_production_area_codes_including_aggregates": 156,
+      "harvested_area_rows": 157,
+      "yield_rows": 155
+    },
+    {
+      "year": 2018,
+      "crop": "rice_paddy",
+      "production_rows": 172,
+      "nonmissing_production_area_codes_including_aggregates": 170,
+      "harvested_area_rows": 172,
+      "yield_rows": 150
+    },
+    {
+      "year": 2018,
+      "crop": "maize",
+      "production_rows": 204,
+      "nonmissing_production_area_codes_including_aggregates": 202,
+      "harvested_area_rows": 204,
+      "yield_rows": 196
+    },
+    {
+      "year": 2018,
+      "crop": "cereals_primary",
+      "production_rows": 215,
+      "nonmissing_production_area_codes_including_aggregates": 214,
+      "harvested_area_rows": 215,
+      "yield_rows": 213
+    },
+    {
+      "year": 2019,
+      "crop": "wheat",
+      "production_rows": 157,
+      "nonmissing_production_area_codes_including_aggregates": 156,
+      "harvested_area_rows": 157,
+      "yield_rows": 155
+    },
+    {
+      "year": 2019,
+      "crop": "rice_paddy",
+      "production_rows": 172,
+      "nonmissing_production_area_codes_including_aggregates": 170,
+      "harvested_area_rows": 172,
+      "yield_rows": 151
+    },
+    {
+      "year": 2019,
+      "crop": "maize",
+      "production_rows": 204,
+      "nonmissing_production_area_codes_including_aggregates": 202,
+      "harvested_area_rows": 204,
+      "yield_rows": 196
+    },
+    {
+      "year": 2019,
+      "crop": "cereals_primary",
+      "production_rows": 215,
+      "nonmissing_production_area_codes_including_aggregates": 214,
+      "harvested_area_rows": 215,
+      "yield_rows": 213
+    },
+    {
+      "year": 2020,
+      "crop": "wheat",
+      "production_rows": 157,
+      "nonmissing_production_area_codes_including_aggregates": 156,
+      "harvested_area_rows": 157,
+      "yield_rows": 155
+    },
+    {
+      "year": 2020,
+      "crop": "rice_paddy",
+      "production_rows": 174,
+      "nonmissing_production_area_codes_including_aggregates": 170,
+      "harvested_area_rows": 174,
+      "yield_rows": 149
+    },
+    {
+      "year": 2020,
+      "crop": "maize",
+      "production_rows": 205,
+      "nonmissing_production_area_codes_including_aggregates": 203,
+      "harvested_area_rows": 205,
+      "yield_rows": 196
+    },
+    {
+      "year": 2020,
+      "crop": "cereals_primary",
+      "production_rows": 216,
+      "nonmissing_production_area_codes_including_aggregates": 214,
+      "harvested_area_rows": 216,
+      "yield_rows": 213
+    },
+    {
+      "year": 2021,
+      "crop": "wheat",
+      "production_rows": 157,
+      "nonmissing_production_area_codes_including_aggregates": 156,
+      "harvested_area_rows": 157,
+      "yield_rows": 155
+    },
+    {
+      "year": 2021,
+      "crop": "rice_paddy",
+      "production_rows": 174,
+      "nonmissing_production_area_codes_including_aggregates": 170,
+      "harvested_area_rows": 174,
+      "yield_rows": 149
+    },
+    {
+      "year": 2021,
+      "crop": "maize",
+      "production_rows": 205,
+      "nonmissing_production_area_codes_including_aggregates": 204,
+      "harvested_area_rows": 204,
+      "yield_rows": 197
+    },
+    {
+      "year": 2021,
+      "crop": "cereals_primary",
+      "production_rows": 216,
+      "nonmissing_production_area_codes_including_aggregates": 214,
+      "harvested_area_rows": 216,
+      "yield_rows": 213
+    },
+    {
+      "year": 2022,
+      "crop": "wheat",
+      "production_rows": 157,
+      "nonmissing_production_area_codes_including_aggregates": 156,
+      "harvested_area_rows": 157,
+      "yield_rows": 155
+    },
+    {
+      "year": 2022,
+      "crop": "rice_paddy",
+      "production_rows": 174,
+      "nonmissing_production_area_codes_including_aggregates": 170,
+      "harvested_area_rows": 174,
+      "yield_rows": 149
+    },
+    {
+      "year": 2022,
+      "crop": "maize",
+      "production_rows": 205,
+      "nonmissing_production_area_codes_including_aggregates": 204,
+      "harvested_area_rows": 204,
+      "yield_rows": 197
+    },
+    {
+      "year": 2022,
+      "crop": "cereals_primary",
+      "production_rows": 216,
+      "nonmissing_production_area_codes_including_aggregates": 214,
+      "harvested_area_rows": 216,
+      "yield_rows": 213
+    },
+    {
+      "year": 2023,
+      "crop": "wheat",
+      "production_rows": 156,
+      "nonmissing_production_area_codes_including_aggregates": 155,
+      "harvested_area_rows": 156,
+      "yield_rows": 154
+    },
+    {
+      "year": 2023,
+      "crop": "rice_paddy",
+      "production_rows": 174,
+      "nonmissing_production_area_codes_including_aggregates": 170,
+      "harvested_area_rows": 174,
+      "yield_rows": 149
+    },
+    {
+      "year": 2023,
+      "crop": "maize",
+      "production_rows": 205,
+      "nonmissing_production_area_codes_including_aggregates": 204,
+      "harvested_area_rows": 204,
+      "yield_rows": 197
+    },
+    {
+      "year": 2023,
+      "crop": "cereals_primary",
+      "production_rows": 215,
+      "nonmissing_production_area_codes_including_aggregates": 213,
+      "harvested_area_rows": 215,
+      "yield_rows": 212
+    },
+    {
+      "year": 2024,
+      "crop": "wheat",
+      "production_rows": 156,
+      "nonmissing_production_area_codes_including_aggregates": 155,
+      "harvested_area_rows": 156,
+      "yield_rows": 154
+    },
+    {
+      "year": 2024,
+      "crop": "rice_paddy",
+      "production_rows": 173,
+      "nonmissing_production_area_codes_including_aggregates": 169,
+      "harvested_area_rows": 173,
+      "yield_rows": 148
+    },
+    {
+      "year": 2024,
+      "crop": "maize",
+      "production_rows": 204,
+      "nonmissing_production_area_codes_including_aggregates": 203,
+      "harvested_area_rows": 203,
+      "yield_rows": 196
+    },
+    {
+      "year": 2024,
+      "crop": "cereals_primary",
+      "production_rows": 214,
+      "nonmissing_production_area_codes_including_aggregates": 212,
+      "harvested_area_rows": 214,
+      "yield_rows": 211
+    }
+  ],
+  "warning": "Maximum year is not a verified complete-year cutoff; counts include aggregates. Review coverage, units, labels and release provenance."
+}

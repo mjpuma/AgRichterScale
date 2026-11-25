@@ -1,0 +1,31 @@
+{
+  "protocol_version": "1.0",
+  "source": "https://bulks-faostat.fao.org/production/Production_Crops_Livestock_E_All_Data_(Normalized).zip",
+  "archive": "production.zip",
+  "archive_sha256": "c5835418c18f9322e7decbd6800f93a216eaae3cdfa31acb08f0518c0c6d6853",
+  "input_format": ".zip",
+  "archive_member": "Production_Crops_Livestock_E_All_Data_(Normalized).csv",
+  "encoding": "utf-8-sig",
+  "release_note": "Existing FoodShockCascadeModel cache inputs/faostat_bulk_cache/production.zip; ZIP member timestamp 2025-12-23; local cache mtime 2026-11-19; sha256 c5835418c18f9322e7decbd6800f93a216eaae3cdfa31acb08f0518c0c6d6853. No redownload. Cutoff 2024 is the last year present. Nonmissing production area counts in 2024 are within 1-2 of 2022-2023 for wheat, rice, maize and cereals primary; counts include aggregates. 2024 can still be revised by FAO. Boundary audit not certified.",
+  "start_year": 1961,
+  "end_year": 2024,
+  "processed_utc": "2026-11-25T18:13:45.931707+00:00",
+  "breaks_sha256": null,
+  "area_classification": "provisional; review area_audit before inference",
+  "boundary_audit": "pending",
+  "counts": {
+    "no_area_reporting_row": 5480,
+    "insufficient_baseline": 4994,
+    "assessable": 30304,
+    "missing_production": 12726
+  },
+  "source_rows": 130732,
+  "panel_rows": 53504,
+  "candidates_10pct": 9047,
+  "thresholds_pct": [
+    5,
+    10,
+    20
+  ],
+  "scientific_status": "screening only, not a validated event sample"
+}
