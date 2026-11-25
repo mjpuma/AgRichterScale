@@ -2,6 +2,29 @@
 
 Implementation of [protocol v1.0](HISTORICAL_EVENT_SELECTION_PROTOCOL.md). This is a separate research pipeline, not a replacement for AgRichter's theoretical potential-loss model.
 
+## Reuse the FoodShockCascadeModel snapshot (preferred)
+
+The sibling repository's `main/fetch_faostat_bulk.py` documents the cached archive `inputs/faostat_bulk_cache/production.zip` and extracted `inputs/Production_Crops_Livestock_E_All_Data_(Normalized).csv`. These are likely local-only; the cache itself was not found in the tracked Git tree. No data need be copied or downloaded if either exists. Run from AgRichterScale:
+
+```bash
+git pull --ff-only
+python3 -m unittest discover -s tests -p 'test_screen_faostat_disruptions.py'
+python3 scripts/inspect_faostat_snapshot.py
+```
+
+The inspector prefers the sibling ZIP, falls back to the extracted CSV, and records the input checksum, observed year range, per-year commodity coverage, source labels, units and flags in `results/faostat_snapshot_audit.json`. If directories are not siblings, pass the exact input file path as the first argument. If strict UTF-8 decoding fails, confirm the source encoding and retry with `--encoding latin-1` (the FSC downloader uses Latin-1 for reading its CSV). The inspector never changes the snapshot or replaces an existing report; choose a different `--out` for another snapshot.
+
+Review the audit and determine the cutoff before screening. The `--archive` option in the screening script accepts either original ZIP or extracted CSV, records the checksum of the supplied input, and never modifies it. For example, **only if the audit confirms 2024 coverage and that cutoff is appropriate**:
+
+```bash
+python3 scripts/screen_faostat_disruptions.py \
+  --archive ../FoodShockCascadeModel/inputs/faostat_bulk_cache/production.zip \
+  --end-year 2024 --release-note "Existing FSC snapshot; release date and completeness to be documented" \
+  --out results/historical_screen_v1
+```
+
+If using the extracted CSV instead, supply its path in quotes and the verified encoding. Do not treat maximum year as proof of completeness. The source archive's actual local presence, vintage, and contents have not been verified remotely.
+
 ## Reproduce
 
 From repository root, Python 3.9+ (standard library only). First inspect the [FAOSTAT QCL release](https://www.fao.org/faostat/en/#data/QCL) and determine its latest sufficiently complete harvest year. Record release metadata. Example syntax below uses 2024 as an illustrative cutoff, **not** a verified current release boundary:
