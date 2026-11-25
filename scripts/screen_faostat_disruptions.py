@@ -59,7 +59,7 @@ def acquire(path):
         tmp.unlink(missing_ok=True)
 
 
-def parse(path, end_year):
+def parse(path, end_year, encoding="utf-8-sig"):
     """Preserve all selected source rows, including aggregate areas and missing values."""
     entities, active, cells = {}, defaultdict(set), {}
     with zipfile.ZipFile(path) as z:
@@ -68,7 +68,7 @@ def parse(path, end_year):
         if len(candidates) != 1:
             raise ValueError(f"Expected one normalized data CSV, got {candidates}")
         member = candidates[0]
-        with z.open(member) as binary, io.TextIOWrapper(binary, encoding="utf-8-sig", errors="strict", newline="") as f:
+        with z.open(member) as binary, io.TextIOWrapper(binary, encoding=encoding, errors="strict", newline="") as f:
             # Some legacy releases use Latin-1; fail rather than corrupt labels.
             reader = csv.DictReader(f)
             required = {"Area Code", "Area", "Item Code", "Item", "Element",
@@ -207,13 +207,14 @@ def main():
     p.add_argument("--end-year", type=int, required=True, help="Explicit reviewed release cutoff")
     p.add_argument("--release-note", required=True, help="Release edition/date and basis for cutoff")
     p.add_argument("--out", type=Path, required=True)
+    p.add_argument("--encoding", default="utf-8-sig", help="CSV encoding; use latin-1 only if verified for the release")
     p.add_argument("--breaks", type=Path, help="CSV area_code,item_code,break_year,reason")
     args = p.parse_args()
     if args.end_year < 1961:
         p.error("end-year must be >=1961")
     if args.download:
         acquire(args.archive)
-    entities, active, cells, member = parse(args.archive, args.end_year)
+    entities, active, cells, member = parse(args.archive, args.end_year, args.encoding)
     breaks = read_breaks(args.breaks)
     panel = list(build_panel(entities, active, cells, args.end_year, breaks))
     args.out.mkdir(parents=True, exist_ok=False)
@@ -244,7 +245,7 @@ def main():
            "assessable", "flag_5pct", "flag_10pct", "flag_20pct"]}}
         for (y,crop),c in sorted(coverage.items())))
     manifest = {"protocol_version": "1.0", "source": URL, "archive": args.archive.name,
-                "archive_sha256": sha256(args.archive), "archive_member": member,
+                "archive_sha256": sha256(args.archive), "archive_member": member, "encoding": args.encoding,
                 "release_note": args.release_note, "start_year": 1961,
                 "end_year": args.end_year, "processed_utc": datetime.now(timezone.utc).isoformat(),
                 "breaks_sha256": sha256(args.breaks) if args.breaks else None,
