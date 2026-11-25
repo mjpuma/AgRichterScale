@@ -10,6 +10,7 @@ import statistics
 import urllib.request
 import zipfile
 from collections import Counter, defaultdict
+from contextlib import contextmanager
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -59,9 +60,13 @@ def acquire(path):
         tmp.unlink(missing_ok=True)
 
 
-def parse(path, end_year, encoding="utf-8-sig"):
-    """Preserve all selected source rows, including aggregate areas and missing values."""
-    entities, active, cells = {}, defaultdict(set), {}
+@contextmanager
+def open_source(path, encoding):
+    """Read immutable normalized ZIP or extracted CSV without modifying it."""
+    if path.suffix.lower() == ".csv":
+        with path.open(encoding=encoding, errors="strict", newline="") as f:
+            yield f, path.name
+        return
     with zipfile.ZipFile(path) as z:
         candidates = [n for n in z.namelist() if n.lower().endswith(".csv")
                       and "all_data" in n.lower() and "normalized" in n.lower()]
@@ -69,39 +74,46 @@ def parse(path, end_year, encoding="utf-8-sig"):
             raise ValueError(f"Expected one normalized data CSV, got {candidates}")
         member = candidates[0]
         with z.open(member) as binary, io.TextIOWrapper(binary, encoding=encoding, errors="strict", newline="") as f:
-            # Some legacy releases use Latin-1; fail rather than corrupt labels.
-            reader = csv.DictReader(f)
-            required = {"Area Code", "Area", "Item Code", "Item", "Element",
-                        "Year", "Unit", "Value", "Flag"}
-            if not required.issubset(reader.fieldnames or []):
-                raise ValueError(f"Unexpected QCL header: {reader.fieldnames}")
-            for row in reader:
-                a, year = code(row["Area Code"]), int(row["Year"])
-                if not 1961 <= year <= end_year:
-                    continue
-                label = row["Area"]
-                if a in entities and entities[a] != label:
-                    raise ValueError(f"Area code {a} has conflicting labels")
-                entities[a] = label
-                active[a].add(year)
-                item = code(row["Item Code"])
-                metric = METRICS.get(row["Element"])
-                if item not in CROPS or metric is None:
-                    continue
-                key = a, item, year, metric
-                if key in cells:
-                    raise ValueError(f"Duplicate QCL observation: {key}")
-                raw = row["Value"].strip()
-                value = float(raw) if raw else None
-                if value is not None and (not math.isfinite(value) or value < 0):
-                    raise ValueError(f"Invalid nonnegative QCL value: {key}")
-                if metric == "production" and row["Unit"] != "t":
-                    raise ValueError(f"Unexpected production unit: {key}, {row['Unit']}")
-                if metric == "harvested_area" and row["Unit"] != "ha":
-                    raise ValueError(f"Unexpected area unit: {key}, {row['Unit']}")
-                cells[key] = {"value": value, "unit": row["Unit"], "flag": row["Flag"],
-                              "note": row.get("Note", ""), "item_label": row["Item"],
-                              "element_code": row.get("Element Code", "")}
+            yield f, member
+
+
+def parse(path, end_year, encoding="utf-8-sig"):
+    """Preserve all selected source rows, including aggregate areas and missing values."""
+    entities, active, cells = {}, defaultdict(set), {}
+    with open_source(path, encoding) as (f, member):
+        # Some legacy releases use Latin-1; fail rather than corrupt labels.
+        reader = csv.DictReader(f)
+        required = {"Area Code", "Area", "Item Code", "Item", "Element",
+                    "Year", "Unit", "Value", "Flag"}
+        if not required.issubset(reader.fieldnames or []):
+            raise ValueError(f"Unexpected QCL header: {reader.fieldnames}")
+        for row in reader:
+            a, year = code(row["Area Code"]), int(row["Year"])
+            if not 1961 <= year <= end_year:
+                continue
+            label = row["Area"]
+            if a in entities and entities[a] != label:
+                raise ValueError(f"Area code {a} has conflicting labels")
+            entities[a] = label
+            active[a].add(year)
+            item = code(row["Item Code"])
+            metric = METRICS.get(row["Element"])
+            if item not in CROPS or metric is None:
+                continue
+            key = a, item, year, metric
+            if key in cells:
+                raise ValueError(f"Duplicate QCL observation: {key}")
+            raw = row["Value"].strip()
+            value = float(raw) if raw else None
+            if value is not None and (not math.isfinite(value) or value < 0):
+                raise ValueError(f"Invalid nonnegative QCL value: {key}")
+            if metric == "production" and row["Unit"] != "t":
+                raise ValueError(f"Unexpected production unit: {key}, {row['Unit']}")
+            if metric == "harvested_area" and row["Unit"] != "ha":
+                raise ValueError(f"Unexpected area unit: {key}, {row['Unit']}")
+            cells[key] = {"value": value, "unit": row["Unit"], "flag": row["Flag"],
+                          "note": row.get("Note", ""), "item_label": row["Item"],
+                          "element_code": row.get("Element Code", "")}
     if not cells or {k[1] for k in cells} != set(CROPS):
         raise ValueError("Selected item coverage incomplete; check FAOSTAT item codes/release")
     return entities, active, cells, member
@@ -202,7 +214,7 @@ def build_panel(entities, active, cells, end_year, breaks):
 
 def main():
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("--archive", type=Path, required=True)
+    p.add_argument("--archive", type=Path, required=True, help="Original normalized ZIP or extracted CSV")
     p.add_argument("--download", action="store_true")
     p.add_argument("--end-year", type=int, required=True, help="Explicit reviewed release cutoff")
     p.add_argument("--release-note", required=True, help="Release edition/date and basis for cutoff")
@@ -213,6 +225,8 @@ def main():
     if args.end_year < 1961:
         p.error("end-year must be >=1961")
     if args.download:
+        if args.archive.suffix.lower() != '.zip':
+            p.error('--download requires a ZIP destination')
         acquire(args.archive)
     entities, active, cells, member = parse(args.archive, args.end_year, args.encoding)
     breaks = read_breaks(args.breaks)
@@ -245,7 +259,7 @@ def main():
            "assessable", "flag_5pct", "flag_10pct", "flag_20pct"]}}
         for (y,crop),c in sorted(coverage.items())))
     manifest = {"protocol_version": "1.0", "source": URL, "archive": args.archive.name,
-                "archive_sha256": sha256(args.archive), "archive_member": member, "encoding": args.encoding,
+                "archive_sha256": sha256(args.archive), "input_format": args.archive.suffix.lower(), "archive_member": member, "encoding": args.encoding,
                 "release_note": args.release_note, "start_year": 1961,
                 "end_year": args.end_year, "processed_utc": datetime.now(timezone.utc).isoformat(),
                 "breaks_sha256": sha256(args.breaks) if args.breaks else None,
