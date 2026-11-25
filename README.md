@@ -17,6 +17,12 @@ The H–P envelopes are **end-member potential-loss scenarios**, not estimates t
 
 See [historical-event audit](docs/HISTORICAL_EVENT_AUDIT.md), [historical-loss comparison protocol](docs/HISTORICAL_LOSSES_METHOD.md), and [initial evidence inventory](ancillary/historical_loss_evidence_seed.csv).
 
+## Systematic historical loss inventory
+
+The event registry now preserves **all 23 legacy cases** and separately identifies **four additional screening candidates**: the Soviet famine of 1932–33, the war in Ukraine (from 2022), the Sudan conflict (from 2023), and conflict-related disruptions in South Sudan. The first evidence records for the modern cases come from FAO and FAO/WFP crop assessments. A registered event is **not** evidence of an observed crop-production shortfall, and none of the new records is yet a harmonized quantitative comparison with an H–P envelope.
+
+To avoid cherry-picking, selection does not depend on whether the reported crop change is large, negative, or even quantifiable; the protocol requires documenting positive changes, missing data, causal ambiguity, and overlapping events. The current additions are illustrative candidates, **not a completed global conflict census**. See the [selection protocol](docs/HISTORICAL_EVENT_SELECTION_PROTOCOL.md), [27-case registry](ancillary/historical_event_registry.csv), [historical evidence inventory](ancillary/historical_loss_evidence_seed.csv), and [registry validation script](scripts/validate_historical_registry.py).
+
 ## Repository Architecture
 
 The repository is structured into two main components:
