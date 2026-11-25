@@ -11,6 +11,12 @@ The core analysis relies on:
 -   **Historical Event Data** (e.g., Dust Bowl, Great Famine) mapped to grid cells.
 -   **H-P Envelope Framework** to define upper and lower bounds of production loss for a given disrupted area.
 
+## Interpreting Potential and Historical Losses
+
+The H–P envelopes are **end-member potential-loss scenarios**, not estimates that all production was actually destroyed during historical events. The historical-event overlays use SPAM 2020 agricultural exposure in designated affected regions and should not be interpreted as observed historical losses without event-specific evidence. We are assembling a separate, source-traceable record of historical harvest and production outcomes—including incomplete and noncomparable records—to assess the plausibility of these scenarios without conflating exposure with realized losses.
+
+See [historical-event audit](docs/HISTORICAL_EVENT_AUDIT.md), [historical-loss comparison protocol](docs/HISTORICAL_LOSSES_METHOD.md), and [initial evidence inventory](ancillary/historical_loss_evidence_seed.csv).
+
 ## Repository Architecture
 
 The repository is structured into two main components:
