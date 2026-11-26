@@ -1,0 +1,28 @@
+event_id,link_status,area_code,area,year_start,year_end,n_crop_years,n_with_production_value,n_qcl_missing,n_no_production_row,reason
+GreatFamine,no_row,,,,,0,0,0,0,"1315-1317 is before the QCL extract, and Europe is not one reporting area. No later European series is attached."
+Laki1783,no_row,,,,,0,0,0,0,"1783-1784 is before the QCL extract. Iceland code 99 is not used to fill those years, and Iceland/Europe is not one reporting area."
+NoSummer,no_row,,,,,0,0,0,0,"1816 is before the QCL extract, and Global is not a reporting area."
+PotatoFamine,no_row,,,,,0,0,0,0,"1845-1852 is before the QCL extract. The documented crop is potato, which is not item 15, 27, 56, or 1717. Ireland code 104 is not attached."
+Drought18761878,no_row,,,,,0,0,0,0,"1876-1878 is before the QCL extract, and Asia/Africa is not one reporting area."
+SovietFamine1921,no_row,,,,,0,0,0,0,1921-1922 is before the QCL extract. USSR code 228 begins in 1961 and is not used to fill 1921-1922.
+ChineseFamine1960,partial_1961_only,41,"China, mainland",1961,1961,4,4,0,0,"1959 and 1960 have no QCL row. 1961 is on China, mainland code 41. China code 351 is an aggregate and is not used. The 1961 rows are national production, not the 1959-1960 decline."
+DustBowl,no_row,,,,,0,0,0,0,"1930-1936 is before the QCL extract. The Great Plains is not a reporting area, and United States code 231 is not attached."
+SahelDrought2010,no_row,,,,,0,0,0,0,"2010-2011 is inside the extract, and no FAOSTAT area is named Sahel. This pass does not assign a country set."
+MillenniumDrought,reporting_area_rows,10,Australia,2000,2009,40,40,0,0,Australia code 10 for 2000-2009. These are national production rows for the registry label. They are not a drought-footprint loss.
+NorthKorea1990s,reporting_area_rows,116,Democratic People's Republic of Korea,1994,1998,20,20,0,0,"Democratic People's Republic of Korea code 116 for 1994-1998. National production rows, not a measured flood or policy loss."
+ENSO2015_2016,no_row,,,,,0,0,0,0,"Global tropics is not a reporting area. Solomon, East Timor, and Laos stay on their own rows and are not attached to this parent."
+Solomon,reporting_area_rows,25,Solomon Islands,2015,2016,8,4,0,4,Solomon Islands code 25 for 2015-2016. These rows are not added to the ENSO parent.
+Vanuatu,reporting_area_rows,155,Vanuatu,2015,2015,4,2,0,2,"Vanuatu code 155 for 2015. The documented impact is a monetary crop-sector total, not these cereal tonnes. The cereal rows are the country-year series only."
+EastTimor,reporting_area_rows,176,Timor-Leste,2015,2016,8,6,0,2,Timor-Leste code 176 for 2015-2016. The code already exists for those years. These rows are not added to the ENSO parent.
+Haiti,reporting_area_rows,93,Haiti,2010,2016,28,21,0,7,"Haiti code 93 for 2010-2016. The registry case combines an earthquake and a hurricane, and these national rows do not separate them."
+SierraLeone,reporting_area_rows,197,Sierra Leone,1991,2002,48,36,0,12,Sierra Leone code 197 for 1991-2002. A civil war is not itself a crop loss. These are the national production rows for those years.
+Liberia,reporting_area_rows,123,Liberia,1989,2003,60,30,0,30,Liberia code 123 for 1989-2003. A civil war is not itself a crop loss. These are the national production rows for those years.
+Yemen,reporting_area_rows,249,Yemen,2015,2024,40,30,0,10,"Yemen code 249 for 2015-2024. The code does not change in 1990. The registry end is open, so the link stops at the snapshot year 2024. There is no 2025 row."
+Ethiopia,reporting_area_rows,62,Ethiopia PDR,1983,1985,12,9,0,3,Ethiopia PDR code 62 for 1983-1985. Ethiopia code 238 and Eritrea begin in 1993 and are not used.
+Laos,reporting_area_rows,120,Lao People's Democratic Republic,2015,2016,8,6,0,2,Lao People's Democratic Republic code 120 for 2015-2016. These rows are not added to the ENSO parent.
+Bangladesh,reporting_area_rows,16,Bangladesh,1974,1974,4,4,0,0,"Bangladesh code 16 for 1974. The code is the reporting series from 1961, including the years before independence."
+Syria,reporting_area_rows,212,Syrian Arab Republic,2011,2024,56,42,14,0,"Syrian Arab Republic code 212 for 2011-2024. The registry end is open, so the link stops at the snapshot year 2024. There is no 2025 row."
+SovietFamine1932,no_row,,,,,0,0,0,0,1932-1933 is before the QCL extract. USSR code 228 begins in 1961 and is not used. This case is not SovietFamine1921.
+UkraineWar2022,reporting_area_rows,230,Ukraine,2022,2024,12,12,0,0,"Ukraine code 230 for 2022-2024. The code begins in 1992, so USSR code 228 is not used. The registry end is open and the snapshot has no 2025 row. The 2025 figure in the search log is not a FAOSTAT row."
+SudanConflict2023,reporting_area_rows,276,Sudan,2023,2024,8,8,0,0,Sudan code 276 for 2023-2024. Sudan (former) code 206 ends in 2011 and is not used. The snapshot has no 2025 row. The 2025 figure in the search log is not a FAOSTAT row.
+SouthSudanConflict,reporting_area_rows,277,South Sudan,2013,2024,48,34,2,12,"South Sudan code 277 for 2013-2024. The code begins in 2012, so the event window is on the successor code. Sudan (former) code 206 is not used. The snapshot has no 2025 row."
