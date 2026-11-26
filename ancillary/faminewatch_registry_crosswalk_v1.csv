@@ -1,0 +1,28 @@
+event_id,faminewatch_ids,what_the_record_is,crop_sentence,verification,crop_loss_from_this_record
+GreatFamine,LJ24-CE-1315; LJ24-FR-1315; LJ24-GB-1315; LJ24-IE-1315; LJ24-LC-1315; LJ24-NO-1315; FW-0206,Regional famine-year presence for 1315 plus one compilation row.,"FW-0206 says grain production fell 12-44 percent depending on location. That sentence was not re-read from Jordan 1996.",corrected in v0.2 for the year range; the production sentence was not re-read,no
+Laki1783,FW-0323,Laki eruption record for 1783-1785 across Europe Egypt India China and Japan.,The description says poor harvest and famine. No crop total was re-read.,corrected in v0.2,no
+NoSummer,FW-0341; AOG17-IRE-1816; AOG17-LOW-1816,Tambora record for 1815-1816 and two regional famine-year entries.,"FW-0341 says poor harvest and famine, and that parts of New England lost almost all of the maize crop. No national total was re-read.",corrected in v0.2,no
+PotatoFamine,FW-0353; FW-0354; AOG17-IRE-1845,Compilation row plus an OWID mortality row and a regional famine-year entry.,"FW-0353 says potato production fell roughly 86 percent in 1847. That sentence was not re-read. The planted-area series already extracted from the CSO page is the reconstruction.",as compiled (beta); not yet re-verified,no
+Drought18761878,FW-0366; FW-0367; FW-0368; FW-0369,Mortality and famine rows for India China Brazil and North Africa. Not a district outturn return.,"FW-0367 says 63-94 percent of crops were lost in the Madras Presidency in 1877 and that the Algeria grain harvest fell 50 percent. Those sentences were not re-read.",FW-0367 as compiled (beta); not yet re-verified,no
+SovietFamine1921,FW-0405; FW-0406,A name-only compilation row and an OWID excess-mortality row of 9 million.,No harvest tonnage is in either record.,FW-0405 as compiled (beta); not yet re-verified,no
+ChineseFamine1960,FW-0428; FW-0429,An OWID mortality row and a compilation row.,"FW-0429 says grain production fell 28 percent relative to 1958. That matches the re-read Lin and Yang comparison of 1960 with 1958, rounded. It is not the 1954-1966 series.",corrected in v0.2,no
+DustBowl,FW-0415,Compilation row typed as a production shock for the United States 1934-1940.,"The description says 1934 US wheat fell 36 percent and corn 48 percent relative to the 1921-1930 average. National, not the Great Plains, and not re-read from USDA (2015).",as compiled (beta); not yet re-verified,no
+SahelDrought2010,FW-0467,Compilation row titled Sahel Famine for 2009-2010. The registry window is 2010-2011.,The description is the name of the famine. No crop figure.,as compiled (beta); not yet re-verified,no
+MillenniumDrought,FW-0463,Compilation row typed as a production shock for Australia 2002-2009. The registry window is 2000-2009.,"The description says wheat yields fell 18-22 percent from July 2002 to June 2009. Yield, not production, and not re-read.",as compiled (beta); not yet re-verified,no
+NorthKorea1990s,FW-0458; FW-0459,An OWID mortality row and a compilation row for 1995-1998. The registry window starts in 1994.,"FW-0459 says 30 percent of grain crops were lost in 1995. That percent was not re-read.",dates corrected in v0.2; the percent was not re-read,no
+ENSO2015_2016,,No 2015-2016 global-tropics row.,,not in this file,no
+Solomon,,No Solomon Islands 2015-2016 row.,,not in this file,no
+Vanuatu,,No Vanuatu 2015 cyclone row.,,not in this file,no
+EastTimor,,No Timor-Leste 2015-2016 row.,,not in this file,no
+Haiti,,No Haiti 2010-2016 row.,,not in this file,no
+SierraLeone,,No Sierra Leone 1991-2002 row.,,not in this file,no
+Liberia,,No Liberia 1989-2003 row.,,not in this file,no
+Yemen,FW-0470,IPC food-insecurity record for 2016 onward. No area was classified in Famine.,No crop production figure. Food insecurity is not a crop loss.,corrected in v0.2,no
+Ethiopia,FW-0450; FW-0451,Mortality rows for 1983-1985.,No crop quantity.,FW-0451 corrected in v0.2,no
+Laos,,No Laos 2015-2016 row.,,not in this file,no
+Bangladesh,FW-0439; FW-0440,Mortality rows for 1974-1975.,"FW-0440 names a harvest shortfall in the cause field and gives no quantity.",FW-0440 as compiled (beta); not yet re-verified,no
+Syria,,No Syria row for 2011 onward. Older Syria rows are other centuries.,,not in this file,no
+SovietFamine1932,FW-0411; FW-0412; FW-0413,"Mortality records. FW-0411 names Ukraine, Kazakhstan, the Northern Caucasus, the Volga, and West Siberia. FW-0412 and FW-0413 are separate OWID mortality rows and are not added to FW-0411.",The cause line says poor harvests in 1931-32. No tonnage was re-read. This is not the 1921 reconstruction.,FW-0411 corrected in v0.2 for mortality,no
+UkraineWar2022,,No Ukraine row for 2022 onward.,,not in this file,no
+SudanConflict2023,FW-0473,"IPC Famine classifications in 2024-2025 for Zamzam, camps near El Fasher, El Fasher, and Kadugli. The cause line dates the war from April 2023.",No national cereal figure. A localized Famine classification is not a crop loss.,added in v0.2 (source-checked),no
+SouthSudanConflict,FW-0471,A 2017 declared-famine row for 100000 people. The registry window starts in 2013.,No cereal production figure.,as compiled (beta); not yet re-verified,no
