@@ -59,6 +59,31 @@ class TestScreening(unittest.TestCase):
         self.assertIsNone(row["flag_10pct"])
         self.assertEqual(row["production_value"], 0)
 
+    def test_official_only_sets_aside_estimated_imputed_and_external(self):
+        entities = {1: "Example"}
+        active = {1: set(range(1961, 1972))}
+        cells = {}
+        for y in range(1961, 1972):
+            cells[1, 15, y, "production"] = dict(value=100, unit="t", flag="A", note="")
+        cells[1, 15, 1968, "production"]["flag"] = "E"
+        cells[1, 15, 1968, "production"]["value"] = 100000
+        for flag in ("E", "I", "X"):
+            cells[1, 15, 1971, "production"] = dict(value=50, unit="t", flag=flag, note="")
+            official = list(s.build_panel(entities, active, cells, 1971, {}, official_only=True))
+            row = next(r for r in official if r["year"] == 1971 and r["item_code"] == 15)
+            self.assertEqual(row["status"], "nonofficial_excluded")
+            self.assertEqual(row["production_value"], 50)
+            self.assertIsNone(row["production_used_t"])
+            self.assertIsNone(row["flag_10pct"])
+            kept = next(r for r in official if r["year"] == 1970 and r["item_code"] == 15)
+            self.assertEqual(kept["status"], "assessable")
+            self.assertEqual(kept["baseline_n"], 8)
+            self.assertAlmostEqual(kept["baseline_t"], 100)
+            mixed = list(s.build_panel(entities, active, cells, 1971, {}))
+            mixed_row = next(r for r in mixed if r["year"] == 1971 and r["item_code"] == 15)
+            self.assertEqual(mixed_row["status"], "assessable")
+            self.assertTrue(mixed_row["flag_10pct"])
+
     def test_parse_synthetic_archive(self):
         with tempfile.TemporaryDirectory() as d:
             path = Path(d)/"qcl.zip"

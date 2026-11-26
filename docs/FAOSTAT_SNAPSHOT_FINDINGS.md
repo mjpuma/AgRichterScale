@@ -91,4 +91,4 @@ A 10-year log-linear trend therefore flags ordinary year-to-year movement in rou
 
 ## Still open
 
-Territorial code successions are reviewed in the boundary audit. The break file clears phantom baselines after a predecessor code ends and does not change assessable flags. An official-only (flag A) rerun has not been produced as a separate panel; the flag composition above is a count on the mixed-flag panel. Event linkage, the documentary search log, and any comparison with envelope losses remain undone. No registry row was added from these flags.
+Territorial code successions are reviewed in the boundary audit. The break file clears phantom baselines after a predecessor code ends and does not change assessable flags. The official-only rerun is in [FAOSTAT_OFFICIAL_ONLY.md](FAOSTAT_OFFICIAL_ONLY.md). The flag composition above remains the mixed-flag count. Event linkage, the documentary search log, and any comparison with envelope losses remain undone. No registry row was added from these flags.

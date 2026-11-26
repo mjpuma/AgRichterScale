@@ -1,0 +1,6 @@
+change,rows
+flag_kept,7012
+flag_dropped_nonofficial_target,1305
+flag_dropped_insufficient_baseline,680
+flag_dropped_baseline_still_assessable,50
+flag_gained_official_baseline,69
