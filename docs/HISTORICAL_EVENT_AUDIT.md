@@ -1,6 +1,6 @@
 # AgRichter historical-event audit (preliminary, November 25, 2026)
 
-**Scope:** Code and metadata review only. The geographic entries in the two legacy Excel workbooks and the external SPAM 2020 input files have not been independently validated or used to rerun the model. This audit does not certify individual historical loss estimates.
+**Scope:** Code and metadata review. Workbook sheet contents were read on 2026-11-26 and are inventoried in [EVENT_FOOTPRINT_AUDIT.md](EVENT_FOOTPRINT_AUDIT.md). SPAM 2020 was not rerun, and the figures were not changed. This audit does not certify individual historical loss estimates.
 
 ## Key result: distinguish potential exposure from observed losses
 
@@ -15,7 +15,7 @@ Consequently, the current event outputs labeled `harvest_area_loss_ha` and `prod
 | Critical | All selected regional harvested area and production are counted as disrupted/lost, without an event-specific crop-loss fraction | `agrichter/analysis/event_calculator.py` (country and state calculations) | Distinguish region-wide 2020 exposure from observed affected area and observed production loss; relabel existing plots or supply documented masks and loss fractions |
 | Critical | Event metadata lacks per-event source citations and footprint uncertainty | `ancillary/event_attributes.csv` (23 events) | Record primary references, dates, crop-specific geography, and inclusion criteria |
 | High | State entries form a flat event-wide list and are reused when processing each country flagged at state level | `agrichter/data/events.py`, `agrichter/analysis/event_calculator.py` | Preserve country–subdivision association; test multi-country events |
-| High | Country-sheet parser always skips first data-frame row despite `read_excel` default header parsing | `EventsProcessor._process_country_sheet` | Compare raw workbook rows with parsed output; ensure first affected country is not lost |
+| High | Country-sheet parser skips the first data row when the sheet has more than one country. Seven countries are dropped, including Australia on the ENSO sheet | `agrichter/data/events.py` `_process_country_sheet`; inventory in [EVENT_FOOTPRINT_AUDIT.md](EVENT_FOOTPRINT_AUDIT.md) | Keep the workbook row in the footprint inventory. Do not change the parser until the figures are redrawn |
 | High | Unmapped regions can be returned as zero impact rather than an explicit mapping failure | `EventCalculator.calculate_country_level_loss` / state-level equivalent | Export mapping failures, distinguish missing from true zero |
 | High | Events from 1315 onward are mapped onto SPAM 2020 agricultural geography | `Config._setup_paths`, historical workbooks | Explain the counterfactual and its historical limitations |
 | High | Included events mix crop disruptions, conflict, policy famine, natural disasters, and multiyear emergencies | `event_attributes.csv` | Define agriculturally disrupted-area criteria and avoid conflating famine with crop loss |
@@ -48,4 +48,4 @@ Keep *observed* area and loss fraction **missing**, not 0 or 1, until sourced.
 4. Recalculate event exposure/impact with verified footprints or explicitly label the 2020-based counterfactuals.
 5. Revisit Figures 1–4 only after event meaning and mapping are validated.
 
-**Unverified in this audit:** Actual workbook sheet contents, external SPAM inputs, rerun outputs, bibliographic historical source evidence, and event-specific historical crop losses.
+**Unverified in this audit:** External SPAM inputs, rerun outputs, and event-specific historical crop losses. Workbook rows are now listed in [EVENT_FOOTPRINT_AUDIT.md](EVENT_FOOTPRINT_AUDIT.md). Observed loss fields in that inventory are empty.
