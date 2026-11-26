@@ -55,7 +55,8 @@ class EventsProcessor:
                 'country_codes': [],
                 'state_flags': [],
                 'state_codes': [],
-                'state_names': []
+                'state_names': [],
+                'state_records': []
             }
             
             # Process country-level data
@@ -87,9 +88,9 @@ class EventsProcessor:
         if df.empty:
             return {'countries': [], 'country_codes': [], 'state_flags': []}
         
-        # Expected columns: Country Name, Country Code, State Flag
-        # Skip first row if it contains headers
-        data_df = df.iloc[1:] if len(df) > 1 else df
+        # read_excel already uses the first row as the header. Every following
+        # row is a country. Do not drop the first of those rows.
+        data_df = df
         
         countries = []
         country_codes = []
@@ -124,7 +125,7 @@ class EventsProcessor:
             Dictionary with processed state data
         """
         if df.empty:
-            return {'state_names': [], 'state_codes': []}
+            return {'state_names': [], 'state_codes': [], 'state_records': []}
         
         # Expected columns: ISO 3166-2, Country Code, Subdivision name
         # Note: We use Subdivision name (col 2) as the 'code' for lookup 
@@ -133,20 +134,25 @@ class EventsProcessor:
         
         state_names = []
         state_codes = []
+        state_records = []
         
         for _, row in data_df.iterrows():
             if len(row) >= 3:
                 # ISO code (e.g. US.CO)
                 iso_sub = row.iloc[0] if pd.notna(row.iloc[0]) else ""
-                # Country code (e.g. 240) - redundant but present
+                # Country code (e.g. 240). Kept so a state is not applied to every flagged country.
                 country_code = row.iloc[1] if pd.notna(row.iloc[1]) else 0
-                # Subdivision name (e.g. Colorado) - CRITICAL for matching
+                # Subdivision name (e.g. Colorado) - used for ADM1_NAME matching
                 subdivision_name = row.iloc[2] if pd.notna(row.iloc[2]) else ""
                 
                 if subdivision_name:
-                    # We use the name as the 'code' because we match against names
                     state_names.append(str(subdivision_name))
                     state_codes.append(str(subdivision_name))
+                    state_records.append({
+                        "country_code": float(country_code) if pd.notna(country_code) else 0.0,
+                        "iso_3166_2": str(iso_sub),
+                        "name": str(subdivision_name),
+                    })
             elif len(row) >= 2:
                 # Fallback for sheets with fewer columns (unlikely based on inspection)
                 val = row.iloc[0]
@@ -156,7 +162,8 @@ class EventsProcessor:
         
         return {
             'state_names': state_names,
-            'state_codes': state_codes
+            'state_codes': state_codes,
+            'state_records': state_records
         }
     
     def calculate_event_losses(self, events: Dict[str, Any], 
@@ -304,7 +311,13 @@ class EventsProcessor:
         harvest_loss = 0.0
         production_loss = 0.0
         
-        state_codes = event_data.get('state_codes', [])
+        if event_data.get("state_records"):
+            state_codes = [
+                record["name"] for record in event_data["state_records"]
+                if float(record["country_code"]) == float(country_code)
+            ]
+        else:
+            state_codes = event_data.get("state_codes", [])
         
         for state_code in state_codes:
             if state_code == 0:
