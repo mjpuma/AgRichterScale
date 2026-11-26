@@ -68,7 +68,7 @@ The screener removes flag M from the baseline and from the target used for flagg
 
 The selected window contains 244 area codes: 209 provisional reporting entities and 35 provisional aggregates. Aggregates excluded from the panel are World, the continental and subregional groups, China (351), European Union (27), and the LDC, LLDC, SIDS, LIFDC, and NFIDC groups. China, mainland (41) stays in the panel. China (351) in 2024 reports 653.2 Mt of cereals primary against 651.4 Mt for China, mainland, so the two series overlap and must not be summed.
 
-No break file was supplied. `boundary_audit` remains `pending`. Successor states and statistical breaks can still be joined across regimes.
+The later boundary review found no overlapping years between predecessor and successor codes. See [FAOSTAT_BOUNDARY_AUDIT.md](FAOSTAT_BOUNDARY_AUDIT.md).
 
 ## Screening result
 
@@ -91,4 +91,4 @@ A 10-year log-linear trend therefore flags ordinary year-to-year movement in rou
 
 ## Still open
 
-Territorial boundaries and statistical breaks are not certified. An official-only (flag A) rerun has not been produced as a separate panel; the flag composition above is a count on the mixed-flag panel. Event linkage, the documentary search log, and any comparison with envelope losses remain undone. No registry row was added from these flags.
+Territorial code successions are reviewed in the boundary audit. The break file clears phantom baselines after a predecessor code ends and does not change assessable flags. The official-only rerun is in [FAOSTAT_OFFICIAL_ONLY.md](FAOSTAT_OFFICIAL_ONLY.md). The flag composition above remains the mixed-flag count. Event linkage, the documentary search log, and any comparison with envelope losses remain undone. No registry row was added from these flags.

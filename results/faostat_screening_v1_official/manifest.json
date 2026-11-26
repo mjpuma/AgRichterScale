@@ -1,0 +1,42 @@
+{
+  "protocol_version": "1.0",
+  "source": "https://bulks-faostat.fao.org/production/Production_Crops_Livestock_E_All_Data_(Normalized).zip",
+  "archive": "production.zip",
+  "archive_sha256": "c5835418c18f9322e7decbd6800f93a216eaae3cdfa31acb08f0518c0c6d6853",
+  "input_format": ".zip",
+  "archive_member": "Production_Crops_Livestock_E_All_Data_(Normalized).csv",
+  "encoding": "utf-8-sig",
+  "release_note": "Same FSC production.zip as the 2026-11-25 audit (sha256 c5835418c18f9322e7decbd6800f93a216eaae3cdfa31acb08f0518c0c6d6853). Cutoff 2024 unchanged. Break file ancillary/faostat_qcl_breaks_v1.csv. Official-only: production flag A enters baselines and targets; E, I, and X are set aside and the source value is kept on the row. M remains excluded.",
+  "start_year": 1961,
+  "end_year": 2024,
+  "processed_utc": "2026-11-26T01:01:30.239231+00:00",
+  "breaks_sha256": "dabf559b646958599d0c5a73677de3b33695412a4d47cb664692267b7a0ed807",
+  "official_only": true,
+  "production_flags_in_baseline_and_target": [
+    "A"
+  ],
+  "production_flags_set_aside": [
+    "M",
+    "E",
+    "I",
+    "X"
+  ],
+  "area_classification": "provisional; review area_audit before inference",
+  "boundary_audit": "not certified; supplied break file applied",
+  "counts": {
+    "no_area_reporting_row": 5480,
+    "insufficient_baseline": 6045,
+    "assessable": 23343,
+    "missing_production": 12726,
+    "nonofficial_excluded": 5910
+  },
+  "source_rows": 130732,
+  "panel_rows": 53504,
+  "candidates_10pct": 7081,
+  "thresholds_pct": [
+    5,
+    10,
+    20
+  ],
+  "scientific_status": "screening only, not a validated event sample"
+}
