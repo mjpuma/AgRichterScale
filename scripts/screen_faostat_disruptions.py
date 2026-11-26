@@ -177,21 +177,31 @@ def read_breaks(path):
     return result
 
 
-def build_panel(entities, active, cells, end_year, breaks):
+def production_used(cell, official_only):
+    """Return the value that may enter a baseline or target, and why."""
+    flag = cell.get("flag") if cell else None
+    value = cell.get("value") if cell else None
+    if official_only and flag in {"E", "I", "X"}:
+        return None, "nonofficial"
+    if flag == "M" or value is None:
+        return None, "missing"
+    return value, "kept"
+
+
+def build_panel(entities, active, cells, end_year, breaks, official_only=False):
     for a, label in sorted(entities.items()):
         if area_class(a) != "reporting_entity":
             continue
         for item, crop in CROPS.items():
-            history = {y: cells.get((a, item, y, "production"), {}).get("value")
-                       for y in range(1961, end_year+1)}
-            # Missing-flag rows never count as measured production.
-            for y in history:
-                if cells.get((a, item, y, "production"), {}).get("flag") == "M":
-                    history[y] = None
+            history, roles = {}, {}
+            for y in range(1961, end_year+1):
+                used, role = production_used(cells.get((a, item, y, "production"), {}), official_only)
+                history[y], roles[y] = used, role
             for y, value in history.items():
                 expected, n, median5, median10 = estimate(history, y, breaks.get((a,item), ()))
                 delta, frac, shortfall, flags = screen(value, expected)
                 status = ("no_area_reporting_row" if y not in active[a] else
+                          "nonofficial_excluded" if roles[y] == "nonofficial" else
                           "missing_production" if value is None else
                           "insufficient_baseline" if expected is None else "assessable")
                 row = {"area_code": a, "area": label, "item_code": item, "crop": crop,
@@ -221,6 +231,8 @@ def main():
     p.add_argument("--out", type=Path, required=True)
     p.add_argument("--encoding", default="utf-8-sig", help="CSV encoding; use latin-1 only if verified for the release")
     p.add_argument("--breaks", type=Path, help="CSV area_code,item_code,break_year,reason")
+    p.add_argument("--official-only", action="store_true",
+                   help="Use production flag A only. Set aside E, I, and X in baselines and targets; keep the source value on the row.")
     args = p.parse_args()
     if args.end_year < 1961:
         p.error("end-year must be >=1961")
@@ -230,7 +242,7 @@ def main():
         acquire(args.archive)
     entities, active, cells, member = parse(args.archive, args.end_year, args.encoding)
     breaks = read_breaks(args.breaks)
-    panel = list(build_panel(entities, active, cells, args.end_year, breaks))
+    panel = list(build_panel(entities, active, cells, args.end_year, breaks, args.official_only))
     args.out.mkdir(parents=True, exist_ok=False)
     write_csv(args.out/"source_rows.csv", (
         dict(area_code=a, area=entities[a], area_class=area_class(a), item_code=i,
@@ -255,14 +267,17 @@ def main():
             c[f"flag_{t}pct"] += int(row[f"flag_{t}pct"] is True)
     write_csv(args.out/"coverage.csv", (
         {"year": y, "crop": crop, **{k: c[k] for k in
-          ["no_area_reporting_row", "missing_production", "insufficient_baseline",
-           "assessable", "flag_5pct", "flag_10pct", "flag_20pct"]}}
+          ["no_area_reporting_row", "missing_production", "nonofficial_excluded",
+           "insufficient_baseline", "assessable", "flag_5pct", "flag_10pct", "flag_20pct"]}}
         for (y,crop),c in sorted(coverage.items())))
     manifest = {"protocol_version": "1.0", "source": URL, "archive": args.archive.name,
                 "archive_sha256": sha256(args.archive), "input_format": args.archive.suffix.lower(), "archive_member": member, "encoding": args.encoding,
                 "release_note": args.release_note, "start_year": 1961,
                 "end_year": args.end_year, "processed_utc": datetime.now(timezone.utc).isoformat(),
                 "breaks_sha256": sha256(args.breaks) if args.breaks else None,
+                "official_only": bool(args.official_only),
+                "production_flags_in_baseline_and_target": ["A"] if args.official_only else ["A", "E", "I", "X"],
+                "production_flags_set_aside": ["M", "E", "I", "X"] if args.official_only else ["M"],
                 "area_classification": "provisional; review area_audit before inference",
                 "boundary_audit": "not certified; supplied break file applied" if args.breaks else "pending",
                 "counts": dict(Counter(r["status"] for r in panel)),

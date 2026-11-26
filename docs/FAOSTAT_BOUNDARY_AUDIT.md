@@ -51,6 +51,6 @@ Kosovo has no area code here, so Serbia from 2006 is not tested for whether it i
 
 The screener's manifest field `boundary_audit` still says `not certified; supplied break file applied`. That string means a break file was supplied. It does not mean every statistical discontinuity has been closed. Small-series level swings were not used to invent breaks: many minor rice or maize series move by an order of magnitude without a border change.
 
-An official-only rerun and event linkage are still open. No registry row was added from these flags.
+The official-only rerun is in [FAOSTAT_OFFICIAL_ONLY.md](FAOSTAT_OFFICIAL_ONLY.md). Event linkage is still open. No registry row was added from these flags.
 
 The full rerun panel stays local in `outputs/faostat_historical_screen_v1_breaks/`. The committed manifest is `results/faostat_screening_v1_breaks/manifest.json`.
