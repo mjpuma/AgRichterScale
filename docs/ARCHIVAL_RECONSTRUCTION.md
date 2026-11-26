@@ -52,7 +52,7 @@ The CSO Potatoes section restates Bourke. Area planted, in hectares as the CSO p
 
 ## Outside this frame
 
-GreatFamine, Laki1783, NoSummer, and DustBowl had no collection in the four-source frame named by the famine inventory. NoSummer stays a qualitative note in the evidence seed. DustBowl has no Great Plains harvest series here. The 1934 national wheat level and the decadal model stay in the evidence seed.
+GreatFamine, Laki1783, NoSummer, and DustBowl had no collection in the four-source frame named by the famine inventory. NoSummer stays a qualitative note in the evidence seed. DustBowl has no Great Plains harvest series here. The 1934 national wheat level and the decadal model stay in the evidence seed. FamineWatch has separate, unverified crop sentences for some of these cases. They are logged in the [crosswalk](FAMINEWATCH_CROSSWALK.md) and are not copied into this table.
 
 ## What this pass does not do
 
