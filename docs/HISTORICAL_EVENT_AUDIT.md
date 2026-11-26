@@ -44,7 +44,7 @@ Keep *observed* area and loss fraction **missing**, not 0 or 1, until sourced.
 
 1. Parse and inspect every sheet of the two Excel workbooks, reconcile country/state assignments, and export a complete footprint inventory.
 2. Fix and test any row-skipping, grouping, or zero-as-missing behavior found.
-3. Source-check a diverse validation subset: Dust Bowl, 1816 Year Without a Summer, Vanuatu 2015, and one conflict-driven crisis.
+3. The source check of the Dust Bowl, 1816, Vanuatu 2015, and the Sudan 2025 cereal assessment is in [SOURCE_CHECK.md](SOURCE_CHECK.md). None of those readings is an event loss fraction. Figures were not redrawn.
 4. Recalculate event exposure/impact with verified footprints or explicitly label the 2020-based counterfactuals.
 5. Revisit Figures 1–4 only after event meaning and mapping are validated.
 
