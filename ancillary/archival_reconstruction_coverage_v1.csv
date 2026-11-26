@@ -1,0 +1,10 @@
+event_id,coverage,note
+GreatFamine,outside_this_frame,No source collection was opened. The target frame is the four collections named in the famine inventory.
+Laki1783,outside_this_frame,No source collection was opened.
+NoSummer,outside_this_frame,The qualitative 1816 note stays in the evidence seed. No harvest series was reconstructed.
+PotatoFamine,extracted_partial,"Potato area for 1844-1848 and 1859, plus a pre-famine balance sheet. Annual area for 1849-1852, yield, and oats were not on the pages read. Potato stays off the cereal axis."
+Drought18761878,not_reopened,"District outturn returns were not assembled. The GIPE file was blocked on retrieval. The Tanjore and Coimbatore percentages stay in the famine inventory and were not copied here. The Gazetteer area is famine exposure, not harvested area."
+SovietFamine1921,extracted_partial,"Three competing USSR-less-SCR evaluations for 1920-1923, and source block 3a by region for 1920-1922. Not a single official total, and not a Volga series. Years 1918-1919 were not extracted."
+ChineseFamine1960,extracted_partial,"National grain output, procurement, procurement share, net export, and per capita grain for 1954-1966. Provincial output was not in Table 1. 1961 is not the onset."
+DustBowl,outside_this_frame,No Great Plains harvest series was reconstructed. The national 1934 wheat level and the decadal model stay in the evidence seed.
+SovietFamine1932,not_reopened,The approximate 56 and 50 million tonne harvest statements were not re-read and are not copied into this table. Ukraine and Kazakhstan were not separated. This case is not SovietFamine1921.
