@@ -1,8 +1,8 @@
 event_name,event_type,primary_cause,year_start,year_end,region,notes
-GreatFamine,Climate-induced famine,Extreme weather (cold/wet),1315,1317,Europe,Crop failure from excessive rain and cold
-Laki1783,Volcanic famine,Volcanic eruption,1783,1784,Iceland/Europe,Laki volcanic eruption caused crop failures
+GreatFamine,Climate-induced famine,Extreme weather (cold/wet),1315,1317,Europe,Cold and wet years; Winchester estate yields reported below average (Schuh 2020 citing Titow); the scale of grain loss is not verified
+Laki1783,Volcanic famine,Volcanic eruption,1783,1784,Iceland/Europe,Laki eruption; haze damaged grass in Iceland; Wieners and Halfdanarson 2024 find no evidence of harvest failure in west and central Europe in 1783
 NoSummer,Volcanic famine,Volcanic eruption,1816,1816,Global,Year Without a Summer from Tambora eruption
-PotatoFamine,Disease-induced famine,Crop disease (blight),1845,1852,Ireland,Potato blight destroyed primary food crop
+PotatoFamine,Disease-induced famine,Crop disease (blight),1845,1852,Ireland,Potato blight; potato area fell from 656014 ha in 1846 to 89000 ha in 1847 (CSO after Bourke); the production loss is not verified
 Drought18761878,Climate-induced famine,Drought,1876,1878,Asia/Africa,Great Drought affecting India and China
 SovietFamine1921,Compound crisis,Drought + conflict,1921,1922,Soviet Union,Drought exacerbated by civil war disruption
 ChineseFamine1960,Policy-induced famine,Policy failure,1959,1961,China,Great Leap Forward policies
