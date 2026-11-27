@@ -13,6 +13,26 @@ from ..data.spatial_mapper import SpatialMapper
 logger = logging.getLogger(__name__)
 
 
+def subdivisions_for_country(event_data: Dict[str, Any], country_code: float) -> List[Any]:
+    """State names that belong to one country.
+
+    Workbook rows carry a country code on each subdivision. Callers that only
+    pass a flat state_codes list keep that list, because older tests do.
+    """
+    records = event_data.get("state_records")
+    if records is None:
+        return list(event_data.get("state_codes") or [])
+    matched = []
+    for record in records:
+        try:
+            same = float(record["country_code"]) == float(country_code)
+        except (TypeError, ValueError, KeyError):
+            same = False
+        if same:
+            matched.append(record["name"])
+    return matched
+
+
 class EventCalculator:
     """
     Calculates production losses and magnitudes for historical events.
@@ -48,13 +68,22 @@ class EventCalculator:
             logger.info("Country codes mapping not loaded, loading now...")
             self.spatial_mapper.load_country_codes_mapping()
         
-        # Storage for event results
+        # Storage for event results and places that could not be mapped.
+        # An unmapped place is recorded here. It is not a measured zero harvest.
         self.event_results: Dict[str, Dict[str, Any]] = {}
+        self.mapping_failures: List[Dict[str, Any]] = []
         
         logger.info(
             f"Initialized EventCalculator for {config.crop_type} "
             f"(crop indices: {config.get_crop_indices()})"
         )
+    
+    def _record_mapping_failure(self, country_code: float, reason: str) -> None:
+        """Record a place that could not be mapped. A later zero is not a harvest."""
+        self.mapping_failures.append({
+            "country_code": country_code,
+            "reason": reason,
+        })
     
     def calculate_single_event(
         self, 
@@ -83,6 +112,7 @@ class EventCalculator:
                 - grid_cells_count: Total grid cells affected
         """
         logger.info(f"Calculating losses for event: {event_name}")
+        self.mapping_failures = []
         
         # Initialize totals
         total_harvest_loss_ha = 0.0
@@ -94,7 +124,6 @@ class EventCalculator:
         # Get event parameters
         country_codes = event_data.get('country_codes', [])
         state_flags = event_data.get('state_flags', [])
-        state_codes = event_data.get('state_codes', [])
         
         if not country_codes:
             logger.warning(f"Event {event_name} has no country codes")
@@ -103,7 +132,8 @@ class EventCalculator:
                 'production_loss_kcal': 0.0,
                 'affected_countries': 0,
                 'affected_states': 0,
-                'grid_cells_count': 0
+                'grid_cells_count': 0,
+                'mapping_failures': []
             }
         
         # Process each affected country
@@ -116,12 +146,15 @@ class EventCalculator:
             state_flag = state_flags[i] if i < len(state_flags) else 0
             
             if state_flag == 1:
-                # State-level processing
+                names = subdivisions_for_country(event_data, country_code)
+                if event_data.get("state_records") is not None and not names:
+                    self._record_mapping_failure(country_code, "no_subdivisions_for_country")
+                    continue
                 logger.debug(f"  Processing country {country_code} at state level")
                 harvest_loss, production_loss, grid_cells = self.calculate_state_level_loss(
-                    country_code, state_codes
+                    country_code, names
                 )
-                affected_states_count += len(state_codes) if state_codes else 0
+                affected_states_count += len(names)
             else:
                 # Country-level processing
                 logger.debug(f"  Processing country {country_code} at country level")
@@ -143,7 +176,8 @@ class EventCalculator:
             'production_loss_kcal': total_production_loss_kcal,
             'affected_countries': affected_countries_count,
             'affected_states': affected_states_count,
-            'grid_cells_count': total_grid_cells
+            'grid_cells_count': total_grid_cells,
+            'mapping_failures': list(self.mapping_failures),
         }
         
         self.event_results[event_name] = result
@@ -185,6 +219,7 @@ class EventCalculator:
                 f"Could not map country code {country_code} "
                 f"({country_name or 'Unknown'}) to FIPS"
             )
+            self._record_mapping_failure(country_code, "no_fips")
             return 0.0, 0.0, 0
         
         # Query GridDataManager for country's grid cells (using FIPS code)
@@ -194,10 +229,12 @@ class EventCalculator:
             )
         except Exception as e:
             logger.error(f"Error querying grid cells for FIPS {fips_code}: {e}")
+            self._record_mapping_failure(country_code, "grid_query_failed")
             return 0.0, 0.0, 0
         
         if len(production_cells) == 0:
             logger.warning(f"No grid cells found for FIPS: {fips_code}")
+            self._record_mapping_failure(country_code, "no_grid_cells")
             return 0.0, 0.0, 0
         
         # Get crop indices for current analysis
@@ -269,6 +306,7 @@ class EventCalculator:
             logger.error(
                 f"Error mapping states to grid cells for country {country_code}: {e}"
             )
+            self._record_mapping_failure(country_code, "state_query_failed")
             return 0.0, 0.0, 0
         
         if not production_ids:
@@ -279,6 +317,7 @@ class EventCalculator:
                 f"No grid cells found for states {state_codes} in "
                 f"country {country_code} ({country_name or 'Unknown'})"
             )
+            self._record_mapping_failure(country_code, "no_matching_subdivisions")
             return 0.0, 0.0, 0
         
         # Get full DataFrames for the state grid cells
@@ -288,6 +327,7 @@ class EventCalculator:
         
         if len(production_cells) == 0:
             logger.warning(f"No production data found for states {state_codes}")
+            self._record_mapping_failure(country_code, "no_state_production_cells")
             return 0.0, 0.0, 0
         
         # Get crop indices for current analysis
@@ -442,18 +482,8 @@ class EventCalculator:
                 filtered_event_data = {
                     'country_codes': [country_codes[i] for i in indices],
                     'state_flags': [event_data.get('state_flags', [])[i] for i in indices],
-                    # State codes are a bit trickier as they are a flat list corresponding to state_flags=1
-                    # But the current structure seems to be parallel lists? 
-                    # Let's check process_event_sheets output structure again.
-                    # It seems country_codes and state_flags are parallel.
-                    # State codes might be handled differently in process_event_sheets.
-                    # Let's assume for now we pass the whole state_codes list and calculate_single_event handles it?
-                    # Actually calculate_single_event calls calculate_state_level_loss which takes ALL state_codes.
-                    # This implies state_codes are specific to the event, not per country in the data structure?
-                    # Reviewing process_event_sheets: it returns 'state_codes': [list of all state codes for event]
-                    # And calculate_state_level_loss iterates through ALL state_codes and maps them to the country.
-                    # So passing the full list is safe because map_state_to_grid_cells filters by country ISO3.
-                    'state_codes': event_data.get('state_codes', [])
+                    'state_codes': event_data.get('state_codes', []),
+                    'state_records': event_data.get('state_records'),
                 }
                 
                 # Use filtered data
@@ -819,7 +849,6 @@ class EventCalculator:
         
         country_codes = event_data.get('country_codes', [])
         state_flags = event_data.get('state_flags', [])
-        state_codes = event_data.get('state_codes', [])
         
         for i, country_code in enumerate(country_codes):
             if pd.isna(country_code) or country_code == 0:
@@ -833,10 +862,14 @@ class EventCalculator:
             state_flag = state_flags[i] if i < len(state_flags) else 0
             
             if state_flag == 1:
-                # State-level
-                production_cells, harvest_cells = self.spatial_mapper.get_state_grid_cells_dataframe(
-                    country_code, state_codes, code_system='GDAM '
-                )
+                names = subdivisions_for_country(event_data, country_code)
+                if event_data.get("state_records") is not None and not names:
+                    production_cells = pd.DataFrame()
+                    harvest_cells = pd.DataFrame()
+                else:
+                    production_cells, harvest_cells = self.spatial_mapper.get_state_grid_cells_dataframe(
+                        country_code, names, code_system='GDAM '
+                    )
             else:
                 # Country-level
                 iso3_code = self.spatial_mapper.get_iso3_from_country_code(
