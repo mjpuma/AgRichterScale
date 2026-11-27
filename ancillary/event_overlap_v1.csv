@@ -1,0 +1,4 @@
+event_a,event_b,shared_years,shared_gdam_codes,shared_places,registry_overlap_groups,rule
+ENSO2015_2016,EastTimor,2015-2016,67,East Timor,ENSO_2015_2016_PARENT / ENSO_2015_2016_SUBEVENT,parent_contains_subevent_do_not_sum
+ENSO2015_2016,Laos,2015-2016,123,Laos,ENSO_2015_2016_PARENT / ENSO_2015_2016_SUBEVENT,parent_contains_subevent_do_not_sum
+ENSO2015_2016,Solomon,2015-2016,,,ENSO_2015_2016_PARENT / ENSO_2015_2016_SUBEVENT,registry_subevent_place_not_on_parent_sheet_keep_separate
