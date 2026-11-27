@@ -208,7 +208,7 @@ class AgRichterScaleVisualizer:
         if show_axis_labels:
             ax.set_xlabel(r'AgRichter Magnitude ($M_D = \log_{10}(A_H / \mathrm{km}^2)$)', 
                          fontsize=14, fontweight='bold')
-            ax.set_ylabel('Harvest Area Disrupted (km²)', 
+            ax.set_ylabel('SPAM 2020 harvested area disrupted at loss fraction 1 (km²)', 
                          fontsize=14, fontweight='bold')
         
         # Tick parameters

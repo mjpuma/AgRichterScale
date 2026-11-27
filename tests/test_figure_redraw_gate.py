@@ -21,7 +21,7 @@ class TestFigureRedrawGate(unittest.TestCase):
 
     def test_gate_lists_six_conditions_and_stays_closed(self):
         text = GATE.read_text(encoding="utf-8")
-        self.assertIn("**Status: closed.**", text)
+        self.assertIn("**Status: met and drawn on 2026-11-27.**", text)
         rows = re.findall(r"^\| ([1-9]) \|", text, flags=re.MULTILINE)
         self.assertEqual(rows, ["1", "2", "3", "4", "5", "6"])
         for phrase in (
@@ -35,6 +35,26 @@ class TestFigureRedrawGate(unittest.TestCase):
             "5.2 million tonnes",
         ):
             self.assertIn(phrase, text)
+
+    def test_redraw_note_keeps_caption_and_pre_fix_files(self):
+        text = (ROOT / "docs" / "FIGURE_REDRAW_2026-11.md").read_text(encoding="utf-8")
+        for phrase in (
+            "implicit loss fraction of 1",
+            "SPAM 2020",
+            "wheat, maize, rice, or all grain",
+            "not a measured harvest",
+            "not observed historical losses",
+        ):
+            self.assertIn(phrase, text)
+        for name in ("figure1_agrichter_scale", "figure2_hp_envelopes"):
+            self.assertTrue((ROOT / "results" / f"{name}_pre_fix.png").exists(), name)
+
+    def test_point_tables_have_no_observed_loss(self):
+        for name in ("event_points_before.csv", "event_points_after.csv"):
+            with (ROOT / "results" / "redraw_2026-11" / name).open(newline="", encoding="utf-8") as handle:
+                rows = list(csv.DictReader(handle))
+            self.assertEqual(len(rows), 92)
+            self.assertFalse(any("observed" in key or "loss_fraction" in key for key in rows[0]))
 
     def test_registry_is_untouched(self):
         with (ROOT / "ancillary" / "historical_event_registry.csv").open(

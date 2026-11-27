@@ -127,11 +127,13 @@ class Config:
             'media': self.root_dir / 'outputs' / 'media'
         }
         
-        # SPAM data files - version-specific paths
+        # SPAM data files - version-specific paths. AGRICHTER_SPAM_ROOT moves only the
+        # SPAM folders; ancillary tables still come from root_dir.
+        spam_root = Path(os.environ['AGRICHTER_SPAM_ROOT']) if os.environ.get('AGRICHTER_SPAM_ROOT') else self.root_dir
         if self.spam_version == '2020':
-            spam_prod_dir = self.root_dir / 'spam2020V2r0_global_production' / 'spam2020V2r0_global_production'
-            spam_harvest_dir = self.root_dir / 'spam2020V2r0_global_harvested_area' / 'spam2020V2r0_global_harvested_area'
-            spam_yield_dir = self.root_dir / 'spam2020V2r0_global_yield' / 'spam2020V2r0_global_yield'
+            spam_prod_dir = spam_root / 'spam2020V2r0_global_production' / 'spam2020V2r0_global_production'
+            spam_harvest_dir = spam_root / 'spam2020V2r0_global_harvested_area' / 'spam2020V2r0_global_harvested_area'
+            spam_yield_dir = spam_root / 'spam2020V2r0_global_yield' / 'spam2020V2r0_global_yield'
             production_file = spam_prod_dir / 'spam2020V2r0_global_P_TA.csv'
             harvest_area_file = spam_harvest_dir / 'spam2020V2r0_global_H_TA.csv'
             yield_file = spam_yield_dir / 'spam2020V2r0_global_Y_TA.csv'

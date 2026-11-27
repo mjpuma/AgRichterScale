@@ -218,7 +218,7 @@ class HPEnvelopeVisualizer:
         if show_axis_labels:
             ax.set_xlabel(r'AgRichter Magnitude ($M_D = \log_{10}(A_H / \mathrm{km}^2)$)', 
                          fontsize=14, fontweight='bold')
-            ax.set_ylabel('Production Loss (kcal)', 
+            ax.set_ylabel('SPAM 2020 production disrupted at loss fraction 1 (kcal)', 
                          fontsize=14, fontweight='bold')
         
         # Tick parameters
