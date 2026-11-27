@@ -123,29 +123,13 @@ class TestAgRichterScaleVisualizer:
         # Values should remain unchanged
         assert prepared.iloc[0]['harvest_area_km2'] == 100000
     
-    def test_get_axis_limits_wheat(self, config_wheat):
-        """Test axis limits for wheat."""
-        visualizer = AgRichterScaleVisualizer(config_wheat)
-        xlim, ylim = visualizer._get_axis_limits()
-        
-        assert xlim == (2, 6.5)
-        assert ylim == (1e10, 1e16)
-    
-    def test_get_axis_limits_rice(self, config_rice):
-        """Test axis limits for rice."""
-        visualizer = AgRichterScaleVisualizer(config_rice)
-        xlim, ylim = visualizer._get_axis_limits()
-        
-        assert xlim == (2, 6)
-        assert ylim == (1e10, 1e16)
-    
-    def test_get_axis_limits_allgrain(self, config_allgrain):
-        """Test axis limits for allgrain."""
-        visualizer = AgRichterScaleVisualizer(config_allgrain)
-        xlim, ylim = visualizer._get_axis_limits()
-        
-        assert xlim == (2, 7)
-        assert ylim == (1e10, 1e16)
+    def test_get_axis_limits_unified(self, config_wheat, config_rice, config_allgrain):
+        """All crops share unified Richter-style limits for panel comparability."""
+        for config in (config_wheat, config_rice, config_allgrain):
+            visualizer = AgRichterScaleVisualizer(config)
+            xlim, ylim = visualizer._get_axis_limits()
+            assert xlim == (1, 7)
+            assert ylim == (1e1, 1e7)
     
     def test_plot_with_empty_dataframe(self, config_wheat):
         """Test plotting with empty events DataFrame."""
@@ -185,41 +169,31 @@ class TestAgRichterScaleVisualizer:
         assert fig is not None
         plt.close(fig)
     
-    def test_plot_historical_events_with_adjusttext(self, config_wheat, sample_events_ha):
-        """Test plotting historical events with adjustText."""
+    def test_plot_historical_events_richter_style(self, config_wheat, sample_events_ha):
+        """Test plotting historical events (Richter-style markers)."""
         visualizer = AgRichterScaleVisualizer(config_wheat)
         prepared = visualizer._prepare_events_data(sample_events_ha)
         prepared['magnitude'] = np.log10(prepared['harvest_area_km2'])
         
         fig, ax = plt.subplots()
-        visualizer._plot_historical_events(ax, prepared)
+        visualizer._plot_historical_events_richter_style(ax, prepared)
         
         # Check that scatter plot was created
         assert len(ax.collections) > 0
         plt.close(fig)
     
-    def test_plot_agriPhase_thresholds(self, config_wheat):
-        """Test plotting AgriPhase threshold lines."""
+    def test_plot_magnitude_area_relationship(self, config_wheat):
+        """Test plotting the fundamental A_H = 10^M_D relationship line."""
         visualizer = AgRichterScaleVisualizer(config_wheat)
         
         fig, ax = plt.subplots()
-        xlim = (2, 7)
-        visualizer._plot_agriPhase_thresholds(ax, xlim)
+        xlim = (1, 7)
+        visualizer._plot_magnitude_area_relationship(ax, xlim)
         
-        # Check that horizontal lines were added
+        # Check that line was added and follows A_H = 10^M_D
         assert len(ax.lines) > 0
-        plt.close(fig)
-    
-    def test_plot_theoretical_line(self, config_wheat):
-        """Test plotting theoretical production loss line."""
-        visualizer = AgRichterScaleVisualizer(config_wheat)
-        
-        fig, ax = plt.subplots()
-        xlim = (2, 7)
-        visualizer._plot_theoretical_line(ax, xlim)
-        
-        # Check that line was added
-        assert len(ax.lines) > 0
+        x, y = ax.lines[0].get_data()
+        np.testing.assert_allclose(y, 10 ** np.asarray(x), rtol=1e-10)
         plt.close(fig)
     
     def test_different_crop_types(self, sample_events_ha):
@@ -260,87 +234,5 @@ class TestAgRichterScaleVisualizer:
         assert fig is not None
         plt.close(fig)
     
-    def test_severity_classification(self, config_wheat):
-        """Test event severity classification."""
-        visualizer = AgRichterScaleVisualizer(config_wheat)
-        thresholds = config_wheat.get_thresholds()
-        
-        # Test classification at different levels
-        test_cases = [
-            (thresholds.get('T1', 1e14) * 0.5, 1, 'Phase 1 (Minimal)'),
-            (thresholds.get('T1', 1e14) * 1.5, 2, 'Phase 2 (Stressed)'),
-            (thresholds.get('T2', 1e15) * 1.5, 3, 'Phase 3 (Crisis)'),
-            (thresholds.get('T3', 1e15) * 1.5, 4, 'Phase 4 (Emergency)'),
-            (thresholds.get('T4', 1e15) * 1.5, 5, 'Phase 5 (Famine)'),
-        ]
-        
-        for production_loss, expected_phase, expected_name in test_cases:
-            phase, phase_name, color, marker = visualizer._classify_event_severity(production_loss)
-            assert phase == expected_phase
-            assert phase_name == expected_name
-            assert color is not None
-            assert marker is not None
-    
-    def test_severity_markers_unique(self, config_wheat):
-        """Test that different severity levels have unique markers."""
-        visualizer = AgRichterScaleVisualizer(config_wheat)
-        thresholds = config_wheat.get_thresholds()
-        
-        test_values = [
-            thresholds.get('T1', 1e14) * 0.5,
-            thresholds.get('T1', 1e14) * 1.5,
-            thresholds.get('T2', 1e15) * 1.5,
-            thresholds.get('T3', 1e15) * 1.5,
-            thresholds.get('T4', 1e15) * 1.5,
-        ]
-        
-        markers = set()
-        for value in test_values:
-            _, _, _, marker = visualizer._classify_event_severity(value)
-            markers.add(marker)
-        
-        # All phases should have unique markers
-        assert len(markers) == len(test_values)
-    
-    def test_severity_visualization_in_plot(self, config_wheat):
-        """Test that severity classification appears in visualization."""
-        visualizer = AgRichterScaleVisualizer(config_wheat)
-        thresholds = config_wheat.get_thresholds()
-        
-        # Create events with varied severity
-        events_data = pd.DataFrame([
-            {'event_name': 'Minor', 'harvest_area_km2': 5000, 'production_loss_kcal': thresholds['T1'] * 0.5},
-            {'event_name': 'Moderate', 'harvest_area_km2': 20000, 'production_loss_kcal': thresholds['T2'] * 1.2},
-            {'event_name': 'Severe', 'harvest_area_km2': 100000, 'production_loss_kcal': thresholds['T4'] * 1.5},
-        ])
-        
-        fig = visualizer.create_agrichter_scale_plot(events_data)
-        ax = fig.gca()
-        
-        # Check that legend has severity classifications
-        legend = ax.get_legend()
-        assert legend is not None
-        
-        legend_labels = [text.get_text() for text in legend.get_texts()]
-        phase_labels = [label for label in legend_labels if 'Phase' in label]
-        
-        # Should have at least some phase labels
-        assert len(phase_labels) > 0
-        
-        plt.close(fig)
-    
-    def test_severity_colors_from_ipc(self, config_wheat):
-        """Test that severity colors come from IPC color scheme."""
-        visualizer = AgRichterScaleVisualizer(config_wheat)
-        ipc_colors = config_wheat.get_ipc_colors()
-        
-        # Test that classification uses IPC colors
-        thresholds = config_wheat.get_thresholds()
-        _, _, color, _ = visualizer._classify_event_severity(thresholds['T1'] * 0.5)
-        
-        # Color should be from IPC color scheme
-        assert color in ipc_colors.values()
-
-
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])

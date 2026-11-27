@@ -92,6 +92,7 @@ def main():
         individual_dir.mkdir(exist_ok=True)
         
         crops = ['allgrain', 'wheat', 'maize', 'rice']
+        all_events_for_export = []
         
         # Combined figure
         logger.info("Creating 4-panel combined figure...")
@@ -102,6 +103,19 @@ def main():
             envelope_data, config, grid_manager = calculate_envelope(crop)
             events_data = load_real_events(crop, config, grid_manager)
             
+            # Prepare data for export
+            if not events_data.empty:
+                export_df = events_data.copy()
+                export_df['crop_type'] = crop
+                # Add display name
+                export_df['display_name'] = export_df['event_name'].apply(config.get_event_label)
+                # Ensure harvest_area_km2 exists
+                if 'harvest_area_km2' not in export_df.columns:
+                    export_df['harvest_area_km2'] = export_df['harvest_area_loss_ha'] * 0.01
+                # Rename magnitude to magnitude_MD
+                export_df = export_df.rename(columns={'magnitude': 'magnitude_MD'})
+                all_events_for_export.append(export_df)
+
             visualizer = HPEnvelopeVisualizer(config)
             visualizer.create_hp_envelope_plot(
                 envelope_data,
@@ -156,6 +170,33 @@ def main():
         plt.savefig(results_dir / 'figure2_hp_envelopes.svg', format='svg', bbox_inches='tight', facecolor='white')
         plt.close()
         
+        # Final Export of computed events to CSV
+        if all_events_for_export:
+            final_export_df = pd.concat(all_events_for_export, ignore_index=True)
+            
+            # Merge with metadata from food_disruptions.csv
+            metadata_path = Path('ancillary/food_disruptions.csv')
+            if metadata_path.exists():
+                metadata_df = pd.read_csv(metadata_path)
+                # Select only the columns we need from metadata
+                meta_cols = ['event_name', 'year_start', 'year_end', 'region', 'event_type']
+                # Drop event_type from computed data to use the one from metadata (driver category)
+                final_export_df = final_export_df.drop(columns=['event_type'], errors='ignore')
+                final_export_df = pd.merge(final_export_df, metadata_df[meta_cols], on='event_name', how='left')
+            
+            # Select and order final columns
+            column_order = [
+                'event_name', 'display_name', 'crop_type', 'magnitude_MD',
+                'harvest_area_km2', 'production_loss_kcal', 'event_type',
+                'year_start', 'year_end', 'region'
+            ]
+            # Filter to only requested columns that exist
+            final_export_df = final_export_df[[c for c in column_order if c in final_export_df.columns]]
+            
+            csv_path = results_dir / 'historical_events_computed.csv'
+            final_export_df.to_csv(csv_path, index=False)
+            logger.info(f"✅ Exported computed events to {csv_path}")
+
         logger.info("🎉 SUCCESS!")
         return 0
     except Exception as e:

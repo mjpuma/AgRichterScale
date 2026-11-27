@@ -52,12 +52,6 @@ def generate_table_s1():
     caloric_content = config.get_caloric_content()
     kcal_per_tmt = 1_000_000_000.0 * caloric_content 
     
-    # Calculate Global Production for scaling (USDA 2020 total)
-    prod_file = "USDAdata/grains_world_usdapsd_production_jan212026.csv"
-    global_prod_df = pd.read_csv(prod_file)
-    # The sum across years for "Allgrain" in the wide format
-    global_total_prod_tmt = global_prod_df[global_prod_df['Commodity'] == 'Allgrain']['2020/2021'].iloc[0]
-    
     # 2. Initialize SPAM Data Manager
     grid_manager = GridDataManager(config)
     grid_manager.load_spam_data()
@@ -65,6 +59,15 @@ def generate_table_s1():
     # 3. Build the table rows
     rows = []
     crop_indices = config.get_crop_indices()
+    
+    # Global SPAM production for the scaling denominator. Using SPAM for both
+    # numerator (country) and denominator (global) keeps the production-share
+    # ratio on a single consistent crop basket; the USDA thresholds are then
+    # scaled by that dimensionless share.
+    global_spam_prod_mt = grid_manager.get_crop_production(
+        grid_manager.get_production_data(), crop_indices, convert_to_kcal=False
+    )
+    global_spam_prod_tmt = global_spam_prod_mt / 1000.0
     
     for display_name, iso3 in COUNTRY_MAP.items():
         logger.info(f"Processing {display_name} ({iso3})...")
@@ -86,8 +89,8 @@ def generate_table_s1():
             country_prod_mt = grid_manager.get_crop_production(p_cells, crop_indices, convert_to_kcal=False)
             country_prod_tmt = country_prod_mt / 1000.0
             
-            # Scaling Factor: Ratio of country production to global production
-            scaling_factor = country_prod_tmt / global_total_prod_tmt
+            # Scaling Factor: country share of global production (both SPAM)
+            scaling_factor = country_prod_tmt / global_spam_prod_tmt
             
             # Apply scaling to global thresholds
             t1_kcal = global_mt_thresholds['1 Month'] * kcal_per_tmt * scaling_factor
@@ -105,14 +108,11 @@ def generate_table_s1():
             
         except Exception as e:
             logger.error(f"Failed to process {display_name}: {e}")
-            
-        except Exception as e:
-            logger.error(f"Failed to process {country}: {e}")
 
     # 4. Generate LaTeX
     latex = "\\begin{table}[H]\n    \\centering\n"
     latex += "    \\caption{\\textbf{National Food Security Thresholds.} \n"
-    latex += "    Consumption-based thresholds used in Figure~4 of the main text. Thresholds are calculated by scaling global USDA stocks-to-use ratios by each country's annual caloric production (derived from SPAM 2020 data). The ``Total Stocks'' column represents the theoretical systemic failure point if all reserves were fully depleted. Values assume proportional consumption relative to production; actual vulnerability depends on trade balances, storage infrastructure, and emergency reserves. Countries with production exceeding domestic consumption (e.g., Australia, Argentina) are net exporters; disruptions affect global markets rather than solely domestic supply.}\n"
+    latex += "    Consumption-based thresholds used in Figure~3 of the main text. Global thresholds (1-month supply $=$ mean 2019--2021 world grain consumption / 12; 3-month supply $=$ consumption / 4; total stocks $=$ mean ending stocks; USDA PSD Allgrain aggregate) are scaled by each country's share of global grain production (SPAM 2020). The ``Total Stocks'' column represents the theoretical systemic failure point if all reserves were fully depleted. Values assume proportional consumption relative to production; actual vulnerability depends on trade balances, storage infrastructure, and emergency reserves. Countries with production exceeding domestic consumption (e.g., Australia, Argentina) are net exporters; disruptions affect global markets rather than solely domestic supply.}\n"
     latex += "    \\label{tab:S1_country_stocks}\n    \\vspace{0.3cm}\n"
     latex += "    \\begin{tabular}{lccccc}\n        \\toprule\n"
     latex += "        \\textbf{Country} & \\textbf{Annual} & \\textbf{Harvest} & \\textbf{1-Month} & \\textbf{3-Month} & \\textbf{Total} \\\\\n"

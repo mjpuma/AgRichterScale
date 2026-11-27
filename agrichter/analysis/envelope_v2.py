@@ -2,6 +2,7 @@
 
 import logging
 from typing import Dict, List, Tuple, Optional, Any
+from dataclasses import dataclass
 import pandas as pd
 import numpy as np
 
@@ -9,12 +10,82 @@ from ..core.config import Config
 from ..core.utils import ProgressReporter
 from .envelope_builder import build_envelope
 from .convergence_validator import ConvergenceValidator
-from .envelope import EnvelopeData
 
 
 class HPEnvelopeError(Exception):
     """Exception raised for H-P envelope calculation errors."""
     pass
+
+
+@dataclass
+class EnvelopeData:
+    """Envelope data structure with convergence validation.
+
+    (Moved here from the retired v1 envelope module.)
+    """
+
+    # Core envelope data
+    disruption_areas: np.ndarray
+    lower_bound_harvest: np.ndarray
+    lower_bound_production: np.ndarray
+    upper_bound_harvest: np.ndarray
+    upper_bound_production: np.ndarray
+
+    # Convergence fields
+    convergence_point: Tuple[float, float]  # (total_harvest, total_production)
+    convergence_validated: bool
+    mathematical_properties: Dict[str, bool]
+    convergence_statistics: Dict[str, float]
+
+    # Metadata
+    crop_type: str = "unknown"
+    calculation_date: str = ""
+
+    def validate_convergence(self) -> bool:
+        """Validate that bounds converge properly."""
+        return self.convergence_validated and all(self.mathematical_properties.values())
+
+    def get_convergence_statistics(self) -> Dict[str, Any]:
+        """Get convergence analysis statistics."""
+        return {
+            'convergence_point': self.convergence_point,
+            'convergence_validated': self.convergence_validated,
+            'mathematical_properties': self.mathematical_properties,
+            'statistics': self.convergence_statistics,
+            'envelope_points': len(self.disruption_areas)
+        }
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary format for backward compatibility."""
+        return {
+            'disruption_areas': self.disruption_areas,
+            'lower_bound_harvest': self.lower_bound_harvest,
+            'lower_bound_production': self.lower_bound_production,
+            'upper_bound_harvest': self.upper_bound_harvest,
+            'upper_bound_production': self.upper_bound_production,
+            'convergence_point': self.convergence_point,
+            'convergence_validated': self.convergence_validated,
+            'mathematical_properties': self.mathematical_properties,
+            'convergence_statistics': self.convergence_statistics,
+            'crop_type': self.crop_type
+        }
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> 'EnvelopeData':
+        """Create EnvelopeData from dictionary."""
+        return cls(
+            disruption_areas=data['disruption_areas'],
+            lower_bound_harvest=data['lower_bound_harvest'],
+            lower_bound_production=data['lower_bound_production'],
+            upper_bound_harvest=data['upper_bound_harvest'],
+            upper_bound_production=data['upper_bound_production'],
+            convergence_point=data.get('convergence_point', (0.0, 0.0)),
+            convergence_validated=data.get('convergence_validated', False),
+            mathematical_properties=data.get('mathematical_properties', {}),
+            convergence_statistics=data.get('convergence_statistics', {}),
+            crop_type=data.get('crop_type', 'unknown'),
+            calculation_date=data.get('calculation_date', '')
+        )
 
 
 class HPEnvelopeCalculatorV2:

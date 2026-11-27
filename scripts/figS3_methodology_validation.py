@@ -15,7 +15,7 @@ import matplotlib.ticker as ticker
 # Add parent directory to path to allow importing from agrichter
 sys.path.append(str(Path(__file__).parent.parent))
 
-from agrichter.core.config import Config
+from agrichter.data.usda_wide import load_usda_wide
 
 # Configure logging
 logging.basicConfig(
@@ -23,36 +23,6 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
-
-def load_usda_wide(data_type="production"):
-    """Load USDA data in wide format."""
-    file_map = {
-        "production": "grains_world_usdapsd_production_jan212026.csv",
-        "consumption": "grains_world_usdapsd_consumption_jan212026.csv",
-        "endingstocks": "grains_world_usdapsd_endingstocks_jan212026.csv"
-    }
-    file_path = Path("USDAdata") / file_map[data_type]
-    if not file_path.exists():
-        # Fallback to general file search
-        available_files = list(Path("USDAdata").glob(f"grains_world_usdapsd_{data_type}_*.csv"))
-        if available_files:
-            file_path = available_files[0]
-        else:
-            raise FileNotFoundError(f"Missing required USDA file in USDAdata/ for {data_type}")
-        
-    logger.info(f"Loading {data_type} data from {file_path}")
-    df = pd.read_csv(file_path)
-    year_cols = [c for c in df.columns if '/' in c and len(c) == 9]
-    df_long = df.melt(
-        id_vars=['Commodity', 'Attribute', 'Country', 'Unit Description'],
-        value_vars=year_cols,
-        var_name='Year_Range',
-        value_name='Value'
-    )
-    df_long['Year'] = df_long['Year_Range'].str[:4].astype(int)
-    if df_long['Value'].dtype == object:
-        df_long['Value'] = df_long['Value'].str.replace(',', '').str.replace('"', '').astype(float)
-    return df_long
 
 def durbin_watson(residuals):
     """Calculate Durbin-Watson statistic."""

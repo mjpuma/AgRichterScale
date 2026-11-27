@@ -6,9 +6,9 @@ This script calculates the annual exceedance probability of global agricultural 
 It integrates historical production variability with the AgRichter H-P Envelope.
 
 DATA PEDIGREE & PROVENANCE:
-- Production Data: USDAdata/grains_world_usdapsd_production_jan212026.csv
-- Consumption Data: USDAdata/grains_world_usdapsd_consumption_jan212026.csv
-- Stocks Data: USDAdata/grains_world_usdapsd_endingstocks_jan212026.csv
+- Production Data: USDAdata/grains_world_usdapsd_production_jul142026.csv
+- Consumption Data: USDAdata/grains_world_usdapsd_consumption_jul142026.csv
+- Stocks Data: USDAdata/grains_world_usdapsd_endingstocks_jul142026.csv
 - Commodity: 'Allgrain' (Aggregate of global grain production/consumption/stocks)
 - Period: 1960/61 to 2023/24
 
@@ -35,6 +35,7 @@ from agrichter.core.config import Config
 from agrichter.data.grid_manager import GridDataManager
 from agrichter.data.spatial_mapper import SpatialMapper
 from agrichter.data.events import EventsProcessor
+from agrichter.data.usda_wide import load_usda_wide
 from agrichter.analysis.event_calculator import EventCalculator
 from agrichter.analysis.envelope_v2 import HPEnvelopeCalculatorV2
 
@@ -44,44 +45,6 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
-
-def load_usda_wide(data_type="production"):
-    """
-    Load USDA wide-format data (years as columns) and convert to long format.
-    """
-    # Use the refreshed Jan 2026 data
-    file_map = {
-        "production": "grains_world_usdapsd_production_jan212026.csv",
-        "consumption": "grains_world_usdapsd_consumption_jan212026.csv",
-        "endingstocks": "grains_world_usdapsd_endingstocks_jan212026.csv"
-    }
-    
-    file_path = Path("USDAdata") / file_map[data_type]
-    if not file_path.exists():
-        raise FileNotFoundError(f"Missing required USDA file: {file_path}")
-        
-    logger.info(f"Loading {data_type} data from {file_path}")
-    df = pd.read_csv(file_path)
-    
-    # 1. Melt years into long format
-    # Identify year columns (e.g., "1960/1961")
-    year_cols = [c for c in df.columns if '/' in c and len(c) == 9]
-    
-    df_long = df.melt(
-        id_vars=['Commodity', 'Attribute', 'Country', 'Unit Description'],
-        value_vars=year_cols,
-        var_name='Year_Range',
-        value_name='Value'
-    )
-    
-    # 2. Clean Year (take start year as in user's old code)
-    df_long['Year'] = df_long['Year_Range'].str[:4].astype(int)
-    
-    # 3. Clean Value (remove commas, handle quotes)
-    if df_long['Value'].dtype == object:
-        df_long['Value'] = df_long['Value'].str.replace(',', '').str.replace('"', '').astype(float)
-    
-    return df_long
 
 def durbin_watson(residuals):
     """Calculate Durbin-Watson statistic to check for autocorrelation."""
@@ -231,8 +194,9 @@ def generate_all_figures():
     logger.info(f"Performing {n_boot} bootstrap iterations...")
     shocks = stats['shocks']
     
+    rng = np.random.default_rng(42)  # fixed seed for reproducible CIs
     for i in range(n_boot):
-        sample = np.random.choice(shocks, size=len(shocks), replace=True)
+        sample = rng.choice(shocks, size=len(shocks), replace=True)
         sigma_boot = np.std(sample)
         scale_boot = (sigma_boot * current_prod_kcal) / (-np.log(0.32))
         boot_probs[i, :] = np.exp(-losses_at_mags / scale_boot)
@@ -292,33 +256,61 @@ def generate_all_figures():
         if not events_data.empty:
             main_scale = (stats['sigma'] * current_prod_kcal) / (-np.log(0.32))
             
-            # Map event production loss to exceedance probability using the calibrated model
-            event_probs = np.exp(-events_data['production_loss_kcal'] / main_scale)
+            # Map event production loss to exceedance probability using the calibrated model.
+            # Restrict to the visible axes ranges: labels placed outside the axes
+            # (e.g. M<3 events, or probabilities below the floor) blow up the
+            # tight bounding box and produce multi-gigapixel output files.
+            Y_FLOOR = 1e-4
+            X_MIN, X_MAX = 3.0, 7.5
+            events_data = events_data[
+                (events_data['magnitude'] >= X_MIN) & (events_data['magnitude'] <= X_MAX)
+            ].copy()
+            raw_probs = np.exp(-events_data['production_loss_kcal'] / main_scale)
+            event_probs = np.clip(raw_probs, Y_FLOOR, 1.0)
             
             ax.scatter(events_data['magnitude'], event_probs, 
                        color='black', s=40, alpha=0.6, edgecolors='none', 
                        label='Event footprints, SPAM 2020 exposure (model-mapped)', zorder=15)
             
-            # Label selected high-impact events for context
-            # (Filtering to avoid label wall)
-            try:
-                from adjustText import adjust_text
-                texts = []
-                for _, row in events_data.iterrows():
-                    # Only label events with Mag > 4.5 or high probability for Figure 4
-                    if row['magnitude'] > 4.5 or np.exp(-row['production_loss_kcal'] / main_scale) > 0.1:
-                        display_name = config.get_event_label(row['event_name'])
-                        prob = np.exp(-row['production_loss_kcal'] / main_scale)
-                        
-                        text = ax.text(row['magnitude'], prob, display_name,
-                                     fontsize=8, ha='left', va='center', fontweight='bold',
-                                     bbox=dict(boxstyle='round,pad=0.2', facecolor='white', alpha=0.6, edgecolor='none'))
-                        texts.append(text)
-                
-                if texts:
-                    adjust_text(texts, ax=ax, arrowprops=dict(arrowstyle='->', color='gray', lw=0.5, alpha=0.5))
-            except ImportError:
-                pass
+            # Label a curated subset of events with deterministic per-event
+            # offsets (points). adjustText on log axes pushed labels away from
+            # their markers; fixed offsets keep label and marker visibly
+            # paired. Offsets tuned so labels sit in clear space.
+            LABELED_EVENTS = {
+                'DustBowl':          (-9, 6, 'right', 'center'),
+                'SovietFamine1921':  (9, 2, 'left', 'center'),
+                'PotatoFamine':      (9, 7, 'left', 'center'),
+                'GreatFamine':       (9, -7, 'left', 'center'),
+                'NoSummer':          (9, 0, 'left', 'center'),
+                'ENSO2015_2016':     (9, 0, 'left', 'center'),
+                'ChineseFamine1960': (9, 0, 'left', 'center'),
+                'Laki1783':          (-4, 16, 'right', 'bottom'),
+                'Drought18761878':   (4, 38, 'left', 'bottom'),
+            }
+            label_bbox = dict(boxstyle='round,pad=0.25', facecolor='white',
+                              alpha=0.85, edgecolor='none')
+            leader = dict(arrowstyle='-', color='gray', lw=0.8, alpha=0.8,
+                          shrinkA=2, shrinkB=3)
+            for (_, row), prob in zip(events_data.iterrows(), event_probs):
+                spec = LABELED_EVENTS.get(row['event_name'])
+                if spec is None:
+                    continue
+                dx, dy, ha, va = spec
+                display_name = config.get_event_label(row['event_name'])
+                ax.annotate(display_name, (row['magnitude'], prob),
+                            xytext=(dx, dy), textcoords='offset points',
+                            fontsize=8.5, fontweight='bold', ha=ha, va=va,
+                            bbox=label_bbox, arrowprops=leader,
+                            clip_on=True, zorder=16)
+            # Summarize the unlabeled high-frequency cluster instead of
+            # stacking a wall of labels along the top axis
+            n_frequent = int(np.sum(event_probs >= 0.6))
+            if n_frequent > 2:
+                ax.text(0.02, 0.965,
+                        f'{n_frequent} regional events with RP $\\leq$ 2 yr '
+                        f'(unlabeled)',
+                        transform=ax.transAxes, fontsize=9, style='italic',
+                        color='dimgray', va='top')
 
         colors = {'1 Month': '#FFD700', '3 Months': '#FF4500', 'Total Stocks': '#800080'}
         main_scale = (stats['sigma'] * current_prod_kcal) / (-np.log(0.32))
@@ -359,9 +351,12 @@ def generate_all_figures():
         ax.legend(loc='upper right', fontsize=10, framealpha=0.9)
         plt.tight_layout()
         output_path = Path(f'results/figure4_risk_probability_{mode}.png')
-        plt.savefig(output_path, dpi=300, bbox_inches='tight', facecolor='white')
+        # NOTE: deliberately NOT using bbox_inches='tight' here. Stray artists
+        # (adjustText arrows on the log axis) can extend the tight bbox to
+        # hundreds of thousands of pixels, producing ~10 MB gigapixel PNGs.
+        plt.savefig(output_path, dpi=300, facecolor='white')
         # Also save as SVG
-        plt.savefig(output_path.with_suffix('.svg'), format='svg', bbox_inches='tight', facecolor='white')
+        plt.savefig(output_path.with_suffix('.svg'), format='svg', facecolor='white')
         logger.info(f"Saved {output_path} and {output_path.with_suffix('.svg')}")
         plt.close()
 
