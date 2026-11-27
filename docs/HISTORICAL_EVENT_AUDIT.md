@@ -43,8 +43,8 @@ Keep *observed* area and loss fraction **missing**, not 0 or 1, until sourced.
 ## Next steps
 
 1. Parse and inspect every sheet of the two Excel workbooks, reconcile country/state assignments, and export a complete footprint inventory.
-2. The row-skip, shared state list, and silent-zero defects are fixed in code and covered by tests. Figures 1–4 have not been redrawn, so the files on disk still use the previous parser.
-3. Source-check a diverse validation subset: Dust Bowl, 1816 Year Without a Summer, Vanuatu 2015, and one conflict-driven crisis.
+2. The row-skip and shared state list defects are fixed in code and covered by tests. An unmapped place still adds zero to the total, but it now carries a mapping failure reason. Figures 1–4 have not been redrawn, so the files on disk still use the previous parser. The conditions for a redraw are in [FIGURE_REDRAW_GATE.md](FIGURE_REDRAW_GATE.md).
+3. The source check of the Dust Bowl, 1816, Vanuatu 2015, and the Sudan 2025 cereal assessment is in [SOURCE_CHECK.md](SOURCE_CHECK.md). None of those readings is an event loss fraction. Figures were not redrawn.
 4. Recalculate event exposure/impact with verified footprints or explicitly label the 2020-based counterfactuals.
 5. Revisit Figures 1–4 only after event meaning and mapping are validated.
 
