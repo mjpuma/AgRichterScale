@@ -13,14 +13,14 @@ Consequently, the current event outputs labeled `harvest_area_loss_ha` and `prod
 | Priority | Finding | Code/data location | Action |
 |---|---|---|---|
 | Critical | All selected regional harvested area and production are counted as disrupted/lost, without an event-specific crop-loss fraction | `agrichter/analysis/event_calculator.py` (country and state calculations) | Labeled as 2020 exposure under a complete-disruption counterfactual in [EVENT_QUANTITY_LABEL.md](EVENT_QUANTITY_LABEL.md). Figures were not redrawn. Observed loss fields stay empty |
-| Critical | Event metadata lacks per-event source citations and footprint uncertainty | `ancillary/event_attributes.csv` (23 events) | Record primary references, dates, crop-specific geography, and inclusion criteria |
+| Critical | Event metadata lacks per-event source citations and footprint uncertainty | `ancillary/event_attributes.csv` (23 events) | Citation status and categorical footprint flags are in [EVENT_CLASSIFICATION.md](EVENT_CLASSIFICATION.md). Two of 69 catalog references were opened; per-event primary citations still need pages opened one event at a time |
 | High | State entries were a flat event-wide list and were reused for every country flagged at state level | `agrichter/data/events.py`, `agrichter/analysis/event_calculator.py` | Fixed in code: `state_records` keeps the country code, and each flagged country receives only its own names. Figures were not redrawn |
 | High | Country-sheet parser skipped the first data row when the sheet had more than one country. Seven countries were dropped, including Australia on the ENSO sheet | `agrichter/data/events.py` `_process_country_sheet`; inventory in [EVENT_FOOTPRINT_AUDIT.md](EVENT_FOOTPRINT_AUDIT.md) | Fixed in code: every workbook country is kept. Figures were not redrawn |
 | High | Unmapped regions were returned as zero impact with no failure record | `EventCalculator.calculate_country_level_loss` / state-level equivalent | The numeric return is still `0, 0, 0`. `mapping_failures` now records the reason. A zero from cells that exist is a measured empty harvest |
 | High | Events from 1315 onward are mapped onto SPAM 2020 agricultural geography | `Config._setup_paths`, historical workbooks | Explain the counterfactual and its historical limitations |
-| High | Included events mix crop disruptions, conflict, policy famine, natural disasters, and multiyear emergencies | `event_attributes.csv` | Define agriculturally disrupted-area criteria and avoid conflating famine with crop loss |
+| High | Included events mix crop disruptions, conflict, policy famine, natural disasters, and multiyear emergencies | `event_attributes.csv` | Rule in [EVENT_CLASSIFICATION.md](EVENT_CLASSIFICATION.md): only an opened grain quantity counts as crop-disruption evidence (SovietFamine1921, ChineseFamine1960). Famine, conflict, IPC, and FAOSTAT rows do not |
 | Medium | Main Figure 1 script uses a machine-specific absolute path | `scripts/fig1_agrichter_scale.py` | Make repository-relative for reproducibility |
-| Medium | Event periods and possible overlap are not explicitly resolved | `event_attributes.csv` | Clarify ENSO 2015–16 versus its regional events and multiyear crises |
+| Medium | Event periods and possible overlap are not explicitly resolved | `event_attributes.csv` | ENSO 2015–16 contains EastTimor and Laos (do not sum); Solomon is a registry subevent not on the ENSO sheet. See [EVENT_CLASSIFICATION.md](EVENT_CLASSIFICATION.md) |
 
 ## Inventory (all require documentary verification)
 

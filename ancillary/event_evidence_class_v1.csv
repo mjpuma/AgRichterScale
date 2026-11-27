@@ -1,0 +1,28 @@
+event_id,driver_class,documentary_disposition,crop_measure_opened,attribution,evidence_class,counts_as_crop_disruption_evidence,basis
+GreatFamine,environmental,not_yet_screened,yield_one_estate_group,secondary,crop_measure_opened_not_grain_tonnes,no,Schuh 2020 reports Titow's Winchester yields 36 and 45 percent below average for 1314/15 and 1315/16. Titow and Jordan were not opened.
+Laki1783,environmental,not_yet_screened,none,none,no_crop_source_opened,no,No crop source was opened.
+NoSummer,environmental,uncertain,qualitative,secondary,no_usable_crop_quantity,no,Veale and Endfield describe 1816 in the UK qualitatively. Jefferson expected the Atlantic-states corn crop below one-third of ordinary. Stommel and Stommel were not opened.
+PotatoFamine,environmental,confirmed,potato_area,reported,crop_measure_opened_not_grain_tonnes,no,"CSO prints potato hectares, 656,014 in 1846 and 89,000 in 1847. Potato is not grain, and area is not production. Bourke 1960 was not opened."
+Drought18761878,environmental,confirmed,district_crop_share,secondary,crop_measure_opened_not_grain_tonnes,no,"Davis 2001 Table 1.2 prints percent of crop saved by Madras district, 6 to 37. Tanjore is one district in the documentary log. The Famine Commission page was not opened."
+SovietFamine1921,compound,uncertain,grain_reconstruction,reconstructed,grain_quantity_opened,yes,Wheatcroft 1980 gives three USSR-less-SCR grain evaluations for 1920-1923. His area is not the full Soviet Union and not the Volga.
+ChineseFamine1960,conflict_or_policy,confirmed,grain_national_series,reported,grain_quantity_opened,yes,"Lin and Yang 2000 Table 1 national grain output 1954-1966, 200.00 in 1958 and 143.50 million tons in 1960. Policy and weather are not separated."
+DustBowl,environmental,uncertain,grain_national_series,not_attributed,production_context_not_attributed,no,"NASS national 1934 wheat and corn are 36.4 and 47.8 percent below their 1921-1930 means. United States, not the Great Plains. The decadal wheat model is a counterfactual."
+SahelDrought2010,environmental,not_yet_screened,none,none,no_crop_source_opened,no,No crop source was opened.
+MillenniumDrought,environmental,not_yet_screened,yield_gap_counterfactual,secondary,no_usable_crop_quantity,no,"van Dijk 2013: dryland wheat yields 18-22 percent below average conditions, while production rose on more area. Not a production loss."
+NorthKorea1990s,compound,not_yet_screened,contested_claim,reported,no_usable_crop_quantity,no,"Noland, Robinson and Wang 1999 record a government claim of 1.9 million tons of grain lost and say outside estimates were far lower. Goodkind and West were not opened."
+ENSO2015_2016,environmental,uncertain,regional_production_report,not_attributed,production_context_not_attributed,no,"NHESS 2020 and an FAO outlook report southern Africa cereal and maize shortfalls. Regional, and not the whole ENSO footprint."
+Solomon,environmental,not_yet_screened,none,none,no_crop_source_opened,no,No crop source was opened.
+Vanuatu,environmental,confirmed,crop_damage_money,reported,crop_measure_opened_not_grain_tonnes,no,"Post-disaster needs assessment: crop damage and losses VT 4,175 million. Vatu, mixing food gardens and cash crops. Kava is 58 percent of losses."
+EastTimor,environmental,not_yet_screened,none,none,no_crop_source_opened,no,No crop source was opened.
+Haiti,environmental,not_yet_screened,none,none,no_crop_source_opened,no,No crop source was opened.
+SierraLeone,conflict_or_policy,not_yet_screened,none,none,no_crop_source_opened,no,No crop source was opened.
+Liberia,conflict_or_policy,not_yet_screened,none,none,no_crop_source_opened,no,No crop source was opened.
+Yemen,conflict_or_policy,not_yet_screened,none,none,no_crop_source_opened,no,"No crop source was opened. FamineWatch lists IPC phases, which are not crop data."
+Ethiopia,environmental,not_yet_screened,none,none,no_crop_source_opened,no,No crop source was opened.
+Laos,environmental,not_yet_screened,none,none,no_crop_source_opened,no,No crop source was opened.
+Bangladesh,environmental,not_yet_screened,none,none,no_crop_source_opened,no,No crop source was opened.
+Syria,compound,not_yet_screened,none,none,no_crop_source_opened,no,No crop source was opened.
+SovietFamine1932,compound,uncertain,statement_not_reread,none,no_usable_crop_quantity,no,Harvest statements of about 56 and 50 million tonnes were not re-read. Ukraine and Kazakhstan were not separated.
+UkraineWar2022,compound,uncertain,national_production_report,not_attributed,production_context_not_attributed,no,FAO GIEWS and an FAO enterprise survey report national cereal and cultivated-area figures. Not attributed to the war alone.
+SudanConflict2023,compound,confirmed,national_production_report,not_attributed,production_context_not_attributed,no,"FAO CFSAM 2025 national cereals about 5.2 million tonnes, 22 percent below 2024. The mission cites inputs and rainfall as well as conflict."
+SouthSudanConflict,compound,contextual_only,national_production_report,not_attributed,production_context_not_attributed,no,The 2025 CFSAM smallholder cereal result in hand is an increase.
