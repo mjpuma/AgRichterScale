@@ -15,7 +15,8 @@ import numpy as np
 import pandas as pd
 
 # Add parent directory to path to allow importing from agrichter
-sys.path.append(str(Path(__file__).parent.parent))
+REPO_ROOT = Path(__file__).resolve().parent.parent
+sys.path.append(str(REPO_ROOT))
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -50,8 +51,8 @@ def load_real_events(crop: str, config: Config, grid_manager: GridDataManager):
     """Load and calculate real historical events."""
     logger.info(f"  Loading real historical events for {crop}...")
     try:
-        country_file = Path('ancillary/DisruptionCountry.xls')
-        state_file = Path('ancillary/DisruptionStateProvince.xls')
+        country_file = REPO_ROOT / 'ancillary' / 'DisruptionCountry.xls'
+        state_file = REPO_ROOT / 'ancillary' / 'DisruptionStateProvince.xls'
         if not country_file.exists() or not state_file.exists():
             return pd.DataFrame()
         country_sheets = pd.read_excel(country_file, sheet_name=None, engine='xlrd')
@@ -71,7 +72,7 @@ def load_real_events(crop: str, config: Config, grid_manager: GridDataManager):
 def calculate_envelope(crop: str):
     """Calculate H-P envelope for a crop."""
     logger.info(f"  Calculating envelope for {crop}...")
-    config = Config(crop_type=crop, root_dir='/Users/mjp38/GitHub/AgRichter2025', use_dynamic_thresholds=True)
+    config = Config(crop_type=crop, root_dir=REPO_ROOT, use_dynamic_thresholds=True)
     grid_manager = GridDataManager(config)
     prod_df, harv_df = grid_manager.load_spam_data()
     calculator = HPEnvelopeCalculatorV2(config)
@@ -85,7 +86,7 @@ def main():
     logger.info("=" * 60)
     
     try:
-        results_dir = Path('results')
+        results_dir = REPO_ROOT / 'results'
         results_dir.mkdir(exist_ok=True)
         individual_dir = results_dir / 'individual_plots'
         individual_dir.mkdir(exist_ok=True)
