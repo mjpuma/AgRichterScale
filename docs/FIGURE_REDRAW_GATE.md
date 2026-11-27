@@ -1,18 +1,18 @@
 # Figure redraw gate (November 26, 2026)
 
-**Status: closed.** Figures 1–4 have not been redrawn. The image files under `results/` were drawn with the parser on main, which drops the first data country on a multi-country sheet, and their axes still say loss. This page records what has to be true before anyone redraws them. It does not start a redraw, rerun SPAM, fill an observed field, or edit `ancillary/historical_event_registry.csv`.
+**Status: closed.** Figures 1–4 have not been redrawn. The image files under `results/` were drawn with the parser that was on main before PR 10, which drops the first data country on a multi-country sheet, and their axes still say loss. This page records what has to be true before anyone redraws them. It does not start a redraw, rerun SPAM, fill an observed field, or edit `ancillary/historical_event_registry.csv`.
 
 ## The six conditions
 
 All six must hold in the same draw.
 
-| # | Condition | State on main, 2026-11-26 |
+| # | Condition | State on main, updated 2026-11-27 |
 |---|---|---|
-| 1 | PR 10 (`faostat-footprint-fix`) is merged, or the redraw is explicitly from the pre-fix parser and the caption says which. | Open. Main still skips the first data country and gives every state-flagged country the whole state name list. |
-| 2 | PR 12 (`faostat-quantity-label`) is merged, or the axis and caption text are changed in the same draw so the points are named as 2020 exposure under complete disruption. | Open. The plotted columns are still named `harvest_area_loss_ha` and `production_loss_kcal`. |
+| 1 | PR 10 (`faostat-footprint-fix`) is merged, or the redraw is explicitly from the pre-fix parser and the caption says which. | Merged on 2026-11-27. The parser keeps every workbook country and gives each state-flagged country only its own subdivisions. The image files on disk were drawn before the merge and still use the old parser. |
+| 2 | PR 12 (`faostat-quantity-label`) is merged, or the axis and caption text are changed in the same draw so the points are named as 2020 exposure under complete disruption. | Met by this change once merged, as a label only. [EVENT_QUANTITY_LABEL.md](EVENT_QUANTITY_LABEL.md) names the points. The calculator columns are still named `harvest_area_loss_ha` and `production_loss_kcal`, and the plot code and image files are unchanged, so the axis text still has to be set in the draw. |
 | 3 | The caption states the crop set, the place rule, the year 2020, and the implicit loss fraction of 1. | Not written. |
 | 4 | Observed loss stays off the figure. | Holds. Nothing in [SOURCE_CHECK.md](SOURCE_CHECK.md) is adopted as an event loss. |
-| 5 | The note says that unmapped places on current main enter the total as zero with no failure count. After PR 10, a zero with a mapping failure is not a measured harvest. | Holds as a statement, below. |
+| 5 | The note says that unmapped places enter the total as zero. Before PR 10 they did so with no failure count. After PR 10, a zero with a mapping failure is not a measured harvest. | Holds as a statement, below. |
 | 6 | Figure scripts use repository-relative paths. | Done for `scripts/fig1_agrichter_scale.py` and `scripts/fig2_hp_envelopes.py` in this change. Not checked by running them. |
 
 ## Condition 4: what must not be plotted as the event loss
@@ -25,9 +25,9 @@ These numbers were read in the source check. None of them is the quantity on the
 - The Vanuatu total of VT 4,175 million. It is money.
 - The Sudan 2025 national cereals of about 5.2 million tonnes. It is national production, not an event loss.
 
-## Condition 5: zeros on main
+## Condition 5: zeros in the total
 
-On main, `EventCalculator.calculate_country_level_loss` and `calculate_state_level_loss` return `0.0, 0.0, 0` for an unmapped FIPS code, an empty grid, or an unmatched state, and that triple is added into the event total. Main records no failure for it. A failed lookup and a real empty harvest therefore give the same number. PR 10 adds a `mapping_failures` reason but still adds the zero, so a result table that shows only the total still hides the failure.
+Before PR 10, `EventCalculator.calculate_country_level_loss` and `calculate_state_level_loss` return `0.0, 0.0, 0` for an unmapped FIPS code, an empty grid, or an unmatched state, and that triple is added into the event total. No failure was recorded, so a failed lookup and a real empty harvest gave the same number. The current image files were drawn that way. PR 10, now on main, adds a `mapping_failures` reason but still adds the zero, so a result table that shows only the total still hides the failure.
 
 ## Condition 6: paths
 

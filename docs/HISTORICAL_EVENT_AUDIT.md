@@ -12,7 +12,7 @@ Consequently, the current event outputs labeled `harvest_area_loss_ha` and `prod
 
 | Priority | Finding | Code/data location | Action |
 |---|---|---|---|
-| Critical | All selected regional harvested area and production are counted as disrupted/lost, without an event-specific crop-loss fraction | `agrichter/analysis/event_calculator.py` (country and state calculations) | Distinguish region-wide 2020 exposure from observed affected area and observed production loss; relabel existing plots or supply documented masks and loss fractions |
+| Critical | All selected regional harvested area and production are counted as disrupted/lost, without an event-specific crop-loss fraction | `agrichter/analysis/event_calculator.py` (country and state calculations) | Labeled as 2020 exposure under a complete-disruption counterfactual in [EVENT_QUANTITY_LABEL.md](EVENT_QUANTITY_LABEL.md). Figures were not redrawn. Observed loss fields stay empty |
 | Critical | Event metadata lacks per-event source citations and footprint uncertainty | `ancillary/event_attributes.csv` (23 events) | Record primary references, dates, crop-specific geography, and inclusion criteria |
 | High | State entries were a flat event-wide list and were reused for every country flagged at state level | `agrichter/data/events.py`, `agrichter/analysis/event_calculator.py` | Fixed in code: `state_records` keeps the country code, and each flagged country receives only its own names. Figures were not redrawn |
 | High | Country-sheet parser skipped the first data row when the sheet had more than one country. Seven countries were dropped, including Australia on the ENSO sheet | `agrichter/data/events.py` `_process_country_sheet`; inventory in [EVENT_FOOTPRINT_AUDIT.md](EVENT_FOOTPRINT_AUDIT.md) | Fixed in code: every workbook country is kept. Figures were not redrawn |
@@ -45,7 +45,7 @@ Keep *observed* area and loss fraction **missing**, not 0 or 1, until sourced.
 1. Parse and inspect every sheet of the two Excel workbooks, reconcile country/state assignments, and export a complete footprint inventory.
 2. The row-skip and shared state list defects are fixed in code and covered by tests. An unmapped place still adds zero to the total, but it now carries a mapping failure reason. Figures 1–4 have not been redrawn, so the files on disk still use the previous parser. The conditions for a redraw are in [FIGURE_REDRAW_GATE.md](FIGURE_REDRAW_GATE.md).
 3. The source check of the Dust Bowl, 1816, Vanuatu 2015, and the Sudan 2025 cereal assessment is in [SOURCE_CHECK.md](SOURCE_CHECK.md). None of those readings is an event loss fraction. Figures were not redrawn.
-4. Recalculate event exposure/impact with verified footprints or explicitly label the 2020-based counterfactuals.
+4. The plotted numbers are labeled as SPAM 2020 exposure under a complete-disruption counterfactual in [EVENT_QUANTITY_LABEL.md](EVENT_QUANTITY_LABEL.md). They were not recomputed. Observed loss fields stay empty.
 5. Revisit Figures 1–4 only after event meaning and mapping are validated.
 
 **Unverified in this audit:** External SPAM inputs, rerun outputs, and event-specific historical crop losses. Workbook rows are now listed in [EVENT_FOOTPRINT_AUDIT.md](EVENT_FOOTPRINT_AUDIT.md). Observed loss fields in that inventory are empty.
