@@ -45,7 +45,8 @@ def years(row):
 CROP_EVIDENCE = {
     "GreatFamine": ("yield_one_estate_group", "secondary",
                     "Schuh 2020 reports Titow's Winchester yields 36 and 45 percent below average for 1314/15 and 1315/16. Titow and Jordan were not opened."),
-    "Laki1783": ("none", "none", "No crop source was opened."),
+    "Laki1783": ("qualitative", "secondary",
+                 "Wieners and Halfdanarson 2024 (NHESS): haze damaged Icelandic grass; records show no evidence of harvest failure in west and central Europe in 1783. No crop quantity."),
     "NoSummer": ("qualitative", "secondary",
                  "Veale and Endfield describe 1816 in the UK qualitatively. Jefferson expected the Atlantic-states corn crop below one-third of ordinary. Stommel and Stommel were not opened."),
     "PotatoFamine": ("potato_area", "reported",
@@ -58,25 +59,35 @@ CROP_EVIDENCE = {
                           "Lin and Yang 2000 Table 1 national grain output 1954-1966, 200.00 in 1958 and 143.50 million tons in 1960. Policy and weather are not separated."),
     "DustBowl": ("grain_national_series", "not_attributed",
                  "NASS national 1934 wheat and corn are 36.4 and 47.8 percent below their 1921-1930 means. United States, not the Great Plains. The decadal wheat model is a counterfactual."),
-    "SahelDrought2010": ("none", "none", "No crop source was opened."),
+    "SahelDrought2010": ("regional_production_report", "not_attributed",
+                         "FAO Information Note 1, 6 February 2012: CILSS Sahel cereals 16.6 million tonnes in 2011/12, 25 percent below the 2010/11 record and 2 percent below five years. The aggregate is not the ten workbook countries."),
     "MillenniumDrought": ("yield_gap_counterfactual", "secondary",
                           "van Dijk 2013: dryland wheat yields 18-22 percent below average conditions, while production rose on more area. Not a production loss."),
     "NorthKorea1990s": ("contested_claim", "reported",
                         "Noland, Robinson and Wang 1999 record a government claim of 1.9 million tons of grain lost and say outside estimates were far lower. Goodkind and West were not opened."),
     "ENSO2015_2016": ("regional_production_report", "not_attributed",
                       "NHESS 2020 and an FAO outlook report southern Africa cereal and maize shortfalls. Regional, and not the whole ENSO footprint."),
-    "Solomon": ("none", "none", "No crop source was opened."),
+    "Solomon": ("none", "none", "No crop source was opened. Searches found only qualitative 2015-2016 drought reports."),
     "Vanuatu": ("crop_damage_money", "reported",
                 "Post-disaster needs assessment: crop damage and losses VT 4,175 million. Vatu, mixing food gardens and cash crops. Kava is 58 percent of losses."),
-    "EastTimor": ("none", "none", "No crop source was opened."),
-    "Haiti": ("none", "none", "No crop source was opened."),
-    "SierraLeone": ("none", "none", "No crop source was opened."),
-    "Liberia": ("none", "none", "No crop source was opened."),
-    "Yemen": ("none", "none", "No crop source was opened. FamineWatch lists IPC phases, which are not crop data."),
-    "Ethiopia": ("none", "none", "No crop source was opened."),
-    "Laos": ("none", "none", "No crop source was opened."),
-    "Bangladesh": ("none", "none", "No crop source was opened."),
-    "Syria": ("none", "none", "No crop source was opened."),
+    "EastTimor": ("grain_national_series", "reported",
+                  "FAO GIEWS brief, 14 December 2016: 2016 rice 60,000 tonnes, 6 percent below 2015 and 30 percent below average; maize 60,000 tonnes, 8 and 21 percent below; El Nino dry weather named."),
+    "Haiti": ("grain_national_series", "reported",
+              "FAO newsroom for the FAO/WFP CFSAM, 22 September 2010: 2010 cereals forecast 503,600 tonnes, 9 percent below 2009. Earthquake and late rains are named together."),
+    "SierraLeone": ("grain_national_series", "reported",
+                    "FAO GIEWS special report, 4 February 2000: 1999 paddy 248,220 tonnes, about 45 percent of pre-war (1990, 543,700 tonnes). Provisional estimates; war and displacement named."),
+    "Liberia": ("grain_national_series", "reported",
+                "FAO GIEWS missions: 1995 paddy at most 23 percent of pre-war (highly tentative); 2000 paddy 144,000 tonnes against 259,000 in 1988. No official crop data since 1989."),
+    "Yemen": ("grain_national_series", "reported",
+              "FAO GIEWS brief, 10 February 2017: 2016 cereals about 480,000 tonnes, 11 percent below 2015 and 37 percent below the five-year average. Conflict and July 2016 floods are named. FamineWatch IPC phases are not crop data."),
+    "Ethiopia": ("grain_national_series", "reported",
+                 "USDA ERS RS-85-10, July 1985: 1984 food grain 20 to 30 percent below normal, over 5 million tons. Rainfall, pests, government policy and civil war are named together."),
+    "Laos": ("grain_national_series", "reported",
+             "FAO GIEWS brief, 24 May 2016: 2015 rice 3.2 million tonnes, 4 percent below the 2014 record; maize 1.1 million tonnes, 5 percent below; El Nino rains named."),
+    "Bangladesh": ("grain_change_source_not_named", "secondary",
+                   "Dyson 2021: the end-1974 aman crop was 700,000 tons below 1973, tied to the floods. The sentence names no data source."),
+    "Syria": ("grain_national_series", "reported",
+              "UN News for FAO, May 2014: 2014 wheat 1.97 million tonnes, 52 percent below the 2001-2011 average. FAO 2018: 1.2 million tons. Drought and conflict are named together."),
     "SovietFamine1932": ("statement_not_reread", "none",
                          "Harvest statements of about 56 and 50 million tonnes were not re-read. Ukraine and Kazakhstan were not separated."),
     "UkraineWar2022": ("national_production_report", "not_attributed",
@@ -116,7 +127,8 @@ def evidence_class(measure, attribution):
         return "crop_measure_opened_not_grain_tonnes"
     if measure in ("grain_national_series", "regional_production_report", "national_production_report"):
         return "production_context_not_attributed"
-    if measure in ("qualitative", "yield_gap_counterfactual", "contested_claim", "statement_not_reread"):
+    if measure in ("qualitative", "yield_gap_counterfactual", "contested_claim", "statement_not_reread",
+                   "grain_change_source_not_named"):
         return "no_usable_crop_quantity"
     return "no_crop_source_opened"
 
@@ -152,6 +164,10 @@ def main():
         opened[row["event_id"]].add(row["source_title"])
     for row in seed:
         opened[row["event_id"]].add(row["source_title"])
+    readings = ANC / "primary_source_readings_v1.csv"
+    for row in (read(readings) if readings.exists() else []):
+        if row["source_status"] == "opened":
+            opened[row["event_id"]].add(f"{row['source_title']} ({row['date_as_printed']})")
     for event_id, row in log.items():
         if row["measurement_type"] != "not_opened" and row["source_title"]:
             opened[event_id].add(row["source_title"])

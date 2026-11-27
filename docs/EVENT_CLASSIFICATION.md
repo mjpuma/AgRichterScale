@@ -13,10 +13,10 @@ Each of the 23 workbook events has three catalog references in `ancillary/food_d
 | Citation status | Events |
 |---|---|
 | A catalog reference was opened | 2 |
-| Only other sources were opened (source check, archival reconstruction, evidence seed, documentary log) | 13 |
-| No source was opened | 12 |
+| Only other sources were opened (source check, archival reconstruction, evidence seed, documentary log, [primary source pass](PRIMARY_SOURCE_PASS.md)) | 24 |
+| No source was opened | 1 (Solomon) |
 
-Solomon, EastTimor, and Laos have the same three references word for word. They are Pacific El Niño reports, and Laos is not in the Pacific. These lists are not per-event primary citations. Filling them needs pages that are opened and read, one event at a time.
+Solomon, EastTimor, and Laos have the same three references word for word. They are Pacific El Niño reports, and Laos is not in the Pacific. These lists are not per-event primary citations. The [primary source pass](PRIMARY_SOURCE_PASS.md) of 2026-11-27 opened sources for 11 of the 12 events that had none; the catalog references themselves were still not opened.
 
 ## 2. Footprint uncertainty (`ancillary/event_footprint_uncertainty_v1.csv`)
 
@@ -38,11 +38,11 @@ MillenniumDrought (one country, seven subdivisions) is the only workbook event w
 
 The driver class comes from the registry driver text: environmental, conflict or policy, or compound. It describes the cause, not the crop outcome. The evidence class depends only on what an opened page measures:
 
-1. **`grain_quantity_opened`**: an opened page reports or reconstructs a grain quantity for the event's place and years. Only SovietFamine1921 (Wheatcroft) and ChineseFamine1960 (Lin and Yang) qualify. Neither page separates the weather, policy, or conflict share.
+1. **`grain_quantity_opened`**: an opened page reports or reconstructs a grain quantity for the event's place and years. SovietFamine1921 (Wheatcroft), ChineseFamine1960 (Lin and Yang), and, after the primary source pass, Ethiopia, Syria, Yemen, Haiti, Laos, EastTimor, SierraLeone and Liberia (FAO GIEWS and USDA ERS national figures). None of these pages separates the weather, policy, or conflict share, and each figure is national production against a stated baseline, not an event loss.
 2. **`crop_measure_opened_not_grain_tonnes`**: a crop measure exists but is not grain tonnes. The cases are potato area (PotatoFamine), district percent saved (Drought18761878), one estate group's yields (GreatFamine), and vatu (Vanuatu).
-3. **`production_context_not_attributed`**: a national or regional production figure that the source does not tie to the event alone. The cases are DustBowl, ENSO2015_2016, UkraineWar2022, SudanConflict2023, and SouthSudanConflict.
-4. **`no_usable_crop_quantity`**: a qualitative account (NoSummer), a yield gap against a counterfactual (MillenniumDrought), a contested government claim (NorthKorea1990s), or harvest statements not re-read (SovietFamine1932).
-5. **`no_crop_source_opened`**: the other 12.
+3. **`production_context_not_attributed`**: a national or regional production figure that the source does not tie to the event alone. The cases are DustBowl, SahelDrought2010 (CILSS aggregate, not the workbook countries), ENSO2015_2016, UkraineWar2022, SudanConflict2023, and SouthSudanConflict.
+4. **`no_usable_crop_quantity`**: a qualitative account (NoSummer), a yield gap against a counterfactual (MillenniumDrought), a contested government claim (NorthKorea1990s), harvest statements not re-read (SovietFamine1932), a page with no crop quantity (Laki1783), or a grain change whose data source the page does not name (Bangladesh).
+5. **`no_crop_source_opened`**: Solomon.
 
 An event counts as crop-disruption evidence only in class 1. A famine label, a mortality toll, an IPC phase, a conflict, or a FAOSTAT production value does not move an event up a class. A documentary "confirmed" disposition does not move it either, because PotatoFamine, Drought18761878, Vanuatu, and SudanConflict2023 are confirmed but fall in classes 2 and 3. Any future observed-loss layer may draw only on class 1, and only after the attribution is argued from a source. No event is removed from the figures by this rule.
 

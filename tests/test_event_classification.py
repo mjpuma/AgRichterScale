@@ -18,9 +18,10 @@ class TestEventClassification(unittest.TestCase):
         opened = {k for k, r in rows.items() if r["citation_status"] == "catalog_reference_opened"}
         self.assertEqual(opened, {"Drought18761878", "MillenniumDrought"})
         self.assertIn("[not checked]", rows["ChineseFamine1960"]["catalog_references_with_status"])
+        self.assertIn("GIEWS Country Brief: Yemen", rows["Yemen"]["sources_opened_in_repo"])
         self.assertIn("Lin and Yang", rows["ChineseFamine1960"]["sources_opened_in_repo"])
         self.assertIn("[named, not opened]", rows["NorthKorea1990s"]["catalog_references_with_status"])
-        self.assertEqual(sum(r["citation_status"] == "no_source_opened" for r in rows.values()), 12)
+        self.assertEqual({k for k, r in rows.items() if r["citation_status"] == "no_source_opened"}, {"Solomon"})
         self.assertIn("identical to", rows["Laos"]["notes"])
 
     def test_footprint_flags_and_empty_observed_fields(self):
@@ -38,12 +39,16 @@ class TestEventClassification(unittest.TestCase):
     def test_only_grain_quantities_count_as_crop_disruption(self):
         rows = read("event_evidence_class_v1.csv")
         counted = {k for k, r in rows.items() if r["counts_as_crop_disruption_evidence"] == "yes"}
-        self.assertEqual(counted, {"SovietFamine1921", "ChineseFamine1960"})
+        self.assertEqual(counted, {"SovietFamine1921", "ChineseFamine1960", "Ethiopia", "Syria", "Yemen", "Haiti",
+                                   "Laos", "EastTimor", "SierraLeone", "Liberia"})
+        for event_id in ("Bangladesh", "Laki1783"):
+            self.assertEqual(rows[event_id]["evidence_class"], "no_usable_crop_quantity")
+        self.assertEqual(rows["SahelDrought2010"]["evidence_class"], "production_context_not_attributed")
         for event_id in ("PotatoFamine", "Vanuatu", "SudanConflict2023", "Drought18761878"):
             self.assertEqual(rows[event_id]["documentary_disposition"], "confirmed")
             self.assertEqual(rows[event_id]["counts_as_crop_disruption_evidence"], "no")
         self.assertEqual(rows["MillenniumDrought"]["evidence_class"], "no_usable_crop_quantity")
-        self.assertEqual(rows["Yemen"]["evidence_class"], "no_crop_source_opened")
+        self.assertEqual(rows["Solomon"]["evidence_class"], "no_crop_source_opened")
 
     def test_enso_overlap(self):
         rows = read("event_overlap_v1.csv")
@@ -52,6 +57,20 @@ class TestEventClassification(unittest.TestCase):
         self.assertEqual(pairs[("ENSO2015_2016", "Laos")]["shared_gdam_codes"], "123")
         self.assertEqual(pairs[("ENSO2015_2016", "Solomon")]["shared_gdam_codes"], "")
         self.assertTrue(all("do_not_sum" in r["rule"] or "keep_separate" in r["rule"] for r in rows))
+
+    def test_primary_source_readings(self):
+        with (ROOT / "ancillary" / "primary_source_readings_v1.csv").open(newline="", encoding="utf-8") as handle:
+            rows = list(csv.DictReader(handle))
+        self.assertTrue(all(r["adopted_as_event_loss"] == "no" for r in rows))
+        opened = {r["event_id"] for r in rows if r["source_status"] == "opened"}
+        self.assertEqual(opened, {"SahelDrought2010", "Ethiopia", "Bangladesh", "Syria", "Yemen", "Haiti", "Laos",
+                                  "EastTimor", "SierraLeone", "Liberia", "Laki1783"})
+        for r in rows:
+            if r["source_status"] != "opened":
+                self.assertEqual(r["quantity"], "")
+        by_id = {r["reading_id"]: r for r in rows}
+        self.assertEqual(by_id["yem-giews-2017"]["quantity"], "480,000")
+        self.assertEqual(by_id["laki-nhess-2024"]["quantity"], "")
 
     def test_registry_untouched(self):
         with (ROOT / "ancillary" / "historical_event_registry.csv").open(newline="", encoding="utf-8") as handle:
