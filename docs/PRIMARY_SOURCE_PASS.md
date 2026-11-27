@@ -1,4 +1,6 @@
-# Primary source pass for the 12 events with no opened source (November 27, 2026)
+# Primary source passes (November 27, 2026)
+
+## Pass 1: the 12 events with no opened source
 
 Each reading is in `ancillary/primary_source_readings_v1.csv`. A row records the page that was opened, where in it the number sits, the quantity and unit exactly as printed, the place and years, the baseline, and the causes the source names. Pages that failed to open are listed as `blocked` or `not_found` with no quantity. Nothing was adopted as an event loss. No observed field was filled, and the registry was not edited.
 
@@ -30,3 +32,22 @@ Each reading is in `ancillary/primary_source_readings_v1.csv`. A row records the
 ## Blocked or not found
 
 ReliefWeb (UNDRO Ethiopia 1984; the GIEWS Yemen mirror), UNU-WIDER WP26, and FAO Open Knowledge (the Timor-Leste El Niño project, which a search snippet says gives maize −13 and rice −71 percent) all returned HTTP 403. The CIA reading-room node for the Bangladesh foodgrain outlook served no document. None of these is used.
+
+## Pass 2: the other 15 events
+
+These events already had opened sources from earlier passes: the source check, the archival reconstruction, the evidence seed, and the documentary log. This pass looked for agency or primary pages that had not yet been opened.
+
+| Event | Source opened | What it says | Class after this pass |
+|---|---|---|---|
+| NorthKorea1990s | FAO/WFP CFSAM special reports, 6 December 1996 and 25 November 1997 | 1996 grain about 4.3 Mt, after 300,000 t of flood losses. 1997 maize 1.138 Mt, 51 percent below 1996 and the lowest on record. 1997 rice 1.52 Mt milled. The yields are mission estimates | grain quantity (was a contested claim) |
+| MillenniumDrought | ABS 7121.0, *Agricultural Commodities, Australia, 2002-03*, released 28 June 2004 | 2002-03 wheat fell 58 percent to 10.1 Mt. NSW fell 69 percent to 2.5 Mt. The baseline is not named | grain quantity for one season (was a yield gap) |
+| UkraineWar2022 | FAO GIEWS country brief, 16 December 2022 | 2022 cereals 51 Mt, almost 30 percent below the five-year average and 40 percent below the exceptional 2021 harvest. The brief names the war's effect on fields, labour, and costs | grain quantity (was production context) |
+| ENSO2015_2016 | FAO Southern Africa Situation Report, September 2016 | Regional cereal shortfall of nearly 9.3 Mt in 2015/16. Southern Africa is not on the ENSO workbook sheet | production context (unchanged) |
+
+Blocked or not tried:
+- Goodkind and West (2001): Wiley returned HTTP 403, and JSTOR served a browser challenge.
+- Tauger on the 1932 harvest: the Pitt page went over the fetch size limit, and the WVU host refused the connection.
+- Jordan (1996), Stommel and Stommel (1983), Bourke (1960), the Indian Famine Commission report (1880), and Titow are print books or paywalled papers. No open copy was tried.
+- GreatFamine, NoSummer, PotatoFamine, Drought18761878, SovietFamine1921, SovietFamine1932, ChineseFamine1960, DustBowl, Vanuatu, SudanConflict2023, and SouthSudanConflict gained no new reading in this pass. Their classes are unchanged.
+
+The MillenniumDrought figure covers one season of a 2000–2009 registry window. It sits alongside van Dijk (2013), who reports that production over the whole drought rose as more area was planted. Neither number is an event loss.

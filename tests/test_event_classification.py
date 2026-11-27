@@ -40,14 +40,15 @@ class TestEventClassification(unittest.TestCase):
         rows = read("event_evidence_class_v1.csv")
         counted = {k for k, r in rows.items() if r["counts_as_crop_disruption_evidence"] == "yes"}
         self.assertEqual(counted, {"SovietFamine1921", "ChineseFamine1960", "Ethiopia", "Syria", "Yemen", "Haiti",
-                                   "Laos", "EastTimor", "SierraLeone", "Liberia"})
+                                   "Laos", "EastTimor", "SierraLeone", "Liberia", "NorthKorea1990s",
+                                   "MillenniumDrought", "UkraineWar2022"})
         for event_id in ("Bangladesh", "Laki1783"):
             self.assertEqual(rows[event_id]["evidence_class"], "no_usable_crop_quantity")
         self.assertEqual(rows["SahelDrought2010"]["evidence_class"], "production_context_not_attributed")
         for event_id in ("PotatoFamine", "Vanuatu", "SudanConflict2023", "Drought18761878"):
             self.assertEqual(rows[event_id]["documentary_disposition"], "confirmed")
             self.assertEqual(rows[event_id]["counts_as_crop_disruption_evidence"], "no")
-        self.assertEqual(rows["MillenniumDrought"]["evidence_class"], "no_usable_crop_quantity")
+        self.assertEqual(rows["ENSO2015_2016"]["evidence_class"], "production_context_not_attributed")
         self.assertEqual(rows["Solomon"]["evidence_class"], "no_crop_source_opened")
 
     def test_enso_overlap(self):
@@ -64,7 +65,9 @@ class TestEventClassification(unittest.TestCase):
         self.assertTrue(all(r["adopted_as_event_loss"] == "no" for r in rows))
         opened = {r["event_id"] for r in rows if r["source_status"] == "opened"}
         self.assertEqual(opened, {"SahelDrought2010", "Ethiopia", "Bangladesh", "Syria", "Yemen", "Haiti", "Laos",
-                                  "EastTimor", "SierraLeone", "Liberia", "Laki1783"})
+                                  "EastTimor", "SierraLeone", "Liberia", "Laki1783", "NorthKorea1990s",
+                                  "MillenniumDrought", "ENSO2015_2016", "UkraineWar2022"})
+        self.assertEqual({r["reading_id"]: r["source_status"] for r in rows}["prk-goodkind"], "blocked")
         for r in rows:
             if r["source_status"] != "opened":
                 self.assertEqual(r["quantity"], "")
