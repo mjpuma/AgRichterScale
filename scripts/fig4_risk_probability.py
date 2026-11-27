@@ -274,10 +274,10 @@ def generate_all_figures():
                             facecolor='none', edgecolor='crimson', alpha=0.4, hatch='///',
                             label='The Fragility Gap (Systemic Breach)')
             
-            ax.axvspan(3, 6, color='gray', alpha=0.03, linestyle=':', label='Historical Obs. Range')
+            ax.axvspan(3, 6, color='gray', alpha=0.03, linestyle=':', label='Magnitude range of event footprints')
             
         elif mode == 'exposure':
-            ax.axvspan(3, 6, color='gray', alpha=0.04, label='Historical Observation Range')
+            ax.axvspan(3, 6, color='gray', alpha=0.04, label='Magnitude range of event footprints')
             mask = mags_plot >= thresh_mags['Total Stocks']
             plt.rcParams['hatch.linewidth'] = 1.5
             ax.fill_between(mags_plot, prob_median, 1e-4, where=mask, color='crimson', alpha=0.1)
@@ -297,7 +297,7 @@ def generate_all_figures():
             
             ax.scatter(events_data['magnitude'], event_probs, 
                        color='black', s=40, alpha=0.6, edgecolors='none', 
-                       label='Historical Events (Model-Mapped)', zorder=15)
+                       label='Event footprints, SPAM 2020 exposure (model-mapped)', zorder=15)
             
             # Label selected high-impact events for context
             # (Filtering to avoid label wall)

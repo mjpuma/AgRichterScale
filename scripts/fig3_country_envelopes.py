@@ -125,8 +125,6 @@ def calculate_country_envelope(country_key: str, country_name_spam: str, global_
     # Initialize config for allgrain with dynamic thresholds
     config = Config(crop_type='allgrain', root_dir='.', use_dynamic_thresholds=True)
 
-    config.data_files['production'] = Path('spam2020V2r0_global_production/spam2020V2r0_global_production/spam2020V2r0_global_P_TA.csv')
-    config.data_files['harvest_area'] = Path('spam2020V2r0_global_harvested_area/spam2020V2r0_global_harvested_area/spam2020V2r0_global_H_TA.csv')
     
     # Load data
     grid_manager = GridDataManager(config)
@@ -173,7 +171,6 @@ def get_global_stats():
     """Calculate global production and harvest for scaling."""
     logger.info("Calculating Global Statistics for Scaling...")
     config = Config(crop_type='allgrain', root_dir='.')
-    config.data_files['production'] = Path('spam2020V2r0_global_production/spam2020V2r0_global_production/spam2020V2r0_global_P_TA.csv')
     grid_manager = GridDataManager(config)
     prod_df, _ = grid_manager.load_spam_data()
     

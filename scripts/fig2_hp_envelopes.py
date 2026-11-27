@@ -130,7 +130,7 @@ def main():
 
         fig.supxlabel('AgRichter Magnitude ($M_D = \log_{10}(A_H/\mathrm{km}^2)$)', 
                        fontsize=14, fontweight='bold', y=0.02)
-        fig.supylabel('Production Loss (kcal)', 
+        fig.supylabel('SPAM 2020 production disrupted at loss fraction 1 (kcal)', 
                        fontsize=14, fontweight='bold', x=0.02)
 
         import matplotlib.lines as mlines
