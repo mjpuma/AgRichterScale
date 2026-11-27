@@ -1,10 +1,11 @@
 """Visualization module for AgRichter analysis."""
 
-from .maps import GlobalProductionMapper
-from .plots import AgRichterPlotter, EnvelopePlotter
+from .agrichter_scale import AgRichterScaleVisualizer
+from .hp_envelope import HPEnvelopeVisualizer
+from .global_map_generator import GlobalMapGenerator
 
 __all__ = [
-    'GlobalProductionMapper',
-    'AgRichterPlotter', 
-    'EnvelopePlotter'
+    "AgRichterScaleVisualizer",
+    "HPEnvelopeVisualizer",
+    "GlobalMapGenerator",
 ]

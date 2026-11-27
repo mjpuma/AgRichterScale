@@ -701,6 +701,7 @@ class GridDataManager:
                 'BARL_A': CALORIC_CONTENT['Barley'],
                 'MAIZ_A': CALORIC_CONTENT['Corn'],
                 'OCER_A': CALORIC_CONTENT['MixedGrain'],
+                'MILL_A': CALORIC_CONTENT['Millet'],
                 'PMIL_A': CALORIC_CONTENT['Millet'],
                 'RICE_A': CALORIC_CONTENT['Rice'],
                 'SORG_A': CALORIC_CONTENT['Sorghum'],

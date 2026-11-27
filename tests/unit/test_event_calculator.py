@@ -109,8 +109,8 @@ class TestCountryLevelLoss:
     
     def test_country_level_loss_usa(self, event_calculator):
         """Test country-level loss calculation for USA."""
-        # USA GDAM code is typically 231
-        harvest_loss, production_loss, grid_cells = event_calculator.calculate_country_level_loss(231)
+        # USA GDAM code is 240 (231 is Tunisia! See CountryCode_Convert.xls)
+        harvest_loss, production_loss, grid_cells = event_calculator.calculate_country_level_loss(240)
         
         # USA should have significant wheat production
         assert harvest_loss > 0, "USA should have harvest area data"
@@ -131,8 +131,8 @@ class TestCountryLevelLoss:
     
     def test_country_level_loss_china(self, event_calculator):
         """Test country-level loss calculation for China."""
-        # China GDAM code is typically 45
-        harvest_loss, production_loss, grid_cells = event_calculator.calculate_country_level_loss(45)
+        # China GDAM code is 48 (see ancillary/CountryCode_Convert.xls)
+        harvest_loss, production_loss, grid_cells = event_calculator.calculate_country_level_loss(48)
         
         # China should have significant wheat production
         assert harvest_loss > 0, "China should have harvest area data"
@@ -148,7 +148,7 @@ class TestStateLevelLoss:
         # USA with some state codes (example)
         state_codes = [1, 2, 3]  # Example state codes
         harvest_loss, production_loss, grid_cells = event_calculator.calculate_state_level_loss(
-            231, state_codes
+            240, state_codes
         )
         
         # Should return some data (may be zero if state codes don't match)
@@ -160,7 +160,7 @@ class TestStateLevelLoss:
         """Test state-level loss with empty state codes."""
         # Should fall back to country-level
         harvest_loss, production_loss, grid_cells = event_calculator.calculate_state_level_loss(
-            231, []
+            240, []
         )
         
         # Should return country-level data for USA
@@ -175,7 +175,7 @@ class TestSingleEventCalculation:
     def test_single_event_country_level(self, event_calculator):
         """Test single event calculation at country level."""
         event_data = {
-            'country_codes': [231],  # USA
+            'country_codes': [240],  # USA
             'state_flags': [0],  # Country-level
             'state_codes': []
         }
@@ -196,7 +196,7 @@ class TestSingleEventCalculation:
     def test_single_event_multiple_countries(self, event_calculator):
         """Test single event with multiple countries."""
         event_data = {
-            'country_codes': [231, 45],  # USA and China
+            'country_codes': [240, 48],  # USA and China
             'state_flags': [0, 0],  # Both country-level
             'state_codes': []
         }
@@ -229,12 +229,12 @@ class TestBatchEventProcessing:
         """Test batch processing with small number of events."""
         events_definitions = {
             'Event1': {
-                'country_codes': [231],  # USA
+                'country_codes': [240],  # USA
                 'state_flags': [0],
                 'state_codes': []
             },
             'Event2': {
-                'country_codes': [45],  # China
+                'country_codes': [48],  # China
                 'state_flags': [0],
                 'state_codes': []
             }
@@ -256,7 +256,7 @@ class TestBatchEventProcessing:
         """Test batch processing handles errors gracefully."""
         events_definitions = {
             'ValidEvent': {
-                'country_codes': [231],
+                'country_codes': [240],
                 'state_flags': [0],
                 'state_codes': []
             },

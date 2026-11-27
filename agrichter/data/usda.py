@@ -113,7 +113,7 @@ class USDADataLoader:
             year_range: Tuple of (start_year, end_year)
             
         Returns:
-            Mean consumption in metric tons
+            Mean consumption in USDA PSD native units (1000 MT)
         """
         try:
             df = self.load_crop_data(crop, year_range)
@@ -131,7 +131,7 @@ class USDADataLoader:
             year_range: Tuple of (start_year, end_year)
             
         Returns:
-            Mean ending stocks in metric tons
+            Mean ending stocks in USDA PSD native units (1000 MT)
         """
         try:
             df = self.load_crop_data(crop, year_range)
@@ -379,7 +379,7 @@ class AgriPhaseThresholdCalculator:
         return production_thresholds
 
     def calculate_consumption_thresholds(self, crop: str, year_range: Tuple[int, int] = (2019, 2021)) -> Dict[str, float]:
-        """
+        r"""
         Calculate consumption-based thresholds (Months of Supply) for determining disruption severity.
         
         REPLACES OLD T1-T4 IPC THRESHOLDS FOR PUBLICATION FIGURES.
@@ -415,27 +415,63 @@ class AgriPhaseThresholdCalculator:
             year_range: Year range to average consumption/stocks (inclusive).
             
         Returns:
-            Dictionary mapping threshold names to mass values in Metric Tons (MT).
-            Note: The Config class handles conversion from MT to kcal.
+            Dictionary mapping threshold names to mass values in the native
+            USDA PSD unit (1000 MT / TMT). The Config class handles
+            conversion from TMT to kcal.
         """
         # Get average consumption and stocks
         if crop == 'allgrain':
-            crops = ['wheat', 'rice', 'maize']
-            avg_consumption = 0
-            avg_stocks = 0
-            for c in crops:
-                avg_consumption += self.usda_loader.get_mean_consumption(c, year_range)
-                avg_stocks += self.usda_loader.get_mean_stocks(c, year_range)
+            # Use the full USDA "Allgrain" aggregate (wheat, corn, rice,
+            # barley, oats, rye, millet, sorghum, mixed grain) so the
+            # threshold basket matches the SPAM allgrain envelope and the
+            # Figure 4 risk analysis. Summing only wheat+rice+maize (the old
+            # behavior) understated the buffers by ~10%.
+            avg_consumption, avg_stocks = self._allgrain_means_from_wide(year_range)
         else:
             avg_consumption = self.usda_loader.get_mean_consumption(crop, year_range)
             avg_stocks = self.usda_loader.get_mean_stocks(crop, year_range)
             
-        # Return thresholds in Metric Tons
+        # Return thresholds in USDA PSD native units (1000 MT)
         return {
             '1 Month': avg_consumption / 12.0,
             '3 Months': avg_consumption / 4.0,
             'Total Stocks': avg_stocks
         }
+
+    def _allgrain_means_from_wide(self, year_range: Tuple[int, int]) -> Tuple[float, float]:
+        """
+        Mean world consumption and ending stocks (1000 MT) for the USDA
+        'Allgrain' aggregate, from the wide-format PSD files.
+
+        Falls back to summing wheat+rice+maize from the per-crop files if
+        the wide files are unavailable (logged, since the baskets differ).
+        """
+        try:
+            from .usda_wide import load_usda_wide
+            years = list(range(year_range[0], year_range[1] + 1))
+
+            def world_allgrain_mean(data_type: str) -> float:
+                df = load_usda_wide(data_type, data_dir=self.usda_loader.data_dir)
+                sub = df[(df['Commodity'] == 'Allgrain')
+                         & (df['Country'] == 'World')
+                         & (df['Year'].isin(years))]
+                if sub.empty:
+                    raise ValueError(f"No Allgrain/World rows for {data_type} in {years}")
+                return float(sub['Value'].mean())
+
+            return (world_allgrain_mean('consumption'),
+                    world_allgrain_mean('endingstocks'))
+        except Exception as e:
+            logger.warning(
+                f"Falling back to wheat+rice+maize for allgrain thresholds "
+                f"(full Allgrain aggregate unavailable: {e})"
+            )
+            avg_consumption = 0.0
+            avg_stocks = 0.0
+            for c in ('wheat', 'rice', 'maize'):
+                avg_consumption += self.usda_loader.get_mean_consumption(c, year_range)
+                avg_stocks += self.usda_loader.get_mean_stocks(c, year_range)
+            return avg_consumption, avg_stocks
 
 
 def create_usda_threshold_system(data_dir: Union[str, Path] = "USDAdata") -> Tuple[USDADataLoader, AgriPhaseThresholdCalculator]:

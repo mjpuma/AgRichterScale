@@ -1,0 +1,45 @@
+\begin{table}[H]
+    \centering
+    \caption{\textbf{Verification and validation summary.}
+    \emph{Panel A (global crops):} runtime verification of the five mathematical
+    invariants of each H--P envelope (origin, endpoint convergence, dominance,
+    conservation, monotonicity), the endpoint residual
+    $\max(|L_{\mathrm{up/low}}(A_{\mathrm{tot}}) - P_{\mathrm{tot}}|)/P_{\mathrm{tot}}$,
+    and containment of all computed historical events within the envelope band.
+    SPAM 2020 production totals are validated against the independent USDA PSD
+    world production (2019--2021 mean). The rice ratio reflects the paddy (SPAM)
+    vs.\ milled (USDA) convention (milling rate $\approx$ 0.70); all-grain baskets
+    differ slightly in minor-grain composition.
+    \emph{Panel B (national envelopes, all grains):} the same invariant checks for
+    every country envelope shown in Figure~3 and Figure~S2.}
+    \label{tab:S2_verification}
+    \vspace{0.3cm}
+    \textbf{Panel A: Global crop envelopes}\\[0.15cm]
+    \begin{tabular}{lrrrrccc}
+        \toprule
+        \textbf{Crop} & \textbf{SPAM P} & \textbf{USDA P} & \textbf{Ratio} & \textbf{Harvest} & \textbf{Invariants} & \textbf{Endpoint} & \textbf{Events} \\
+         & (Mt) & (Mt) &  & ($10^3$\,km$^2$) & \textbf{passed} & \textbf{residual} & \textbf{inside} \\
+        \midrule
+        All grains & 2,990 & 2,738 & 1.09 & 7,030 & 5/5 & $<10^{-16}$ & 23/23 \\
+        Wheat & 764 & 771 & 0.99 & 2,181 & 5/5 & $<10^{-16}$ & 16/16 \\
+        Maize & 1,168 & 1,161 & 1.01 & 2,001 & 5/5 & $<10^{-14}$ & 21/21 \\
+        Rice & 770 & 507 & 1.52 & 1,629 & 5/5 & $<10^{-16}$ & 20/20 \\
+        \bottomrule
+    \end{tabular}
+    \\[0.4cm]
+    \textbf{Panel B: National envelopes (all grains)}\\[0.15cm]
+    \begin{tabular}{lrrcc}
+        \toprule
+        \textbf{Country} & \textbf{Grid cells} & \textbf{Production share} & \textbf{Invariants passed} & \textbf{Endpoint residual} \\
+        \midrule
+        USA & 71,345 & 14.6\% & 5/5 & $<10^{-16}$ \\
+        China & 75,116 & 20.8\% & 5/5 & $<10^{-16}$ \\
+        India & 38,500 & 11.1\% & 5/5 & $<10^{-16}$ \\
+        Brazil & 64,796 & 4.0\% & 5/5 & $<10^{-16}$ \\
+        France & 9,257 & 2.2\% & 5/5 & $<10^{-16}$ \\
+        Egypt & 4,195 & 0.7\% & 5/5 & $<10^{-14}$ \\
+        Australia & 25,423 & 1.2\% & 5/5 & $<10^{-16}$ \\
+        Argentina & 15,058 & 2.9\% & 5/5 & $<10^{-16}$ \\
+        \bottomrule
+    \end{tabular}
+\end{table}

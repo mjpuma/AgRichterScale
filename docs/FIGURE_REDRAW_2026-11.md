@@ -46,3 +46,12 @@ The H–P envelopes share the Figure 2 and 3 axis; they are also complete-disrup
 ## Reproducing
 
 SPAM 2020 is not tracked. `Config` reads it from the repository root, or from `AGRICHTER_SPAM_ROOT` if set; ancillary tables always come from the repository. This draw used `AGRICHTER_SPAM_ROOT` pointing at a separate local copy of SPAM 2020 V2r0 and ran each script from the repository root.
+
+## Second draw after merging the July fixes (November 27, 2026)
+
+Six commits from 14–15 July 2026 were never pushed to main. They fixed FIPS code swaps, the all-grain basket, per-crop kcal, float64 conservation, and USDA units and the threshold window, and they added `scripts/figS5_fractional_loss.py` and `scripts/tableS2_verification.py`. They were merged with PR 10's parser and mapping-failure record kept. Figures 1–4 and S5 were then redrawn, and Table S2 was rerun, from the merged code.
+
+- **Thresholds.** All-grain 1-month, 3-month, and Total Stocks are 7.83, 23.50, and 27.95 ×10¹⁴ kcal, matching the manuscript.
+- **Table S2** (`results/tableS2_verification.csv`). Every global crop and every country envelope passes all 5 invariants. Endpoint residuals are at most 1.7×10⁻¹⁵. Events inside the envelope band: all grains 23/23, wheat 16/16, maize 21/21, rice 20/20. The 0.02–0.04 percent lower-envelope conservation mismatch from the first November draw does not recur. It came from the missing float64 fix.
+- **Points.** `results/redraw_2026-11/event_points_july_merge.csv` holds the new points, and `mapping_failures_july_merge.csv` the new failures. Against the first November draw, all-grain magnitudes move by at most 0.035. ENSO2015_2016 all-grain production rises 24 percent. Rice changes most, because the FIPS swaps had mapped some European places to the wrong country: PotatoFamine, NoSummer, and GreatFamine rice fall by more than 95 percent, and DustBowl rice rises tenfold. Maize Solomon now has no grid cells.
+- **All-grain exposure against the thresholds.** Drought18761878 is 2.14× the 3-month buffer and 1.80× Total Stocks. Laki1783 is 1.74× and 1.46×. ChineseFamine1960 is 0.93× the 3-month buffer, above the 1-month line only. At 50 percent intensity, only Drought18761878 stays above the 3-month buffer, at 1.07×.

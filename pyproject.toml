@@ -48,9 +48,6 @@ dev = [
     "sphinx-rtd-theme>=1.0.0",
 ]
 
-[project.scripts]
-agrichter = "agrichter.cli.main:main"
-
 [project.urls]
 Homepage = "https://github.com/agrichter/agrichter-python"
 Documentation = "https://agrichter-python.readthedocs.io/"

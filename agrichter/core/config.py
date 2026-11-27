@@ -35,7 +35,8 @@ class Config:
             crop_type: Type of crop analysis ('allgrain', 'wheat', 'rice', 'maize')
             root_dir: Root directory for data files (default: './data')
             use_dynamic_thresholds: Whether to use USDA-based dynamic thresholds
-            usda_year_range: Year range for USDA threshold calculation (default: 1990-2020)
+            usda_year_range: Year range for USDA threshold calculation
+                (default: 2019-2021, aligned with the SPAM 2020 reference period)
             spam_version: SPAM data version to use ('2010' or '2020', default: '2020')
             convergence_validation: Configuration for envelope convergence validation
         
@@ -45,7 +46,9 @@ class Config:
         self.crop_type = self._validate_crop_type(crop_type)
         self.root_dir = Path(root_dir) if root_dir else Path('./data')
         self.use_dynamic_thresholds = use_dynamic_thresholds
-        self.usda_year_range = usda_year_range or (1990, 2020)
+        # 2019-2021 aligns the threshold averaging window with the SPAM 2020
+        # reference period (and with fig4/tableS1, which use it explicitly).
+        self.usda_year_range = usda_year_range or (2019, 2021)
         self.spam_version = self._validate_spam_version(spam_version)
         self.convergence_validation = self._setup_convergence_validation(convergence_validation)
         
@@ -174,16 +177,18 @@ class Config:
         if self.use_dynamic_thresholds and self.threshold_calculator:
             try:
                 # Calculate consumption-based thresholds (Months of Supply)
-                # These are returned in Metric Tons
+                # These are returned in the native USDA PSD unit: 1000 MT (TMT)
                 # NOTE: This replaces the old T1-T4 thresholds with physically meaningful values:
                 # 1 Month Supply, 3 Months Supply, and Total Ending Stocks
                 raw_thresholds = self.threshold_calculator.calculate_consumption_thresholds(
                     self.crop_type, self.usda_year_range
                 )
                 
-                # Convert MT to kcal: MT * 10^6 g/MT * kcal/g
-                # This conversion is critical for comparing against production losses which are in kcal
-                conversion_factor = 1_000_000.0 * self.caloric_content
+                # Convert USDA PSD units to kcal.
+                # USDA PSD values are in 1000 MT (TMT): 1 TMT = 10^9 g,
+                # so kcal = TMT * 10^9 g/TMT * kcal/g.
+                # This matches the kcal_per_tmt factor used in fig4/tableS1.
+                conversion_factor = 1_000_000_000.0 * self.caloric_content
                 
                 self.thresholds = {
                     k: v * conversion_factor 

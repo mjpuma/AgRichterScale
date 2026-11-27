@@ -119,121 +119,44 @@ class TestConvergenceVisualization:
                 if os.path.exists(tmp_file.name):
                     os.unlink(tmp_file.name)
     
-    def test_convergence_diagnostics_display(self, visualizer, convergent_envelope_data, sample_events_data):
-        """Test that convergence diagnostics are displayed in plots."""
-        total_production = 1000.0
-        total_harvest = 2000.0
+    def test_no_diagnostic_text_overlays_on_publication_plot(self, visualizer, convergent_envelope_data, sample_events_data):
+        """Publication plots must NOT carry validation status boxes.
+        (Diagnostic overlays were removed; runtime validation happens in
+        the envelope pipeline, not in the visualizer.)"""
+        fig = visualizer.create_hp_envelope_plot(
+            convergent_envelope_data,
+            sample_events_data,
+            show_convergence=True,
+            total_production=1000.0,
+            total_harvest=2000.0
+        )
         
-        # Mock the convergence validator to return predictable results
-        with patch('agrichter.analysis.convergence_validator.ConvergenceValidator') as mock_validator_class:
-            mock_validator = Mock()
-            mock_validator_class.return_value = mock_validator
-            
-            # Create a validation result with known properties
-            validation_result = ValidationResult(
-                is_valid=True,
-                errors=[],
-                warnings=[],
-                properties={
-                    'starts_at_origin': True,
-                    'converges_at_endpoint': True,
-                    'upper_dominates_lower': True,
-                    'conservation_satisfied': True,
-                    'monotonic_harvest': True
-                },
-                statistics={
-                    'max_harvest_coverage': 1.0,
-                    'final_production_width': 0.0,
-                    'width_reduction_ratio': 0.95
-                }
-            )
-            mock_validator.validate_mathematical_properties.return_value = validation_result
-            
-            fig = visualizer.create_hp_envelope_plot(
-                convergent_envelope_data,
-                sample_events_data,
-                show_convergence=True,
-                total_production=total_production,
-                total_harvest=total_harvest
-            )
-            
-            ax = fig.gca()
-            
-            # Check for diagnostic text annotations
-            text_annotations = [child for child in ax.get_children() 
-                              if hasattr(child, 'get_text')]
-            
-            diagnostic_texts = []
-            for text_obj in text_annotations:
-                if hasattr(text_obj, 'get_text'):
-                    text_content = text_obj.get_text()
-                    if any(keyword in text_content.lower() for keyword in 
-                          ['validation', 'convergence', 'mathematical', 'passed', 'failed']):
-                        diagnostic_texts.append(text_content)
-            
-            assert len(diagnostic_texts) > 0, \
-                "No convergence diagnostic text found in plot"
-            
-            # Verify that validation was called
-            mock_validator.validate_mathematical_properties.assert_called_once()
-            
-            plt.close(fig)
+        ax = fig.gca()
+        overlay_texts = [
+            child.get_text() for child in ax.get_children()
+            if hasattr(child, 'get_text')
+            and any(kw in str(child.get_text()).lower()
+                    for kw in ['validation', 'passed', 'failed', '✓', '✗'])
+        ]
+        assert overlay_texts == [], \
+            f"Unexpected diagnostic overlays on publication plot: {overlay_texts}"
+        plt.close(fig)
     
-    def test_convergence_error_visualization(self, visualizer, non_convergent_envelope_data, sample_events_data):
-        """Test that convergence errors are properly visualized."""
-        total_production = 1000.0
-        total_harvest = 2000.0
-        
-        # Mock the convergence validator to return validation errors
-        with patch('agrichter.analysis.convergence_validator.ConvergenceValidator') as mock_validator_class:
-            mock_validator = Mock()
-            mock_validator_class.return_value = mock_validator
-            
-            # Create a validation result with errors
-            validation_result = ValidationResult(
-                is_valid=False,
-                errors=['Envelope does not converge at endpoint', 'Conservation law violated'],
-                warnings=['Insufficient harvest area coverage'],
-                properties={
-                    'starts_at_origin': True,
-                    'converges_at_endpoint': False,
-                    'upper_dominates_lower': True,
-                    'conservation_satisfied': False,
-                    'monotonic_harvest': True
-                },
-                statistics={
-                    'max_harvest_coverage': 0.9,
-                    'final_production_width': 50.0,
-                    'width_reduction_ratio': 0.7
-                }
-            )
-            mock_validator.validate_mathematical_properties.return_value = validation_result
-            
-            fig = visualizer.create_hp_envelope_plot(
-                non_convergent_envelope_data,
-                sample_events_data,
-                show_convergence=True,
-                total_production=total_production,
-                total_harvest=total_harvest
-            )
-            
-            ax = fig.gca()
-            
-            # Check for error indicators in the plot
-            text_annotations = [child for child in ax.get_children() 
-                              if hasattr(child, 'get_text')]
-            
-            error_indicators = []
-            for text_obj in text_annotations:
-                if hasattr(text_obj, 'get_text'):
-                    text_content = text_obj.get_text()
-                    if 'failed' in text_content.lower() or '✗' in text_content:
-                        error_indicators.append(text_content)
-            
-            assert len(error_indicators) > 0, \
-                "No error indicators found in plot with failed validation"
-            
-            plt.close(fig)
+    def test_non_convergent_data_still_renders(self, visualizer, non_convergent_envelope_data, sample_events_data):
+        """Non-convergent input must still render without raising (validation
+        errors are reported by the envelope pipeline, not the visualizer)."""
+        fig = visualizer.create_hp_envelope_plot(
+            non_convergent_envelope_data,
+            sample_events_data,
+            show_convergence=True,
+            total_production=1000.0,
+            total_harvest=2000.0
+        )
+        assert fig is not None
+        # Envelope bounds must still be plotted
+        ax = fig.gca()
+        assert len(ax.lines) > 0
+        plt.close(fig)
     
     def test_envelope_width_visualization(self, visualizer, convergent_envelope_data, sample_events_data):
         """Test that envelope width is properly visualized near convergence."""
@@ -603,9 +526,9 @@ class TestVisualizationIntegration:
         """Create an EnvelopeDiagnostics instance."""
         return EnvelopeDiagnostics(validator)
     
-    def test_visualization_with_validation_integration(self, visualizer, validator):
-        """Test that visualization properly integrates with validation results."""
-        # Create test data
+    def test_visualizer_does_not_invoke_validator(self, visualizer, validator):
+        """The visualizer must not re-run mathematical validation; that is the
+        envelope pipeline's job (envelope_v2 validates before plotting)."""
         envelope_data = {
             'lower_bound_harvest': np.array([0.0, 100.0, 500.0, 1000.0]),
             'lower_bound_production': np.array([0.0, 80.0, 400.0, 1000.0]),
@@ -621,36 +544,18 @@ class TestVisualizationIntegration:
             'event_type': 'climate'
         }])
         
-        total_production = 1000.0
-        total_harvest = 1000.0
-        
-        # Test that validation is called during visualization
         with patch.object(validator, 'validate_mathematical_properties') as mock_validate:
-            validation_result = ValidationResult(
-                is_valid=True,
-                errors=[],
-                warnings=[],
-                properties={'converges_at_endpoint': True},
-                statistics={'final_production_width': 0.0}
-            )
-            mock_validate.return_value = validation_result
-            
-            # Set the validator on the visualizer
             visualizer._convergence_validator = validator
             
             fig = visualizer.create_hp_envelope_plot(
                 envelope_data,
                 events_data,
                 show_convergence=True,
-                total_production=total_production,
-                total_harvest=total_harvest
+                total_production=1000.0,
+                total_harvest=1000.0
             )
             
-            # Verify validation was called
-            mock_validate.assert_called_once_with(
-                envelope_data, total_production, total_harvest
-            )
-            
+            mock_validate.assert_not_called()
             plt.close(fig)
     
     def test_diagnostic_plot_with_real_validation(self, diagnostics):

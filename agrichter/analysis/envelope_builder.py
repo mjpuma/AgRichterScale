@@ -148,12 +148,16 @@ def build_envelope(
     >>> result['lower']['cum_P_mt']
     array([ 100.,  300.,  600., 1000., 1500.])
     """
-    # Convert to numpy arrays for consistent handling
-    P_mt = np.asarray(P_mt)
-    H_ha = np.asarray(H_ha)
+    # Convert to float64 numpy arrays. The SPAM loaders use float32 for
+    # memory efficiency, but float32 cumulative sums over ~10^6 cells lose
+    # increments smaller than ~0.5 once the running total reaches ~10^7
+    # (24-bit mantissa), which breaks conservation by ~0.04%. Promoting to
+    # float64 here costs only a few tens of MB and keeps cumsum exact.
+    P_mt = np.asarray(P_mt, dtype=np.float64)
+    H_ha = np.asarray(H_ha, dtype=np.float64)
     
     if Y_mt_per_ha is not None:
-        Y_mt_per_ha = np.asarray(Y_mt_per_ha)
+        Y_mt_per_ha = np.asarray(Y_mt_per_ha, dtype=np.float64)
     
     # Validate inputs and compute yield if needed
     validation_result = _validate_and_prepare_inputs(P_mt, H_ha, Y_mt_per_ha, tol)

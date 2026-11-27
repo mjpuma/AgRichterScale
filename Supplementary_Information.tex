@@ -257,7 +257,7 @@ For country-specific analysis, grid cells are filtered by administrative identif
 
 This enables assessment of country-level vulnerability profiles.
 
-Global food security thresholds are scaled to the national level based on each country's share of global production:
+Global food security thresholds are derived from the USDA Production, Supply and Distribution (PSD) \emph{Allgrain} aggregate (wheat, corn, rice, barley, oats, rye, millet, sorghum, and mixed grain), averaged over the 2019--2021 marketing years to align with the SPAM 2020 reference period: the 1-month supply buffer is mean annual world consumption divided by 12, the 3-month buffer is consumption divided by 4, and the total-stocks limit is mean world ending stocks. The same commodity basket is used consistently across all figures. Thresholds are scaled to the national level based on each country's share of global production (both computed from SPAM 2020):
 
 \begin{equation}
 T_c = T_{\text{global}} \times \frac{P_c^{\text{total}}}{P_{\text{global}}^{\text{total}}}
@@ -363,6 +363,22 @@ Such extensions would utilize the general form (Equation~\ref{eq:loss_discrete})
 
 \begin{figure}[H]
     \centering
+    \includegraphics[width=\textwidth]{figureS2_comparative_envelopes_semilogx.png}
+    \caption{\textbf{Comparative national vulnerability fingerprints (all grains).}
+    Each curve traces the normalized upper H--P envelope for one country:
+    worst-case production loss as a percentage of that country's total grain
+    production, as a function of disrupted harvest magnitude. The label on each
+    curve marks the magnitude at which 100\% of national production is exposed
+    (the envelope endpoint). Concentrated producers (e.g.\ Egypt) reach total
+    exposure at lower magnitudes than geographically dispersed exporters
+    (e.g.\ Australia). The dashed global curve is shown for reference only and
+    uses the world grid; it is not ranked on the same horizontal scale as
+    national curves.}
+    \label{fig:S2_comparative}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
     \begin{subfigure}[b]{0.48\textwidth}
         \centering
         \includegraphics[width=\textwidth]{figure2_egypt_individual.png}
@@ -374,10 +390,27 @@ Such extensions would utilize the general form (Equation~\ref{eq:loss_discrete})
         \includegraphics[width=\textwidth]{figure2_australia_individual.png}
         \caption{Australia (Export Topology)}
     \end{subfigure}
-    \caption{\textbf{Additional National H-P Envelopes.} 
-    (a) Egypt exhibits a highly "stiff" envelope due to the extreme concentration of agriculture in the Nile Delta, where small spatial extents ($M_D \approx 4$) correspond to massive production proportions. 
+    \caption{\textbf{Illustrative national H--P envelopes (log--log).}
+    (a) Egypt exhibits a highly ``stiff'' envelope due to the extreme concentration of agriculture in the Nile Delta, where small spatial extents ($M_D \approx 4$) correspond to massive production proportions. 
     (b) Australia shows a wider uncertainty band reflecting the geographic spread of its wheat belt. Dashed lines indicate national food security thresholds scaled from global stocks.}
     \label{fig:S2_additional_countries}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figureS4_tail_sensitivity.png}
+    \caption{\textbf{Sensitivity of exceedance probabilities to the tail model.}
+    (A) Annual exceedance probability of fractional production losses under four tail models fitted to the same detrended USDA production shocks (1960--present): the deliberately conservative exponential calibration used in Figure~4 ($\lambda = \sigma / (-\ln 0.32)$), a maximum-likelihood exponential fitted to observed annual losses, a generalized Pareto distribution (peaks-over-threshold, threshold at zero loss), and a one-sided Gaussian tail. Open circles show the empirical exceedance of the historical record. All models agree within the observed range ($\lesssim$8\% loss); they diverge only in the extrapolated tail.
+    (B) Implied return periods for the two policy thresholds (3-month supply buffer and total ending stocks), with 95\% bootstrap confidence intervals (1{,}000 resamples, fixed seed). The Figure~4 calibration yields the shortest (most conservative) return periods; Gaussian tails imply the food system is essentially immune to threshold-breaching losses, illustrating why a heavy-tailed assumption is the prudent choice.}
+    \label{fig:S4_tail_sensitivity}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figureS5_fractional_loss_sensitivity.png}
+    \caption{\textbf{Sensitivity of event positions to the loss-intensity assumption.}
+    The main-text analysis maps each historical event to its modern-equivalent footprint assuming complete (100\%) loss of current production within the affected countries and states. Real events destroy only a fraction of the harvest inside their footprint. Here each event is re-plotted assuming 50\% and 25\% loss intensity: both disrupted area and production loss scale linearly with the loss fraction $f$, so events slide down-left along lines of unit slope in log--log space ($M_D(f) = M_D(1) + \log_{10} f$; $L(f) = f\,L(1)$). Because the upper envelope is concave and the lower envelope convex (both passing through the origin), scaled events remain within the H--P envelope, so the bounds hold for any loss intensity. Individual events are not labeled; each grey segment links one event's three intensity markers. Threshold crossings are robust for the largest events: the Great Drought (1876--78) and the Chinese famine (1959--61) remain at or above the 3-month global supply buffer even at 50\% intensity, while mid-magnitude events cross thresholds only under the complete-loss convention.}
+    \label{fig:S5_fractional_loss}
 \end{figure}
 
 \clearpage
@@ -388,7 +421,7 @@ Such extensions would utilize the general form (Equation~\ref{eq:loss_discrete})
 \begin{table}[H]
     \centering
     \caption{\textbf{National Food Security Thresholds.} 
-    Verification values for the consumption-based thresholds used in Figure 2. Thresholds are calculated by scaling global USDA stocks-to-use ratios by each country's annual caloric production (derived from SPAM 2020). "Total Stocks" represents the theoretical systemic failure point if reserves were fully depleted.}
+    Verification values for the consumption-based thresholds used in Figure 2. Global thresholds are computed from the USDA PSD Allgrain aggregate (2019--2021 mean consumption and ending stocks) and scaled by each country's share of global grain production (both country and global totals from SPAM 2020). "Total Stocks" represents the theoretical systemic failure point if reserves were fully depleted. Values assume proportional consumption relative to production; actual vulnerability depends on trade balances, storage infrastructure, and emergency reserves.}
     \label{tab:S1_country_stocks}
     \vspace{0.2cm}
     \resizebox{\textwidth}{!}{%
@@ -397,18 +430,20 @@ Such extensions would utilize the general form (Equation~\ref{eq:loss_discrete})
         \textbf{Country} & \textbf{Annual Production} & \textbf{Harvest Area} & \textbf{1-Month Supply} & \textbf{3-Month Supply} & \textbf{Total Stocks} \\
          & (kcal) & (km$^2$) & (kcal) & (kcal) & (kcal) \\
         \midrule
-        USA & $1.54 \times 10^{15}$ & 532,806 & $7.62 \times 10^{10}$ & $2.29 \times 10^{11}$ & $2.53 \times 10^{11}$ \\
-        China & $2.19 \times 10^{15}$ & 985,311 & $1.08 \times 10^{11}$ & $3.25 \times 10^{11}$ & $3.60 \times 10^{11}$ \\
-        India & $1.16 \times 10^{15}$ & 918,636 & $5.77 \times 10^{10}$ & $1.73 \times 10^{11}$ & $1.92 \times 10^{11}$ \\
-        Brazil & $4.24 \times 10^{14}$ & 239,080 & $2.10 \times 10^{10}$ & $6.31 \times 10^{10}$ & $6.99 \times 10^{10}$ \\
-        France & $2.19 \times 10^{14}$ & 92,084 & $1.09 \times 10^{10}$ & $3.26 \times 10^{10}$ & $3.61 \times 10^{10}$ \\
-        Egypt & $7.72 \times 10^{13}$ & 32,950 & $3.83 \times 10^{09}$ & $1.15 \times 10^{10}$ & $1.27 \times 10^{10}$ \\
-        Australia & $1.19 \times 10^{14}$ & 175,650 & $5.90 \times 10^{09}$ & $1.77 \times 10^{10}$ & $1.96 \times 10^{10}$ \\
-        Argentina & $3.01 \times 10^{14}$ & 162,543 & $1.49 \times 10^{10}$ & $4.47 \times 10^{10}$ & $4.95 \times 10^{10}$ \\
+        USA & $1.54 \times 10^{15}$ & 532,806 & $1.15 \times 10^{14}$ & $3.44 \times 10^{14}$ & $4.66 \times 10^{14}$ \\
+        China & $2.19 \times 10^{15}$ & 985,311 & $1.63 \times 10^{14}$ & $4.90 \times 10^{14}$ & $6.64 \times 10^{14}$ \\
+        India & $1.16 \times 10^{15}$ & 918,636 & $8.73 \times 10^{13}$ & $2.62 \times 10^{14}$ & $3.55 \times 10^{14}$ \\
+        Brazil & $4.24 \times 10^{14}$ & 239,080 & $3.15 \times 10^{13}$ & $9.44 \times 10^{13}$ & $1.28 \times 10^{14}$ \\
+        France & $2.19 \times 10^{14}$ & 92,084 & $1.70 \times 10^{13}$ & $5.11 \times 10^{13}$ & $6.92 \times 10^{13}$ \\
+        Egypt & $7.72 \times 10^{13}$ & 32,950 & $5.85 \times 10^{12}$ & $1.75 \times 10^{13}$ & $2.38 \times 10^{13}$ \\
+        Australia & $1.19 \times 10^{14}$ & 175,650 & $9.37 \times 10^{12}$ & $2.81 \times 10^{13}$ & $3.81 \times 10^{13}$ \\
+        Argentina & $3.01 \times 10^{14}$ & 162,543 & $2.26 \times 10^{13}$ & $6.79 \times 10^{13}$ & $9.20 \times 10^{13}$ \\
         \bottomrule
     \end{tabular}
     }
 \end{table}
+
+\input{tableS2_verification}
 
 \newpage
 
