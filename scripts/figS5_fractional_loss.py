@@ -41,9 +41,9 @@ logger = logging.getLogger('figS5')
 
 FRACTIONS = [1.0, 0.5, 0.25]
 FRACTION_STYLE = {
-    1.0: dict(color='#1f77b4', size=90, alpha=0.95, label='100% loss (main text)'),
-    0.5: dict(color='#7fb3d5', size=60, alpha=0.9, label='50% loss'),
-    0.25: dict(color='#c8dcec', size=40, alpha=0.9, label='25% loss'),
+    1.0: dict(color='#1f77b4', size=90, alpha=0.95, label='Loss fraction 1 (main text)'),
+    0.5: dict(color='#7fb3d5', size=60, alpha=0.9, label='Loss fraction 0.5'),
+    0.25: dict(color='#c8dcec', size=40, alpha=0.9, label='Loss fraction 0.25'),
 }
 
 # No per-event text labels: the triplet trajectories are the message.
@@ -129,14 +129,14 @@ def main():
     ax.set_ylim(1e8, 2e16)
     ax.set_xlabel(r'AgRichter Magnitude ($M_D = \log_{10}(A_H/\mathrm{km}^2)$)',
                   fontsize=14, fontweight='bold')
-    ax.set_ylabel('Production Loss (kcal)', fontsize=14, fontweight='bold')
+    ax.set_ylabel('SPAM 2020 production disrupted (kcal)', fontsize=14, fontweight='bold')
     ax.text(0.02, 0.98,
             'Each grey segment links one event at 100%, 50%, and 25% loss\n'
             '(down-left along unit slope in log--log space). Events unlabeled.',
             transform=ax.transAxes, fontsize=9, va='top', color='dimgray',
             style='italic')
     ax.set_title('Sensitivity of Event Positions to Loss Intensity\n'
-                 '(All Grains; modern-equivalent footprint at three intensities)',
+                 '(All Grains; 2020 exposure of event footprints at three loss fractions)',
                  fontsize=13, fontweight='bold')
     ax.grid(True, which='both', alpha=0.15)
 
